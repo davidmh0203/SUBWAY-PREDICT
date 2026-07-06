@@ -1,0 +1,6 @@
+figma-export/
+docs/
+scripts/build-figma-ui.mjs
+scripts/rebuild-figma-map.mjs
+scripts/capture-figma-screens.mjs
+scripts/build-figma-pdf.mjs

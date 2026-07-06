@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SUBWAY PREDICT — Figma Import Gallery</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 32px;
+        font-family: "Pretendard", "Apple SD Gothic Neo", system-ui, sans-serif;
+        background: #f1f5f9;
+        color: #1e293b;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      p {
+        margin: 0 0 24px;
+        font-size: 13px;
+        color: #64748b;
+      }
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        align-items: flex-start;
+      }
+      figure {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      figcaption {
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+      }
+      .phone {
+        width: 390px;
+        height: 844px;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+        background: #fff;
+      }
+      .phone img {
+        display: block;
+        width: 390px;
+        height: 844px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SUBWAY PREDICT Prototype</h1>
+    <p>html.to.design 플러그인에서 이 페이지 URL을 입력하면 4개 화면을 한 번에 가져올 수 있습니다.</p>
+    <div class="grid">
+      <figure>
+        <div class="phone"><img src="screens/01-home.png" alt="홈" width="390" height="844" /></div>
+        <figcaption>01 홈</figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><img src="screens/02-results.png" alt="경로" width="390" height="844" /></div>
+        <figcaption>02 경로</figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><img src="screens/03-detail.png" alt="상세" width="390" height="844" /></div>
+        <figcaption>03 상세</figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><img src="screens/04-macro.png" alt="노선도" width="390" height="844" /></div>
+        <figcaption>04 노선도</figcaption>
+      </figure>
+    </div>
+  </body>
+</html>

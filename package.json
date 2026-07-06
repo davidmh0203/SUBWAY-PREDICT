@@ -1,0 +1,45 @@
+{
+  "name": "subway-predict-dashboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run extract-metro && tsc -b && vite build",
+    "extract-metro": "node scripts/extract-metro-data.mjs",
+    "export-figma": "node scripts/export-figma.mjs",
+    "export-figma:screens": "node scripts/capture-figma-screens.mjs",
+    "export-figma:pdf": "node scripts/build-figma-pdf.mjs",
+    "export-figma:all": "npm run export-figma && npm run export-figma:screens && npm run export-figma:pdf",
+    "rebuild-figma-map": "bun scripts/rebuild-figma-map.mjs",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "deploy": "npm run build && npx vercel --prod"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.18",
+    "@radix-ui/react-slider": "^1.4.2",
+    "@radix-ui/react-slot": "^1.3.0",
+    "@radix-ui/react-tabs": "^1.1.16",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.23.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^3.9.2",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.52.0",
+    "tailwindcss": "^4.3.2",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  }
+}
