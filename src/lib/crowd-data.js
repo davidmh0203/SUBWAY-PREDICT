@@ -28,17 +28,34 @@ function getHourlyCongestionData(activeHour) {
     return { hour, rate: rounded, level: rateToCrowdLevel(rounded) };
   });
 }
-function getCarCongestionRows(timeOffset = 0) {
-  return ROUTE_STATIONS.map((station, idx) => {
+function getTrainCongestionRows(timeOffset = 0, stationNames) {
+  const stations = stationNames?.length
+    ? stationNames.map((name) => {
+        const found = ROUTE_STATIONS.find((s) => s.name === name.replace(/역$/, ""));
+        return found ?? { name: name.replace(/역$/, ""), baseRate: 70 };
+      })
+    : ROUTE_STATIONS;
+
+  return stations.map((station, idx) => {
     const peakBoost = idx >= 4 ? Math.max(0, 30 - Math.abs(timeOffset - 30) * 0.4) : 0;
     const overallRate = Math.round(station.baseRate + peakBoost + timeOffset * 0.15);
-    const cars = CAR_OFFSETS.map((offset, carIdx) => {
-      const carRate = overallRate + offset + (carIdx >= 5 ? 12 : 0);
-      return rateToCrowdLevel(carRate);
-    });
-    return { stationName: station.name, cars, overallRate };
+    return {
+      stationName: station.name,
+      overallRate,
+      level: rateToCrowdLevel(overallRate),
+    };
   });
 }
+
+function getCarCongestionRows(timeOffset = 0) {
+  return getTrainCongestionRows(timeOffset).map((row) => ({
+    ...row,
+    cars: CAR_OFFSETS.map((offset, carIdx) =>
+      rateToCrowdLevel(row.overallRate + offset + (carIdx >= 5 ? 12 : 0)),
+    ),
+  }));
+}
+
 function getMapSegmentsForTime(time) {
   const levels = {
     "17:30": {
@@ -114,6 +131,7 @@ function getStationMarkers() {
 }
 export {
   getCarCongestionRows,
+  getTrainCongestionRows,
   getHourlyCongestionData,
   getMapSegmentsForTime,
   getStationMarkers

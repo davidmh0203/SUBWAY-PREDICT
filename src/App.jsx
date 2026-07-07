@@ -106,8 +106,8 @@ export default function App() {
   };
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg bg-white">
-      <div className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4" : "px-4 pt-6"}`}>
+    <div className="mx-auto min-h-screen max-w-lg bg-white md:max-w-2xl lg:max-w-4xl">
+      <div className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4 md:px-6" : "px-4 pt-6 md:px-8"}`}>
         {view === "home" && (
           <HomeScreen form={form} onFormChange={setForm} onSearch={handleSearch} />
         )}
@@ -131,7 +131,7 @@ export default function App() {
         )}
       </div>
 
-      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
+      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)] md:max-w-2xl lg:max-w-4xl">
         <div className="flex items-center justify-around px-2 py-2">
           {bottomNav.map(({ id, label, icon: Icon, disabled }) => {
             const active = view === id;

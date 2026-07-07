@@ -198,6 +198,42 @@ function buildRoutes(targetTime, departure = "신도림", destination = "강남"
   ];
 }
 const SLIDER_MARKS = ["17:30", "18:00", "18:30", "19:00", "19:30"];
+
+const TODAY_EVENTS = [
+  {
+    id: "evt-1",
+    priority: 1,
+    impactScore: 140,
+    emoji: "🎤",
+    title: "잠실 콘서트",
+    summary: "2만명 · 2호선 사당-잠실 18~20시 혼잡 140% 예상",
+  },
+  {
+    id: "evt-2",
+    priority: 2,
+    impactScore: 95,
+    emoji: "🌧️",
+    title: "퇴근길 비 예보",
+    summary: "18:00권 전반 혼잡도 상승 예상",
+  },
+  {
+    id: "evt-3",
+    priority: 3,
+    impactScore: 72,
+    emoji: "🚧",
+    title: "2호선 선로 점검",
+    summary: "건대입구-잠실 구간 열차 간격 5분 연장",
+  },
+  {
+    id: "evt-4",
+    priority: 4,
+    impactScore: 60,
+    emoji: "📢",
+    title: "출근 시간대 안내",
+    summary: "7~9시 1·4호선 혼잡 예상 · 여유 시간 확보 권장",
+  },
+];
+
 function sliderIndexToDate(index, baseDate) {
   const time = SLIDER_MARKS[index] ?? "18:30";
   const [h, m] = time.split(":").map(Number);
@@ -221,6 +257,7 @@ function dateToSliderIndex(date) {
 }
 export {
   SLIDER_MARKS,
+  TODAY_EVENTS,
   buildRoutes,
   dateToSliderIndex,
   getChartData,

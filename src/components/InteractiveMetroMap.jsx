@@ -14,6 +14,7 @@ import {
   washLineColor
 } from "@/lib/metro-network";
 import { TransferStationMarker } from "@/components/TransferStationMarker";
+import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import {
   BASE_STATION_R,
   getLabelLayout,
@@ -23,12 +24,14 @@ import {
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 4;
 const { width: VB_W, height: VB_H } = MAP_VIEWBOX;
+const SEOUL_LINE_PATTERN = /^[1-9]호선/;
 function InteractiveMetroMap({
   selectedTime = "18:30",
   departureStationId,
   destinationStationId,
   pickRole,
-  onStationClick
+  onStationClick,
+  seoulOnly = false,
 }) {
   const containerRef = useRef(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
@@ -39,7 +42,22 @@ function InteractiveMetroMap({
     origX: 0,
     origY: 0
   });
-  const lineLegend = useMemo(() => getUniqueLineLegend(), []);
+  const lineLegend = useMemo(() => {
+    const all = getUniqueLineLegend();
+    if (!seoulOnly) return all;
+    return all.filter((line) => SEOUL_LINE_PATTERN.test(line.lineKey));
+  }, [seoulOnly]);
+  const visibleStations = useMemo(
+    () => (seoulOnly ? METRO_STATIONS.filter((s) => isSeoulMetroStation(s.name)) : METRO_STATIONS),
+    [seoulOnly],
+  );
+  const visibleLineSegments = useMemo(
+    () =>
+      seoulOnly
+        ? METRO_LINE_SEGMENTS.filter((seg) => SEOUL_LINE_PATTERN.test(getLineKeyForColor(seg.color)))
+        : METRO_LINE_SEGMENTS,
+    [seoulOnly],
+  );
   const [focusedLineKey, setFocusedLineKey] = useState(null);
   const isLineFocused = useCallback(
     (lineKey) => !focusedLineKey || focusedLineKey === lineKey,
@@ -54,11 +72,14 @@ function InteractiveMetroMap({
     [focusedLineKey]
   );
   const congestionSegments = useMemo(
-    () => METRO_LINE_SEGMENTS.map((seg) => ({
-      ...seg,
-      level: getSegmentCrowdLevel(seg, selectedTime)
-    })).filter((s) => s.level),
-    [selectedTime]
+    () =>
+      visibleLineSegments
+        .map((seg) => ({
+          ...seg,
+          level: getSegmentCrowdLevel(seg, selectedTime),
+        }))
+        .filter((s) => s.level),
+    [selectedTime, visibleLineSegments],
   );
   const zoom = useCallback((factor, centerX, centerY) => {
     setTransform((prev) => {
@@ -181,7 +202,7 @@ function InteractiveMetroMap({
           height: VB_H,
           className: "select-none"
         },
-        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, METRO_LINE_SEGMENTS.map((seg) => {
+        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, visibleLineSegments.map((seg) => {
           const focused = segmentMatchesLine(seg, focusedLineKey);
           return /* @__PURE__ */ React.createElement(
             "line",
@@ -218,7 +239,7 @@ function InteractiveMetroMap({
             }
           );
         })),
-        showLabels && /* @__PURE__ */ React.createElement("g", { className: "pointer-events-none transition-opacity duration-300" }, METRO_STATIONS.map((station) => {
+        showLabels && /* @__PURE__ */ React.createElement("g", { className: "pointer-events-none transition-opacity duration-300" }, visibleStations.map((station) => {
           const meta = getStationMeta(station);
           const focused = stationOnFocusedLine(meta.lineKeys, meta.lineColor);
           const lbl = getLabelLayout(station.id);
@@ -240,7 +261,7 @@ function InteractiveMetroMap({
             station.name
           );
         })),
-        /* @__PURE__ */ React.createElement("g", { className: "pointer-events-none transition-opacity duration-300" }, LINE_END_BADGES.map((badge) => {
+        /* @__PURE__ */ React.createElement("g", { className: "pointer-events-none transition-opacity duration-300" }, LINE_END_BADGES.filter((badge) => !seoulOnly || SEOUL_LINE_PATTERN.test(badge.lineKey)).map((badge) => {
           const focused = isLineFocused(badge.lineKey);
           const br = badge.label.length <= 2 ? 7 : badge.label.length <= 4 ? 8.5 : 10;
           const fs = badge.label.length <= 1 ? 6.5 : badge.label.length <= 2 ? 5.5 : 4.2;
@@ -269,7 +290,7 @@ function InteractiveMetroMap({
             badge.label
           ));
         })),
-        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, METRO_STATIONS.map((station) => {
+        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, visibleStations.map((station) => {
           const meta = getStationMeta(station);
           const focused = stationOnFocusedLine(meta.lineKeys, meta.lineColor);
           const isTransfer = meta.isTransfer;

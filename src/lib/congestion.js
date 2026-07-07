@@ -8,7 +8,13 @@ const CROWD_LABELS = {
   RELAXED: "여유",
   NORMAL: "보통",
   BUSY: "혼잡",
-  VERY_BUSY: "매우혼잡"
+  VERY_BUSY: "매우혼잡",
+};
+const CROWD_PERCENT_RANGES = {
+  RELAXED: "≤55%",
+  NORMAL: "56–85%",
+  BUSY: "86–115%",
+  VERY_BUSY: "≥116%",
 };
 const CONGESTION_STYLES = {
   SMOOTH: {
@@ -95,6 +101,7 @@ export {
   CONGESTION_STYLES,
   CROWD_COLORS,
   CROWD_LABELS,
+  CROWD_PERCENT_RANGES,
   addMinutes,
   crowdLevelToStatus,
   formatDateLabel,
