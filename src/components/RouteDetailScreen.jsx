@@ -14,14 +14,18 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
   const timeOffset =
     departureTime.getHours() * 60 + departureTime.getMinutes() - (18 * 60 + 30);
 
-  const stationNames = route.stations ?? [];
+  const stationNames = useMemo(() => {
+    if (route.segments?.length) {
+      return route.segments.flatMap((seg) => seg.stations.map((s) => s.name));
+    }
+    return route.stations ?? [];
+  }, [route.segments, route.stations]);
   const trainRows = useMemo(
     () => getTrainCongestionRows(timeOffset, stationNames),
     [timeOffset, stationNames],
   );
 
   const { expandedGroups, toggleGroup } = useRouteCollapse(route.segments);
-  const lineColor = route.segments?.[0]?.lineColor ?? "#00A84D";
   const nonSeoulStations = stationNames.filter((name) => !isSeoulMetroStation(name));
 
   const dangerStation = route.stationPredictions.find(
@@ -69,7 +73,6 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
               <TrainCongestionList
                 rows={trainRows}
                 departureTime={departureTime}
-                lineColor={lineColor}
                 segments={route.segments}
                 expandedGroups={expandedGroups}
                 onToggleGroup={toggleGroup}
@@ -82,10 +85,7 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
           <Card>
             <CardContent className="p-4 pt-5">
               <p className="mb-3 text-xs font-semibold text-slate-500">경로 미니맵</p>
-              <RouteMiniMap
-                stationIds={stationNames}
-                segmentLineColors={route.segments?.map((s) => s.lineColor)}
-              />
+              <RouteMiniMap stationIds={stationNames} segments={route.segments} />
             </CardContent>
           </Card>
 

@@ -124,9 +124,34 @@ function getChartData() {
     return { time, index, status: getStatusFromRate(index) };
   });
 }
+function fallbackSegments(stationNames, targetTime) {
+  if (!stationNames?.length) return [];
+  return [
+    {
+      lineName: "2호선",
+      lineColor: "#00a44a",
+      stations: stationNames.map((name, i) => {
+        const arrivalDate = new Date(targetTime.getTime() + i * 3 * 6e4);
+        return {
+          name,
+          type:
+            i === 0 ? "departure" : i === stationNames.length - 1 ? "arrival" : "waypoint",
+          arrivalTime: arrivalDate.toLocaleTimeString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          }),
+          congestionRate: 70,
+          congestionStatus: getStatusFromRate(70),
+        };
+      }),
+    },
+  ];
+}
 function buildRoutes(targetTime, departure = "신도림", destination = "강남") {
   const found = findRoute(departure, destination, targetTime);
   const fastStations = found?.stations ?? ["신도림", "신림", "사당", "강남"];
+  const routeSegments = found?.segments ?? fallbackSegments(fastStations, targetTime);
   const fastPredictions = (() => {
     if (departure === "신도림" && destination === "강남") {
       return getPredictionsForTime(targetTime).predictions;
@@ -149,20 +174,20 @@ function buildRoutes(targetTime, departure = "신도림", destination = "강남"
     });
   })();
   const maxFast = Math.max(...fastPredictions.map((p) => p.congestionRate));
-  const firstLineName = found?.segments[0]?.lineName ?? "2호선";
+  const firstLineName = routeSegments[0]?.lineName ?? "2호선";
   const comfortPredictions = fastPredictions.map((p) => ({
     ...p,
     congestionRate: Math.max(40, Math.round(p.congestionRate * 0.55)),
     status: getStatusFromRate(Math.max(40, Math.round(p.congestionRate * 0.55)))
   }));
   const maxComfort = Math.max(...comfortPredictions.map((p) => p.congestionRate));
-  const comfortSegments = found?.segments ? found.segments.map((seg) => ({
+  const comfortSegments = routeSegments.map((seg) => ({
     ...seg,
-    stations: seg.stations.map((st, _i) => ({
+    stations: seg.stations.map((st) => ({
       ...st,
-      congestionRate: Math.max(40, Math.round((st.congestionRate ?? 60) * 0.55))
-    }))
-  })) : void 0;
+      congestionRate: Math.max(40, Math.round((st.congestionRate ?? 60) * 0.55)),
+    })),
+  }));
   return [
     {
       id: "fast",
@@ -177,7 +202,7 @@ function buildRoutes(targetTime, departure = "신도림", destination = "강남"
       description: fastStations.join(" ─ "),
       stations: fastStations,
       stationPredictions: fastPredictions,
-      segments: found?.segments
+      segments: routeSegments
     },
     {
       id: "comfort",
