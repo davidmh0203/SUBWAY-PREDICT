@@ -1,7 +1,8 @@
 import { getStationByName } from "@/lib/metro-network";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
+import { Expand } from "lucide-react";
 
-export function RouteMiniMap({ stationIds, segments, seoulOnly = true }) {
+export function RouteMiniMap({ stationIds, segments, seoulOnly = true, onOpenFullMap }) {
   const segmentPaths =
     segments?.length > 0
       ? segments
@@ -64,7 +65,17 @@ export function RouteMiniMap({ stationIds, segments, seoulOnly = true }) {
         ];
 
   return (
-    <div className="overflow-hidden rounded-xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)]">
+    <div className="relative overflow-hidden rounded-xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)]">
+      {onOpenFullMap && (
+        <button
+          type="button"
+          onClick={onOpenFullMap}
+          className="absolute bottom-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 text-slate-600 shadow-[0_1px_4px_rgba(15,23,42,0.14)] hover:bg-white"
+          aria-label="전체 노선도 보기"
+        >
+          <Expand className="h-4 w-4" />
+        </button>
+      )}
       <svg viewBox={`${minX} ${minY} ${w} ${h}`} className="h-32 w-full">
         {pathsToDraw.map((path, pi) => {
           if (path.points.length < 2) return null;

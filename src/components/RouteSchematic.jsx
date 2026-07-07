@@ -1,21 +1,11 @@
 import { Footprints } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { CONGESTION_STYLES } from "@/lib/congestion";
 import { buildRidingLegs } from "@/lib/route-station-groups";
 import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
 
-function TimelineLine({ color, className }) {
-  return (
-    <div
-      className={cn("absolute left-[11px] top-6 w-[4px] rounded-b-sm", className)}
-      style={{ backgroundColor: color, height: "calc(100% - 4px)" }}
-    />
-  );
-}
-
 function WalkConnector({ prevColor, nextColor }) {
   return (
-    <div className="relative my-1 flex items-center gap-2 py-2 pl-[11px]">
+    <div className="relative -mt-2 mb-1 flex items-center gap-2 py-1 pl-[11px]">
       <div
         className="absolute left-[11px] top-0 h-full w-[4px]"
         style={{
@@ -35,7 +25,7 @@ function WalkConnector({ prevColor, nextColor }) {
   );
 }
 
-function BoardingRow({ leg, showLineBelow }) {
+function BoardingRow({ leg }) {
   const { boarding, lineColor, lineName } = leg;
   const congStyle = boarding.congestionStatus
     ? CONGESTION_STYLES[boarding.congestionStatus]
@@ -43,7 +33,6 @@ function BoardingRow({ leg, showLineBelow }) {
 
   return (
     <div className="relative" style={{ minHeight: 72 }}>
-      {showLineBelow && <TimelineLine color={lineColor} />}
       <div className="relative flex items-start gap-3">
         <div
           className="relative z-10 mt-[2px] h-6 w-6 shrink-0 rounded-full border-[3px] border-white shadow-md"
@@ -72,14 +61,17 @@ function BoardingRow({ leg, showLineBelow }) {
   );
 }
 
-function WaypointRow({ station, lineColor, showLineBelow }) {
+function WaypointRow({ station, lineColor }) {
   return (
     <div className="relative" style={{ minHeight: 36 }}>
-      {showLineBelow && <TimelineLine color={lineColor} className="left-[14px] !top-4" />}
       <div className="relative flex items-center gap-3 py-0.5">
         <div
-          className="relative z-10 ml-1 mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border-2 bg-white"
-          style={{ borderColor: lineColor }}
+          className="relative z-10 mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border-2"
+          style={{
+            marginLeft: "2px",
+            borderColor: lineColor,
+            backgroundColor: "#ffffff",
+          }}
         />
         <span className="text-sm text-slate-600">{station.name}역</span>
       </div>
@@ -87,7 +79,7 @@ function WaypointRow({ station, lineColor, showLineBelow }) {
   );
 }
 
-function AlightingRow({ leg, showLineBelow }) {
+function AlightingRow({ leg }) {
   const { alighting, lineColor, isLast } = leg;
   const label = isLast ? "도착" : "하차";
   const congStyle = alighting.congestionStatus
@@ -96,7 +88,6 @@ function AlightingRow({ leg, showLineBelow }) {
 
   return (
     <div className="relative" style={{ minHeight: 56 }}>
-      {showLineBelow && <TimelineLine color={lineColor} />}
       <div className="relative flex items-start gap-3">
         <div
           className="relative z-10 mt-[2px] h-6 w-6 shrink-0 rounded-full border-[3px] border-white shadow-md"
@@ -128,10 +119,18 @@ function AlightingRow({ leg, showLineBelow }) {
 function RidingLegBlock({ leg, expanded, onToggle }) {
   const expanded_ = expanded;
   const hasWaypoints = leg.waypoints.length > 0;
+  const bottomCut = hasWaypoints && expanded_ ? 18 : 26;
 
   return (
     <div className="relative">
-      <BoardingRow leg={leg} showLineBelow={true} />
+      <div
+        className="absolute left-[11px] top-[14px] w-[4px]"
+        style={{
+          backgroundColor: leg.lineColor,
+          height: `calc(100% - ${bottomCut}px)`,
+        }}
+      />
+      <BoardingRow leg={leg} />
 
       {hasWaypoints && (
         <>
@@ -147,13 +146,12 @@ function RidingLegBlock({ leg, expanded, onToggle }) {
                 key={wp.name}
                 station={wp}
                 lineColor={leg.lineColor}
-                showLineBelow={true}
               />
             ))}
         </>
       )}
 
-      <AlightingRow leg={leg} showLineBelow={false} />
+      <AlightingRow leg={leg} />
     </div>
   );
 }

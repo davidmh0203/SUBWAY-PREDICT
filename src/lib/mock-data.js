@@ -124,7 +124,59 @@ function getChartData() {
     return { time, index, status: getStatusFromRate(index) };
   });
 }
-function fallbackSegments(stationNames, targetTime) {
+function fallbackSegments(stationNames, targetTime, departure, destination) {
+  const dep = departure.replace(/역$/, "");
+  const dest = destination.replace(/역$/, "");
+
+  if (dep === "연신내" && dest === "봉은사") {
+    const segmentAStations = ["연신내", "불광", "홍제", "경복궁", "종로3가", "고속터미널"];
+    const segmentBStations = ["고속터미널", "신논현", "선정릉", "봉은사"];
+    const all = [...segmentAStations, ...segmentBStations.slice(1)];
+
+    const buildStation = (name, idx, type, base = 72) => {
+      const arrivalDate = new Date(targetTime.getTime() + idx * 3 * 6e4);
+      const rate = base + ((idx % 3) * 8);
+      return {
+        name,
+        type,
+        arrivalTime: arrivalDate.toLocaleTimeString("ko-KR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }),
+        congestionRate: rate,
+        congestionStatus: getStatusFromRate(rate),
+      };
+    };
+
+    return [
+      {
+        lineName: "3호선",
+        lineColor: "#f47d30",
+        stations: segmentAStations.map((name, i) =>
+          buildStation(
+            name,
+            all.indexOf(name),
+            i === 0 ? "departure" : i === segmentAStations.length - 1 ? "transfer" : "waypoint",
+            76,
+          ),
+        ),
+      },
+      {
+        lineName: "9호선",
+        lineColor: "#c6b182",
+        stations: segmentBStations.map((name, i) =>
+          buildStation(
+            name,
+            all.indexOf(name),
+            i === 0 ? "transfer" : i === segmentBStations.length - 1 ? "arrival" : "waypoint",
+            68,
+          ),
+        ),
+      },
+    ];
+  }
+
   if (!stationNames?.length) return [];
   return [
     {
@@ -150,8 +202,13 @@ function fallbackSegments(stationNames, targetTime) {
 }
 function buildRoutes(targetTime, departure = "연신내", destination = "봉은사") {
   const found = findRoute(departure, destination, targetTime);
-  const fastStations = found?.stations ?? ["신도림", "신림", "사당", "강남"];
-  const routeSegments = found?.segments ?? fallbackSegments(fastStations, targetTime);
+  const routeSegments =
+    found?.segments ?? fallbackSegments(found?.stations, targetTime, departure, destination);
+  const fastStations =
+    found?.stations ??
+    routeSegments.flatMap((seg, idx) =>
+      idx === 0 ? seg.stations.map((s) => s.name) : seg.stations.slice(1).map((s) => s.name),
+    );
   const fastPredictions = (() => {
     if (departure === "연신내" && destination === "봉은사") {
       return getPredictionsForTime(targetTime).predictions;

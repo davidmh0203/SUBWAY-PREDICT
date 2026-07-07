@@ -32,7 +32,11 @@ function InteractiveMetroMap({
   pickRole,
   onStationClick,
   seoulOnly = false,
-  stationCongestionSnapshot = [],
+  highlightedLineKeys = null,
+  highlightedStationIds = null,
+  routeHighlightOnly = false,
+  hideLegendChips = false,
+  focusStationId = null,
 }) {
   const containerRef = useRef(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
@@ -60,24 +64,26 @@ function InteractiveMetroMap({
     [seoulOnly],
   );
   const [focusedLineKey, setFocusedLineKey] = useState(null);
-  const stationCongestionById = useMemo(() => {
-    const map = new Map();
-    for (const row of stationCongestionSnapshot) {
-      map.set(row.stationId, row);
-    }
-    return map;
-  }, [stationCongestionSnapshot]);
   const isLineFocused = useCallback(
-    (lineKey) => !focusedLineKey || focusedLineKey === lineKey,
-    [focusedLineKey]
+    (lineKey) => {
+      if (routeHighlightOnly && highlightedLineKeys?.length) {
+        return highlightedLineKeys.includes(lineKey);
+      }
+      return !focusedLineKey || focusedLineKey === lineKey;
+    },
+    [focusedLineKey, highlightedLineKeys, routeHighlightOnly]
   );
   const stationOnFocusedLine = useCallback(
     (lineKeys, lineColor) => {
+      if (routeHighlightOnly && highlightedLineKeys?.length) {
+        if (lineKeys.some((k) => highlightedLineKeys.includes(k))) return true;
+        return highlightedLineKeys.includes(getLineKeyForColor(lineColor));
+      }
       if (!focusedLineKey) return true;
       if (lineKeys.includes(focusedLineKey)) return true;
       return getLineKeyForColor(lineColor) === focusedLineKey;
     },
-    [focusedLineKey]
+    [focusedLineKey, highlightedLineKeys, routeHighlightOnly]
   );
   const congestionSegments = useMemo(
     () =>
@@ -153,12 +159,25 @@ function InteractiveMetroMap({
   const onPointerUp = () => {
     dragRef.current.active = false;
   };
+  useEffect(() => {
+    if (!focusStationId || !containerRef.current) return;
+    const target = visibleStations.find((s) => s.id === focusStationId);
+    if (!target) return;
+    const el = containerRef.current;
+    const w = el.clientWidth;
+    const h = el.clientHeight;
+    setTransform((prev) => ({
+      ...prev,
+      x: w / 2 - target.x * prev.scale,
+      y: h / 2 - target.y * prev.scale,
+    }));
+  }, [focusStationId, visibleStations]);
   const showLabels = transform.scale >= 0.95;
-  return /* @__PURE__ */ React.createElement("div", { className: "relative" }, /* @__PURE__ */ React.createElement("div", { className: "mb-2 max-h-16 overflow-y-auto px-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-x-1.5 gap-y-1" }, /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "relative" }, !hideLegendChips && /* @__PURE__ */ React.createElement("div", { className: "mb-2 max-h-16 overflow-y-auto px-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-x-1.5 gap-y-1" }, /* @__PURE__ */ React.createElement(
     "button",
     {
       type: "button",
-      onClick: () => setFocusedLineKey(null),
+        onClick: () => !routeHighlightOnly && setFocusedLineKey(null),
       className: `rounded-full px-2 py-0.5 text-[9px] transition-colors ${focusedLineKey === null ? "bg-slate-800 text-white" : "bg-white text-slate-500 shadow-[0_1px_2px_rgba(15,23,42,0.08)] hover:bg-slate-50"}`
     },
     "전체"
@@ -169,7 +188,7 @@ function InteractiveMetroMap({
       {
         key: line.lineKey,
         type: "button",
-        onClick: () => setFocusedLineKey((prev) => prev === line.lineKey ? null : line.lineKey),
+        onClick: () => !routeHighlightOnly && setFocusedLineKey((prev) => prev === line.lineKey ? null : line.lineKey),
         className: `flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] transition-all ${active ? "bg-white text-slate-800 shadow-[0_0_0_2px_var(--line-color)]" : focusedLineKey ? "bg-white/60 text-slate-400 hover:bg-white hover:text-slate-600" : "bg-white text-slate-600 shadow-[0_1px_2px_rgba(15,23,42,0.08)] hover:bg-slate-50"}`,
         style: { "--line-color": line.color }
       },
@@ -211,7 +230,9 @@ function InteractiveMetroMap({
           className: "select-none"
         },
         /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, visibleLineSegments.map((seg) => {
-          const focused = segmentMatchesLine(seg, focusedLineKey);
+          const focused = routeHighlightOnly
+            ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
+            : segmentMatchesLine(seg, focusedLineKey);
           return /* @__PURE__ */ React.createElement(
             "line",
             {
@@ -223,14 +244,16 @@ function InteractiveMetroMap({
               stroke: focused ? seg.color : washLineColor(seg.color),
               strokeWidth: focused && focusedLineKey ? (seg.width ?? 3) + 0.8 : seg.width ?? 3,
               strokeLinecap: "round",
-              opacity: focused ? 1 : 0.55,
+              opacity: focused ? 1 : 0.2,
               className: "transition-all duration-300"
             }
           );
         })),
         /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, congestionSegments.map((seg) => {
-          const focused = segmentMatchesLine(seg, focusedLineKey);
-          if (focusedLineKey && !focused) return null;
+          const focused = routeHighlightOnly
+            ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
+            : segmentMatchesLine(seg, focusedLineKey);
+          if ((focusedLineKey && !focused) || (routeHighlightOnly && !focused)) return null;
           return /* @__PURE__ */ React.createElement(
             "line",
             {
@@ -242,7 +265,7 @@ function InteractiveMetroMap({
               stroke: CROWD_COLORS[seg.level],
               strokeWidth: 6,
               strokeLinecap: "round",
-              opacity: focused ? 0.8 : 0.35,
+              opacity: focused ? 0.88 : 0.1,
               className: "transition-all duration-500"
             }
           );
@@ -305,10 +328,12 @@ function InteractiveMetroMap({
           const markerR = getStationMarkerRadius(meta);
           const isDep = station.id === departureStationId;
           const isDest = station.id === destinationStationId;
-          const stationCong = stationCongestionById.get(station.id);
-          const congColor = stationCong ? CROWD_COLORS[stationCong.stationLevel] : null;
           const ringR = markerR + 5;
-          const dimOpacity = focused ? 1 : 0.3;
+          const stationHighlighted =
+            routeHighlightOnly && highlightedStationIds?.length
+              ? highlightedStationIds.includes(station.id)
+              : true;
+          const dimOpacity = stationHighlighted ? (focused ? 1 : 0.35) : 0.12;
           return /* @__PURE__ */ React.createElement(
             "g",
             {
@@ -318,7 +343,7 @@ function InteractiveMetroMap({
               opacity: dimOpacity,
               onClick: (e) => {
                 e.stopPropagation();
-                onStationClick(station, pickRole);
+                if (onStationClick) onStationClick(station, pickRole);
               }
             },
             isDep && /* @__PURE__ */ React.createElement(
@@ -343,26 +368,13 @@ function InteractiveMetroMap({
                 strokeWidth: 2
               }
             ),
-            isTransfer ? /* @__PURE__ */ React.createElement(
-              "g",
-              null,
-              congColor && /* @__PURE__ */ React.createElement("circle", {
-                cx: station.x,
-                cy: station.y,
-                r: markerR + 2.2,
-                fill: "none",
-                stroke: congColor,
-                strokeWidth: 2,
-                opacity: 0.9
-              }),
-              /* @__PURE__ */ React.createElement(TransferStationMarker, { x: station.x, y: station.y })
-            ) : /* @__PURE__ */ React.createElement(
+            isTransfer ? /* @__PURE__ */ React.createElement(TransferStationMarker, { x: station.x, y: station.y }) : /* @__PURE__ */ React.createElement(
               "circle",
               {
                 cx: station.x,
                 cy: station.y,
                 r: BASE_STATION_R,
-                fill: congColor ?? "#ffffff",
+                fill: "#ffffff",
                 stroke: focused ? meta.lineColor : washLineColor(meta.lineColor),
                 strokeWidth: 2.2
               }
@@ -388,7 +400,7 @@ function InteractiveMetroMap({
       },
       /* @__PURE__ */ React.createElement(Icon, { className: "h-4 w-4" })
     )))
-  ), /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex flex-wrap items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("p", { className: "text-[10px] text-slate-400" }, "선: 열차 혼잡도 · 점: 역 혼잡도 · 상단 호선 클릭 시 강조"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) => /* @__PURE__ */ React.createElement("span", { key: l, className: "flex items-center gap-1 text-[9px] text-slate-500" }, /* @__PURE__ */ React.createElement("span", { className: "h-1.5 w-1.5 rounded-full", style: { backgroundColor: CROWD_COLORS[l] } }), CROWD_LABELS[l])))));
+  ), /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex flex-wrap items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("p", { className: "text-[10px] text-slate-400" }, "노선 색: 열차 구간 혼잡도 · 상단 호선 클릭 시 강조"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) => /* @__PURE__ */ React.createElement("span", { key: l, className: "flex items-center gap-1 text-[9px] text-slate-500" }, /* @__PURE__ */ React.createElement("span", { className: "h-1.5 w-1.5 rounded-full", style: { backgroundColor: CROWD_COLORS[l] } }), CROWD_LABELS[l])))));
 }
 export {
   InteractiveMetroMap

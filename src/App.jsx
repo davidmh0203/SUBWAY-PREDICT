@@ -5,7 +5,7 @@ import { RouteResultsScreen } from "@/components/RouteResultsScreen";
 import { RouteDetailScreen } from "@/components/RouteDetailScreen";
 import { MacroViewScreen } from "@/components/MacroViewScreen";
 import { buildRoutes } from "@/lib/mock-data";
-import { getNearbyStationCongestion, getStationCongestionSnapshot } from "@/lib/crowd-data";
+import { getNearbyStationCongestion } from "@/lib/crowd-data";
 import { cn } from "@/lib/utils";
 
 const VIEWS = ["home", "results", "detail", "macro"];
@@ -37,10 +37,6 @@ export default function App() {
   const nearbyCongestion = useMemo(
     () => getNearbyStationCongestion(form.targetTime, geoLocation, 4),
     [form.targetTime, geoLocation],
-  );
-  const stationCongestionSnapshot = useMemo(
-    () => getStationCongestionSnapshot(form.targetTime),
-    [form.targetTime],
   );
 
   const navigateTo = useCallback(
@@ -173,7 +169,9 @@ export default function App() {
             form={form}
             onFormChange={setForm}
             onSearch={handleSearch}
-            stationCongestionSnapshot={stationCongestionSnapshot}
+            geoLocation={geoLocation}
+            locationState={locationState}
+            onRequestLocation={requestLocation}
           />
         )}
       </div>

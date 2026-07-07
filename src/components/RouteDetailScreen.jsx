@@ -1,16 +1,19 @@
 import { ArrowLeft } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrainCongestionList } from "@/components/TrainCongestionList";
 import { RouteSchematic } from "@/components/RouteSchematic";
 import { RouteMiniMap } from "@/components/RouteMiniMap";
+import { InteractiveMetroMap } from "@/components/InteractiveMetroMap";
 import { getTrainCongestionRows } from "@/lib/crowd-data";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
+import { getLineKeyForColor } from "@/lib/metro-network";
 
 export function RouteDetailScreen({ route, departureTime, onBack }) {
+  const [fullMapOpen, setFullMapOpen] = useState(false);
   const timeOffset =
     departureTime.getHours() * 60 + departureTime.getMinutes() - (18 * 60 + 30);
 
@@ -26,6 +29,14 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
   );
 
   const { expandedGroups, toggleGroup } = useRouteCollapse(route.segments);
+  const highlightedLineKeys = useMemo(
+    () => [...new Set((route.segments ?? []).map((seg) => getLineKeyForColor(seg.lineColor)))],
+    [route.segments],
+  );
+  const highlightedStationIds = useMemo(
+    () => [...new Set(stationNames.map((name) => name.replace(/역$/, "")))],
+    [stationNames],
+  );
   const nonSeoulStations = stationNames.filter((name) => !isSeoulMetroStation(name));
 
   const dangerStation = route.stationPredictions.find(
@@ -81,7 +92,11 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
         <Card>
           <CardContent className="p-4 pt-5">
             <p className="mb-3 text-xs font-semibold text-slate-500">경로 미니맵</p>
-            <RouteMiniMap stationIds={stationNames} segments={route.segments} />
+            <RouteMiniMap
+              stationIds={stationNames}
+              segments={route.segments}
+              onOpenFullMap={() => setFullMapOpen(true)}
+            />
           </CardContent>
         </Card>
 
@@ -97,6 +112,32 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
           </Card>
         )}
       </div>
+
+      {fullMapOpen && (
+        <div className="fixed inset-0 z-50 bg-black/55">
+          <div className="mx-auto h-full max-w-lg bg-white">
+            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+              <div>
+                <p className="text-xs text-slate-500">상세 경로 전체 보기</p>
+                <p className="text-sm font-semibold text-slate-800">{route.stations.join(" → ")}</p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setFullMapOpen(false)}>
+                닫기
+              </Button>
+            </div>
+            <div className="p-3">
+              <InteractiveMetroMap
+                selectedTime="18:30"
+                seoulOnly
+                routeHighlightOnly
+                highlightedLineKeys={highlightedLineKeys}
+                highlightedStationIds={highlightedStationIds}
+                hideLegendChips
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
