@@ -29,8 +29,11 @@ npm run dev
 
 ```bash
 npm run build
-npm run deploy
+npm run deploy          # 빌드 + Vercel만
+npm run ship -- "메시지"  # 빌드 + 커밋 + push + 배포 (권장)
 ```
+
+자세한 릴리스 절차: [`docs/RELEASE.md`](docs/RELEASE.md) · Agent 워크플로: [`AGENTS.md`](AGENTS.md)
 
 ## 베이스라인
 

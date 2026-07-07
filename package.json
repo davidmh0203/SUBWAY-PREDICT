@@ -15,7 +15,8 @@
     "build-figma-wireframes": "bun scripts/build-figma-wireframes.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "npm run build && npx vercel --prod"
+    "deploy": "npm run build && npx vercel --prod",
+    "ship": "node scripts/ship.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.18",
