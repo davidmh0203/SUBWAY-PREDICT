@@ -31,12 +31,13 @@
 npm run ship -- "변경 요약 한글 커밋 메시지"
 ```
 
-내부 동작: `build` → `commit` → `push` → `vercel --prod`
+내부 동작: `build` → `commit` → `push` → GitHub Actions Deploy
 
 ## GitHub push 후
 
 - **CI**: `.github/workflows/ci.yml` — main push/PR 시 빌드 검증
-- **Vercel**: Git 연동 시 push마다 자동 배포 (대시보드에서 repo 연결)
+- **Deploy**: `.github/workflows/deploy.yml` — main push 시 Vercel 프로덕션 자동 배포
+- Secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` (저장소에 등록됨)
 
 ## 주요 명령
 

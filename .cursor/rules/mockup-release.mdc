@@ -13,9 +13,9 @@ alwaysApply: false
 2. `git status` / `git diff` — 커밋 대상 확인 (`.env`, 시크릿 제외)
 3. 변경이 있으면 **한글 커밋 메시지**로 커밋 (제목 1줄 + 필요 시 본문 bullet)
 4. `git push origin main`
-5. `npx vercel --prod --yes` (또는 `npm run deploy`)
+5. `git push origin main` → **GitHub Actions**가 Vercel 프로덕션 배포 (`.github/workflows/deploy.yml`)
 
-한 번에 하려면: `npm run ship -- "커밋 메시지"`
+한 번에: `npm run ship -- "커밋 메시지"` (로컬 vercel 배포 없음 — Actions가 처리)
 
 ## 커밋 메시지 스타일
 
