@@ -131,7 +131,7 @@ function RidingLegBlock({ leg, expanded, onToggle }) {
 
   return (
     <div className="relative">
-      <BoardingRow leg={leg} showLineBelow={hasWaypoints || true} />
+      <BoardingRow leg={leg} showLineBelow={true} />
 
       {hasWaypoints && (
         <>
@@ -147,7 +147,7 @@ function RidingLegBlock({ leg, expanded, onToggle }) {
                 key={wp.name}
                 station={wp}
                 lineColor={leg.lineColor}
-                showLineBelow={i < leg.waypoints.length - 1 || true}
+                showLineBelow={true}
               />
             ))}
         </>

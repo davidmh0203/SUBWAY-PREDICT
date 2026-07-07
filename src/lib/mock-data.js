@@ -148,12 +148,12 @@ function fallbackSegments(stationNames, targetTime) {
     },
   ];
 }
-function buildRoutes(targetTime, departure = "신도림", destination = "강남") {
+function buildRoutes(targetTime, departure = "연신내", destination = "봉은사") {
   const found = findRoute(departure, destination, targetTime);
   const fastStations = found?.stations ?? ["신도림", "신림", "사당", "강남"];
   const routeSegments = found?.segments ?? fallbackSegments(fastStations, targetTime);
   const fastPredictions = (() => {
-    if (departure === "신도림" && destination === "강남") {
+    if (departure === "연신내" && destination === "봉은사") {
       return getPredictionsForTime(targetTime).predictions;
     }
     return fastStations.map((name, idx) => {

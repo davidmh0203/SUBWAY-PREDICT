@@ -24,10 +24,10 @@ function readHashView() {
 export default function App() {
   const [view, setView] = useState(() => readHashView() ?? "home");
   const [form, setForm] = useState({
-    departure: "신도림역",
-    destination: "강남역",
-    departureStationId: "신도림",
-    destinationStationId: "강남",
+    departure: "연신내역",
+    destination: "봉은사역",
+    departureStationId: "연신내",
+    destinationStationId: "봉은사",
     targetTime: createDefaultTime(),
   });
   const [selectedRoute, setSelectedRoute] = useState(null);
