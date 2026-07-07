@@ -2,57 +2,84 @@ function isKeyStation(type) {
   return type === "departure" || type === "arrival" || type === "transfer";
 }
 
-/** @returns {{ flat: Array, groups: Array<{ id, waypointNames, beforeKey, afterKey }> }} */
-export function buildRouteStationGroups(segments) {
-  if (!segments?.length) return { flat: [], groups: [] };
+/** @returns {Array<{ id, lineName, lineColor, boarding, waypoints, alighting, isLast }>} */
+export function buildRidingLegs(segments) {
+  if (!segments?.length) return [];
 
-  const flat = [];
-  for (const seg of segments) {
-    for (const st of seg.stations) {
-      flat.push({
+  return segments.map((seg, i) => {
+    const isLastLeg = i === segments.length - 1;
+    const boarding = {
+      ...seg.stations[0],
+      lineColor: seg.lineColor,
+      lineName: seg.lineName,
+    };
+
+    let alighting;
+    let waypoints;
+
+    if (isLastLeg) {
+      alighting = {
+        ...seg.stations[seg.stations.length - 1],
+        lineColor: seg.lineColor,
+        lineName: seg.lineName,
+      };
+      waypoints = seg.stations.slice(1, -1).map((st) => ({
         ...st,
         lineColor: seg.lineColor,
         lineName: seg.lineName,
-      });
-    }
-  }
-
-  const groups = [];
-  let waypointRun = [];
-  let beforeKey = flat.find((s) => isKeyStation(s.type))?.name ?? flat[0]?.name;
-
-  const flush = (afterKey) => {
-    if (waypointRun.length > 0) {
-      groups.push({
-        id: `group-${groups.length}`,
-        waypointNames: waypointRun.map((w) => w.name),
-        beforeKey,
-        afterKey,
-      });
-      waypointRun = [];
-    }
-    if (afterKey) beforeKey = afterKey;
-  };
-
-  for (const st of flat) {
-    if (isKeyStation(st.type)) {
-      flush(st.name);
+      }));
     } else {
-      waypointRun.push(st);
+      const nextSeg = segments[i + 1];
+      alighting = {
+        ...nextSeg.stations[0],
+        type: "transfer",
+        lineColor: seg.lineColor,
+        lineName: seg.lineName,
+      };
+      waypoints = seg.stations.slice(1).map((st) => ({
+        ...st,
+        lineColor: seg.lineColor,
+        lineName: seg.lineName,
+      }));
+    }
+
+    return {
+      id: `leg-${i}`,
+      lineName: seg.lineName,
+      lineColor: seg.lineColor,
+      boarding,
+      waypoints,
+      alighting,
+      isLast: isLastLeg,
+    };
+  });
+}
+
+export function isWaypointVisible(stationName, legs, expandedGroups) {
+  for (const leg of legs) {
+    if (leg.waypoints.some((w) => w.name === stationName)) {
+      return expandedGroups?.has(leg.id) ?? false;
     }
   }
+  return true;
+}
 
-  const lastKey = [...flat].reverse().find((s) => isKeyStation(s.type))?.name;
-  if (waypointRun.length > 0) {
-    groups.push({
-      id: `group-${groups.length}`,
-      waypointNames: waypointRun.map((w) => w.name),
-      beforeKey,
-      afterKey: lastKey ?? beforeKey,
-    });
+/** @deprecated use buildRidingLegs */
+export function buildRouteStationGroups(segments) {
+  const legs = buildRidingLegs(segments);
+  const flat = [];
+  for (const seg of segments ?? []) {
+    for (const st of seg.stations) {
+      flat.push({ ...st, lineColor: seg.lineColor, lineName: seg.lineName });
+    }
   }
-
-  return { flat, groups };
+  const groups = legs.map((leg) => ({
+    id: leg.id,
+    waypointNames: leg.waypoints.map((w) => w.name),
+    beforeKey: leg.boarding.name,
+    afterKey: leg.alighting.name,
+  }));
+  return { flat, groups, legs };
 }
 
 export function isStationVisible(st, groups, expandedGroups) {

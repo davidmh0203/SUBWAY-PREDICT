@@ -32,6 +32,7 @@ function InteractiveMetroMap({
   pickRole,
   onStationClick,
   seoulOnly = false,
+  stationCongestionSnapshot = [],
 }) {
   const containerRef = useRef(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
@@ -59,6 +60,13 @@ function InteractiveMetroMap({
     [seoulOnly],
   );
   const [focusedLineKey, setFocusedLineKey] = useState(null);
+  const stationCongestionById = useMemo(() => {
+    const map = new Map();
+    for (const row of stationCongestionSnapshot) {
+      map.set(row.stationId, row);
+    }
+    return map;
+  }, [stationCongestionSnapshot]);
   const isLineFocused = useCallback(
     (lineKey) => !focusedLineKey || focusedLineKey === lineKey,
     [focusedLineKey]
@@ -297,6 +305,8 @@ function InteractiveMetroMap({
           const markerR = getStationMarkerRadius(meta);
           const isDep = station.id === departureStationId;
           const isDest = station.id === destinationStationId;
+          const stationCong = stationCongestionById.get(station.id);
+          const congColor = stationCong ? CROWD_COLORS[stationCong.stationLevel] : null;
           const ringR = markerR + 5;
           const dimOpacity = focused ? 1 : 0.3;
           return /* @__PURE__ */ React.createElement(
@@ -333,13 +343,26 @@ function InteractiveMetroMap({
                 strokeWidth: 2
               }
             ),
-            isTransfer ? /* @__PURE__ */ React.createElement(TransferStationMarker, { x: station.x, y: station.y }) : /* @__PURE__ */ React.createElement(
+            isTransfer ? /* @__PURE__ */ React.createElement(
+              "g",
+              null,
+              congColor && /* @__PURE__ */ React.createElement("circle", {
+                cx: station.x,
+                cy: station.y,
+                r: markerR + 2.2,
+                fill: "none",
+                stroke: congColor,
+                strokeWidth: 2,
+                opacity: 0.9
+              }),
+              /* @__PURE__ */ React.createElement(TransferStationMarker, { x: station.x, y: station.y })
+            ) : /* @__PURE__ */ React.createElement(
               "circle",
               {
                 cx: station.x,
                 cy: station.y,
                 r: BASE_STATION_R,
-                fill: "#ffffff",
+                fill: congColor ?? "#ffffff",
                 stroke: focused ? meta.lineColor : washLineColor(meta.lineColor),
                 strokeWidth: 2.2
               }
@@ -365,7 +388,7 @@ function InteractiveMetroMap({
       },
       /* @__PURE__ */ React.createElement(Icon, { className: "h-4 w-4" })
     )))
-  ), /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex flex-wrap items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("p", { className: "text-[10px] text-slate-400" }, "상단 호선 클릭 시 해당 노선 강조 · 환승역: 검정 테두리 큰 원"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) => /* @__PURE__ */ React.createElement("span", { key: l, className: "flex items-center gap-1 text-[9px] text-slate-500" }, /* @__PURE__ */ React.createElement("span", { className: "h-1.5 w-1.5 rounded-full", style: { backgroundColor: CROWD_COLORS[l] } }), CROWD_LABELS[l])))));
+  ), /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex flex-wrap items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("p", { className: "text-[10px] text-slate-400" }, "선: 열차 혼잡도 · 점: 역 혼잡도 · 상단 호선 클릭 시 강조"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) => /* @__PURE__ */ React.createElement("span", { key: l, className: "flex items-center gap-1 text-[9px] text-slate-500" }, /* @__PURE__ */ React.createElement("span", { className: "h-1.5 w-1.5 rounded-full", style: { backgroundColor: CROWD_COLORS[l] } }), CROWD_LABELS[l])))));
 }
 export {
   InteractiveMetroMap

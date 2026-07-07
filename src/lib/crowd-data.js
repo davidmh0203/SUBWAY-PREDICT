@@ -1,4 +1,5 @@
 import { rateToCrowdLevel } from "./congestion";
+import { METRO_STATIONS, getNearestStationsByGeo } from "./metro-network";
 const ROUTE_STATIONS = [
   { name: "신도림", baseRate: 48 },
   { name: "구로디지털", baseRate: 62 },
@@ -129,8 +130,51 @@ function getStationMarkers() {
     { name: "잠실", x: 920, y: 430 }
   ];
 }
+
+function stationSeed(name) {
+  return [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+}
+
+function buildStationAndTrainRates(stationName, timeOffset = 0) {
+  const seed = stationSeed(stationName);
+  const base = 46 + (seed % 38);
+  const peak = Math.max(0, 28 - Math.abs(timeOffset - 20) * 0.45);
+  const stationRate = Math.round(base + peak);
+  const trainRate = Math.round(stationRate + 8 + (seed % 14));
+  return {
+    stationRate,
+    stationLevel: rateToCrowdLevel(stationRate),
+    trainRate,
+    trainLevel: rateToCrowdLevel(trainRate),
+  };
+}
+
+function getStationCongestionSnapshot(targetTime) {
+  const timeOffset =
+    targetTime.getHours() * 60 + targetTime.getMinutes() - (18 * 60 + 30);
+  return METRO_STATIONS.map((station) => ({
+    stationId: station.id,
+    stationName: station.name,
+    ...buildStationAndTrainRates(station.name, timeOffset),
+  }));
+}
+
+function getNearbyStationCongestion(targetTime, location, limit = 5) {
+  if (!location) return [];
+  const nearest = getNearestStationsByGeo(location.lat, location.lng, limit);
+  const timeOffset =
+    targetTime.getHours() * 60 + targetTime.getMinutes() - (18 * 60 + 30);
+  return nearest.map((station) => ({
+    stationId: station.id,
+    stationName: station.name,
+    ...buildStationAndTrainRates(station.name, timeOffset),
+  }));
+}
+
 export {
   getCarCongestionRows,
+  getNearbyStationCongestion,
+  getStationCongestionSnapshot,
   getTrainCongestionRows,
   getHourlyCongestionData,
   getMapSegmentsForTime,

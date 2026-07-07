@@ -5,7 +5,7 @@ import { InteractiveMetroMap } from "@/components/InteractiveMetroMap";
 import { SLIDER_MARKS } from "@/lib/mock-data";
 import { formatTime } from "@/lib/congestion";
 
-export function MacroViewScreen({ form, onFormChange, onSearch }) {
+export function MacroViewScreen({ form, onFormChange, onSearch, stationCongestionSnapshot }) {
   const [selectedTime, setSelectedTime] = useState("18:30");
   const [pickRole, setPickRole] = useState("departure");
 
@@ -103,6 +103,7 @@ export function MacroViewScreen({ form, onFormChange, onSearch }) {
         pickRole={pickRole}
         onStationClick={handleStationClick}
         seoulOnly
+        stationCongestionSnapshot={stationCongestionSnapshot}
       />
 
       <Button size="lg" className="w-full" disabled={!canSearch} onClick={onSearch}>

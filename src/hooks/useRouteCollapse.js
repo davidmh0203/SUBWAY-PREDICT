@@ -1,21 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
-import { buildRouteStationGroups } from "@/lib/route-station-groups";
+import { buildRidingLegs } from "@/lib/route-station-groups";
 
 export function useRouteCollapse(segments) {
-  const { flat, groups } = useMemo(
-    () => buildRouteStationGroups(segments ?? []),
-    [segments],
-  );
+  const legs = useMemo(() => buildRidingLegs(segments ?? []), [segments]);
   const [expandedGroups, setExpandedGroups] = useState(() => new Set());
 
-  const toggleGroup = useCallback((groupId) => {
+  const toggleGroup = useCallback((legId) => {
     setExpandedGroups((prev) => {
       const next = new Set(prev);
-      if (next.has(groupId)) next.delete(groupId);
-      else next.add(groupId);
+      if (next.has(legId)) next.delete(legId);
+      else next.add(legId);
       return next;
     });
   }, []);
 
-  return { flat, groups, expandedGroups, toggleGroup };
+  return { legs, expandedGroups, toggleGroup };
 }

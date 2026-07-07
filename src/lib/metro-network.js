@@ -89,6 +89,29 @@ function getNearestSegmentColor(x, y) {
 function getStationLineColor(x, y) {
   return getNearestSegmentColor(x, y);
 }
+
+function stationToPseudoGeo(station) {
+  const minX = 560;
+  const maxX = 1020;
+  const minY = 330;
+  const maxY = 700;
+  const lng = 126.82 + ((station.x - minX) / (maxX - minX)) * 0.42;
+  const lat = 37.72 - ((station.y - minY) / (maxY - minY)) * 0.27;
+  return { lat, lng };
+}
+
+function getNearestStationsByGeo(lat, lng, limit = 5) {
+  const withDist = METRO_STATIONS.map((station) => {
+    const pseudo = stationToPseudoGeo(station);
+    const dLat = lat - pseudo.lat;
+    const dLng = lng - pseudo.lng;
+    return { station, distance: Math.hypot(dLat, dLng) };
+  });
+  return withDist
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, limit)
+    .map((x) => x.station);
+}
 function getSegmentCrowdLevel(seg, time) {
   if (seg.color.toLowerCase() !== "#00a44a") return null;
   const mx = (seg.x1 + seg.x2) / 2;
@@ -114,8 +137,10 @@ export {
   getStation,
   getStationByName,
   getStationLineColor,
+  getNearestStationsByGeo,
   getUniqueLineLegend,
   pointToSegmentDistance,
   segmentMatchesLine,
+  stationToPseudoGeo,
   washLineColor
 };

@@ -5,6 +5,7 @@ import { RouteResultsScreen } from "@/components/RouteResultsScreen";
 import { RouteDetailScreen } from "@/components/RouteDetailScreen";
 import { MacroViewScreen } from "@/components/MacroViewScreen";
 import { buildRoutes } from "@/lib/mock-data";
+import { getNearbyStationCongestion, getStationCongestionSnapshot } from "@/lib/crowd-data";
 import { cn } from "@/lib/utils";
 
 const VIEWS = ["home", "results", "detail", "macro"];
@@ -30,6 +31,17 @@ export default function App() {
     targetTime: createDefaultTime(),
   });
   const [selectedRoute, setSelectedRoute] = useState(null);
+  const [locationState, setLocationState] = useState("idle");
+  const [geoLocation, setGeoLocation] = useState(null);
+
+  const nearbyCongestion = useMemo(
+    () => getNearbyStationCongestion(form.targetTime, geoLocation, 4),
+    [form.targetTime, geoLocation],
+  );
+  const stationCongestionSnapshot = useMemo(
+    () => getStationCongestionSnapshot(form.targetTime),
+    [form.targetTime],
+  );
 
   const navigateTo = useCallback(
     (next) => {
@@ -105,11 +117,41 @@ export default function App() {
     navigateTo(id);
   };
 
+  const requestLocation = useCallback(() => {
+    if (!navigator?.geolocation) {
+      setLocationState("denied");
+      return;
+    }
+    setLocationState("loading");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setGeoLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setLocationState("ready");
+      },
+      () => setLocationState("denied"),
+      { enableHighAccuracy: false, timeout: 6000 },
+    );
+  }, []);
+
+  useEffect(() => {
+    requestLocation();
+  }, [requestLocation]);
+
   return (
-    <div className="mx-auto min-h-screen max-w-lg bg-white md:max-w-2xl lg:max-w-4xl">
-      <div className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4 md:px-6" : "px-4 pt-6 md:px-8"}`}>
+    <div className="mx-auto min-h-screen max-w-lg bg-white">
+      <div className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4" : "px-4 pt-6"}`}>
         {view === "home" && (
-          <HomeScreen form={form} onFormChange={setForm} onSearch={handleSearch} />
+          <HomeScreen
+            form={form}
+            onFormChange={setForm}
+            onSearch={handleSearch}
+            nearbyCongestion={nearbyCongestion}
+            locationState={locationState}
+            onRequestLocation={requestLocation}
+          />
         )}
         {view === "results" && (
           <RouteResultsScreen
@@ -127,11 +169,16 @@ export default function App() {
           />
         )}
         {view === "macro" && (
-          <MacroViewScreen form={form} onFormChange={setForm} onSearch={handleSearch} />
+          <MacroViewScreen
+            form={form}
+            onFormChange={setForm}
+            onSearch={handleSearch}
+            stationCongestionSnapshot={stationCongestionSnapshot}
+          />
         )}
       </div>
 
-      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)] md:max-w-2xl lg:max-w-4xl">
+      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
         <div className="flex items-center justify-around px-2 py-2">
           {bottomNav.map(({ id, label, icon: Icon, disabled }) => {
             const active = view === id;

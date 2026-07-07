@@ -21,7 +21,7 @@ export function TrafficForecastCarousel({ events }) {
         {sorted.map((evt) => (
           <Card
             key={evt.id}
-            className="min-w-[82%] shrink-0 snap-start bg-amber-50/60 shadow-[inset_0_1px_3px_rgba(245,158,11,0.06),0_2px_12px_rgba(245,158,11,0.08)] md:min-w-[45%]"
+            className="min-w-[82%] shrink-0 snap-start bg-amber-50/60 shadow-[inset_0_1px_3px_rgba(245,158,11,0.06),0_2px_12px_rgba(245,158,11,0.08)]"
           >
             <CardContent className="p-4 pt-4">
               <p className="text-sm font-semibold text-slate-800">

@@ -1,148 +1,68 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Footprints } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CONGESTION_STYLES } from "@/lib/congestion";
-import { buildRenderItems, buildRouteStationGroups } from "@/lib/route-station-groups";
+import { buildRidingLegs } from "@/lib/route-station-groups";
+import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
 
-const TYPE_LABEL = {
-  departure: "출발",
-  arrival: "도착",
-  transfer: "환승",
-  waypoint: null,
-};
-
-function lineLight(hex) {
-  return hex + "22";
+function TimelineLine({ color, className }) {
+  return (
+    <div
+      className={cn("absolute left-[11px] top-6 w-[4px] rounded-b-sm", className)}
+      style={{ backgroundColor: color, height: "calc(100% - 4px)" }}
+    />
+  );
 }
 
-function TransferConnector({ prevColor, seg }) {
+function WalkConnector({ prevColor, nextColor }) {
   return (
-    <div className="relative my-2 flex items-center gap-2 pl-[11px]">
+    <div className="relative my-1 flex items-center gap-2 py-2 pl-[11px]">
       <div
-        className="absolute left-[11px] top-0 h-full w-[4px] opacity-40"
+        className="absolute left-[11px] top-0 h-full w-[4px]"
         style={{
-          background: `repeating-linear-gradient(to bottom, ${prevColor} 0, ${prevColor} 4px, transparent 4px, transparent 8px)`,
+          background: `repeating-linear-gradient(to bottom, ${prevColor} 0, ${prevColor} 3px, transparent 3px, transparent 7px)`,
+          opacity: 0.45,
         }}
       />
-      <div
-        className="ml-8 flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold"
-        style={{
-          backgroundColor: lineLight(seg.lineColor),
-          color: seg.lineColor,
-          border: `1px solid ${seg.lineColor}44`,
-        }}
-      >
-        <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: seg.lineColor }} />
-        {seg.lineName} 환승
+      <div className="ml-8 flex items-center gap-1.5 text-xs text-slate-500">
+        <Footprints className="h-3.5 w-3.5" />
+        <span>도보 환승</span>
       </div>
+      <div
+        className="absolute bottom-0 left-[11px] h-1/2 w-[4px]"
+        style={{ backgroundColor: nextColor, opacity: 0.3 }}
+      />
     </div>
   );
 }
 
-function CollapseChip({ group, expanded, onToggle, lineColor }) {
-  return (
-    <button
-      type="button"
-      onClick={() => onToggle?.(group.id)}
-      className="relative my-1 flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-left text-xs text-slate-600 transition hover:border-slate-300 hover:bg-slate-100"
-    >
-      <div
-        className="absolute left-[10px] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white shadow-sm"
-        style={{ backgroundColor: lineColor }}
-      />
-      {expanded ? (
-        <ChevronUp className="h-3.5 w-3.5 shrink-0" />
-      ) : (
-        <ChevronDown className="h-3.5 w-3.5 shrink-0" />
-      )}
-      <span>
-        {group.beforeKey}역 ~ {group.afterKey}역 사이{" "}
-        <strong className="text-slate-800">{group.waypointNames.length}개 역</strong>{" "}
-        <span className="text-slate-400">· 탭하여 {expanded ? "접기" : "펼치기"}</span>
-      </span>
-    </button>
-  );
-}
-
-function StationRow({ st, seg, showLineBelow }) {
-  const isSpecial = st.type === "departure" || st.type === "arrival" || st.type === "transfer";
-  const label = TYPE_LABEL[st.type];
-  const congStyle = st.congestionStatus ? CONGESTION_STYLES[st.congestionStatus] : null;
-  const color = seg.lineColor;
+function BoardingRow({ leg, showLineBelow }) {
+  const { boarding, lineColor, lineName } = leg;
+  const congStyle = boarding.congestionStatus
+    ? CONGESTION_STYLES[boarding.congestionStatus]
+    : null;
 
   return (
-    <div className="relative" style={{ minHeight: isSpecial ? 72 : 52 }}>
-      {showLineBelow && (
-        <div
-          className="absolute top-6 w-[4px] rounded-b-sm"
-          style={{
-            left: isSpecial ? 10 : 14,
-            height: "calc(100% - 4px)",
-            backgroundColor: color,
-          }}
-        />
-      )}
-
+    <div className="relative" style={{ minHeight: 72 }}>
+      {showLineBelow && <TimelineLine color={lineColor} />}
       <div className="relative flex items-start gap-3">
         <div
-          className={cn(
-            "relative z-10 mt-1 flex-shrink-0 rounded-full border-[3px] border-white shadow-md",
-            isSpecial ? "mt-[2px]" : "mt-[6px]",
-          )}
-          style={{
-            width: isSpecial ? 24 : 16,
-            height: isSpecial ? 24 : 16,
-            marginLeft: isSpecial ? 0 : 4,
-            backgroundColor: st.type === "waypoint" ? "#ffffff" : color,
-            borderColor: st.type === "waypoint" ? color : "#ffffff",
-            borderWidth: isSpecial ? 3 : 2,
-          }}
+          className="relative z-10 mt-[2px] h-6 w-6 shrink-0 rounded-full border-[3px] border-white shadow-md"
+          style={{ backgroundColor: lineColor }}
         />
-
-        <div className="flex-1 pb-4">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span
-              className={cn(
-                "text-slate-800",
-                isSpecial ? "text-sm font-bold" : "text-sm font-medium",
-              )}
-            >
-              {st.name}역
-            </span>
-
-            {label && (
-              <span
-                className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
-                style={{ backgroundColor: color }}
-              >
-                {label}
-              </span>
-            )}
-
-            {st.showBoarding && (
-              <span
-                className="rounded-full border px-2 py-0.5 text-[10px] font-semibold"
-                style={{
-                  color,
-                  borderColor: color + "66",
-                  backgroundColor: lineLight(color),
-                }}
-              >
-                {seg.lineName} 탑승
-              </span>
-            )}
-
-            {st.arrivalTime && isSpecial && (
-              <span className="ml-auto font-mono text-xs tabular-nums text-slate-400">
-                {st.arrivalTime}
-              </span>
-            )}
-          </div>
-
-          {st.congestionRate !== undefined && isSpecial && congStyle && (
+        <div className="flex-1 pb-3">
+          <p className="text-sm font-bold text-slate-800">
+            <span style={{ color: lineColor }}>{lineName}</span> {boarding.name}역 승차
+          </p>
+          {boarding.arrivalTime && (
+            <p className="mt-0.5 font-mono text-xs tabular-nums text-slate-400">
+              {boarding.arrivalTime}
+            </p>
+          )}
+          {boarding.congestionRate !== undefined && congStyle && (
             <div className="mt-1 flex items-center gap-1.5">
               <div className={`h-2 w-2 rounded-full ${congStyle.dot}`} />
               <span className="text-xs text-slate-500">
-                혼잡도 <strong className="text-slate-700">{st.congestionRate}%</strong>
+                혼잡도 <strong className="text-slate-700">{boarding.congestionRate}%</strong>
               </span>
             </div>
           )}
@@ -152,70 +72,110 @@ function StationRow({ st, seg, showLineBelow }) {
   );
 }
 
-function SegmentBlock({ seg, segIndex, groups, expandedGroups, onToggleGroup, isLastSeg }) {
-  const namesInSeg = new Set(seg.stations.map((s) => s.name));
-  const segGroups = groups.filter((g) => g.waypointNames.every((n) => namesInSeg.has(n)));
-  const flat = seg.stations.map((st) => ({
-    ...st,
-    lineColor: seg.lineColor,
-    lineName: seg.lineName,
-  }));
-  const items = buildRenderItems(flat, segGroups, expandedGroups);
+function WaypointRow({ station, lineColor, showLineBelow }) {
+  return (
+    <div className="relative" style={{ minHeight: 36 }}>
+      {showLineBelow && <TimelineLine color={lineColor} className="left-[14px] !top-4" />}
+      <div className="relative flex items-center gap-3 py-0.5">
+        <div
+          className="relative z-10 ml-1 mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border-2 bg-white"
+          style={{ borderColor: lineColor }}
+        />
+        <span className="text-sm text-slate-600">{station.name}역</span>
+      </div>
+    </div>
+  );
+}
+
+function AlightingRow({ leg, showLineBelow }) {
+  const { alighting, lineColor, isLast } = leg;
+  const label = isLast ? "도착" : "하차";
+  const congStyle = alighting.congestionStatus
+    ? CONGESTION_STYLES[alighting.congestionStatus]
+    : null;
 
   return (
-    <div className="relative pl-1">
-      {items.map((item, idx) => {
-        const isLastItemInSeg = idx === items.length - 1;
-        const showLineBelow = !isLastItemInSeg || !isLastSeg;
+    <div className="relative" style={{ minHeight: 56 }}>
+      {showLineBelow && <TimelineLine color={lineColor} />}
+      <div className="relative flex items-start gap-3">
+        <div
+          className="relative z-10 mt-[2px] h-6 w-6 shrink-0 rounded-full border-[3px] border-white shadow-md"
+          style={{ backgroundColor: lineColor }}
+        />
+        <div className="flex-1 pb-3">
+          <p className="text-sm font-bold text-slate-800">
+            {alighting.name}역 {label}
+          </p>
+          {alighting.arrivalTime && (
+            <p className="mt-0.5 font-mono text-xs tabular-nums text-slate-400">
+              {alighting.arrivalTime}
+            </p>
+          )}
+          {alighting.congestionRate !== undefined && congStyle && (
+            <div className="mt-1 flex items-center gap-1.5">
+              <div className={`h-2 w-2 rounded-full ${congStyle.dot}`} />
+              <span className="text-xs text-slate-500">
+                혼잡도 <strong className="text-slate-700">{alighting.congestionRate}%</strong>
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        if (item.type === "collapse") {
-          return (
-            <CollapseChip
-              key={item.group.id}
-              group={item.group}
-              expanded={expandedGroups?.has(item.group.id)}
-              onToggle={onToggleGroup}
-              lineColor={seg.lineColor}
-            />
-          );
-        }
+function RidingLegBlock({ leg, expanded, onToggle }) {
+  const expanded_ = expanded;
+  const hasWaypoints = leg.waypoints.length > 0;
 
-        const isFirstInSeg = seg.stations[0]?.name === item.station.name;
-        const station = {
-          ...item.station,
-          showBoarding: isFirstInSeg && item.station.type !== "transfer",
-        };
+  return (
+    <div className="relative">
+      <BoardingRow leg={leg} showLineBelow={hasWaypoints || true} />
 
-        return (
-          <StationRow
-            key={`${segIndex}-${item.station.name}-${idx}`}
-            st={station}
-            seg={seg}
-            showLineBelow={showLineBelow}
+      {hasWaypoints && (
+        <>
+          <RouteLegExpandToggle
+            count={leg.waypoints.length}
+            expanded={expanded_}
+            lineColor={leg.lineColor}
+            onToggle={onToggle}
           />
-        );
-      })}
+          {expanded_ &&
+            leg.waypoints.map((wp, i) => (
+              <WaypointRow
+                key={wp.name}
+                station={wp}
+                lineColor={leg.lineColor}
+                showLineBelow={i < leg.waypoints.length - 1 || true}
+              />
+            ))}
+        </>
+      )}
+
+      <AlightingRow leg={leg} showLineBelow={false} />
     </div>
   );
 }
 
 export function RouteSchematic({ segments, expandedGroups, onToggleGroup }) {
-  if (!segments?.length) return null;
-
-  const { groups } = buildRouteStationGroups(segments);
+  const legs = buildRidingLegs(segments);
+  if (!legs.length) return null;
 
   return (
     <div className="relative">
-      {segments.map((seg, si) => (
-        <div key={`${seg.lineColor}-${si}`}>
-          {si > 0 && <TransferConnector prevColor={segments[si - 1].lineColor} seg={seg} />}
-          <SegmentBlock
-            seg={seg}
-            segIndex={si}
-            groups={groups}
-            expandedGroups={expandedGroups}
-            onToggleGroup={onToggleGroup}
-            isLastSeg={si === segments.length - 1}
+      {legs.map((leg, i) => (
+        <div key={leg.id}>
+          {i > 0 && (
+            <WalkConnector
+              prevColor={legs[i - 1].lineColor}
+              nextColor={leg.lineColor}
+            />
+          )}
+          <RidingLegBlock
+            leg={leg}
+            expanded={expandedGroups?.has(leg.id)}
+            onToggle={() => onToggleGroup?.(leg.id)}
           />
         </div>
       ))}

@@ -1,12 +1,20 @@
-import { Settings, MapPin, Train } from "lucide-react";
+import { Settings, MapPin, Train, LocateFixed } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TimeBottomSheet, TimePickerButton } from "@/components/TimeBottomSheet";
 import { TrafficForecastCarousel } from "@/components/TrafficForecastCarousel";
 import { TODAY_EVENTS } from "@/lib/mock-data";
+import { CROWD_LABELS } from "@/lib/congestion";
 
-export function HomeScreen({ form, onFormChange, onSearch }) {
+export function HomeScreen({
+  form,
+  onFormChange,
+  onSearch,
+  nearbyCongestion = [],
+  locationState = "idle",
+  onRequestLocation,
+}) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
@@ -23,6 +31,56 @@ export function HomeScreen({ form, onFormChange, onSearch }) {
       </header>
 
       <TrafficForecastCarousel events={TODAY_EVENTS} />
+
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-medium text-slate-600">내 주변 역/열차 혼잡도</h2>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-[11px]"
+            onClick={onRequestLocation}
+          >
+            <LocateFixed className="mr-1 h-3.5 w-3.5" />
+            내 위치 갱신
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="space-y-2 p-3">
+            {locationState === "denied" && (
+              <p className="text-xs text-rose-600">
+                위치 권한이 필요합니다. 브라우저 권한을 허용해 주세요.
+              </p>
+            )}
+            {locationState === "loading" && (
+              <p className="text-xs text-slate-500">내 위치 기반 주변 역을 찾는 중...</p>
+            )}
+            {locationState !== "loading" && nearbyCongestion.length === 0 && (
+              <p className="text-xs text-slate-500">
+                위치를 불러오면 주변 역의 역 혼잡도/열차 혼잡도를 보여줍니다.
+              </p>
+            )}
+            {nearbyCongestion.map((item) => (
+              <div
+                key={item.stationId}
+                className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
+              >
+                <p className="text-sm font-semibold text-slate-800">{item.stationName}역</p>
+                <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-600">
+                  <span>
+                    역 혼잡도: <strong>{item.stationRate}%</strong> ({CROWD_LABELS[item.stationLevel]})
+                  </span>
+                  <span className="text-slate-300">|</span>
+                  <span>
+                    열차 혼잡도: <strong>{item.trainRate}%</strong> ({CROWD_LABELS[item.trainLevel]})
+                  </span>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </section>
 
       <section>
         <h2 className="mb-3 text-sm font-medium text-slate-600">어디로 이동하시나요?</h2>
