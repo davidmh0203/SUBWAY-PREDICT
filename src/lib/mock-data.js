@@ -291,8 +291,16 @@ const TODAY_EVENTS = [
     summary: "2만명 · 2호선 사당-잠실 18~20시 혼잡 140% 예상",
   },
   {
-    id: "evt-2",
+    id: "evt-5",
     priority: 2,
+    impactScore: 125,
+    emoji: "⚽",
+    title: "잠실 스포츠 경기",
+    summary: "석양 대관 · 2·9호선 잠실역 인근 퇴장 혼잡 125% 예상",
+  },
+  {
+    id: "evt-2",
+    priority: 3,
     impactScore: 95,
     emoji: "🌧️",
     title: "퇴근길 비 예보",
@@ -300,7 +308,7 @@ const TODAY_EVENTS = [
   },
   {
     id: "evt-3",
-    priority: 3,
+    priority: 4,
     impactScore: 72,
     emoji: "🚧",
     title: "2호선 선로 점검",
@@ -308,7 +316,7 @@ const TODAY_EVENTS = [
   },
   {
     id: "evt-4",
-    priority: 4,
+    priority: 5,
     impactScore: 60,
     emoji: "📢",
     title: "출근 시간대 안내",
