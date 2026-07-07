@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# SUBWAY PREDICT
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+수도권 전철 **혼잡도 예측·경로 안내** 모바일 웹 목업입니다.  
+출발·도착·시간을 입력하면 혼잡도 차트와 추천 경로를 보여 주고, 경로 상세에서는 호선별 다이어그램과 칸별 혼잡 히트맵을 확인할 수 있습니다.
 
-Currently, two official plugins are available:
+**라이브 데모:** https://subway-predict-dashboard.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 주요 화면
 
-## React Compiler
+| 화면 | 설명 |
+|------|------|
+| 홈 | 출발/도착·시간 입력, 당일 정체 예보, 즐겨찾기 |
+| 경로 결과 | 시간대별 혼잡 차트, 최단/쾌적 경로 비교 |
+| 경로 상세 | 노선색 경로 다이어그램, 칸별 혼잡도, 대안 안내 |
+| 노선도 | 수도권 전철 지도에서 역 선택 후 검색 |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 기술 스택
 
-## Expanding the Oxlint configuration
+React (JSX) · Vite · Tailwind CSS · Recharts
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## 실행 방법
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+빌드 및 배포:
+
+```bash
+npm run build
+npm run deploy
+```
+
+## 베이스라인
+
+목업 1차 베이스라인: [`mockup-first-baseline`](https://github.com/davidmh0203/SUBWAY-PREDICT/releases/tag/mockup-first-baseline)
