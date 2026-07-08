@@ -8,6 +8,7 @@ from typing import Any
 import httpx
 
 from app.config import ODSAY_API_BASE, ODSAY_API_KEY, ODSAY_SEOUL_CID
+from app.odsay_cache import cache_get, cache_set
 
 
 class OdsayError(Exception):
@@ -70,7 +71,14 @@ async def search_station(
     if cid is not None:
         params["CID"] = cid
 
-    return await call_odsay("searchStation", params)
+    cache_key = f"{name}|{cid}|{display_cnt}|{int(normalize)}"
+    cached = cache_get("station", cache_key)
+    if cached is not None:
+        return cached
+
+    data = await call_odsay("searchStation", params)
+    cache_set("station", cache_key, data)
+    return data
 
 
 async def search_pub_trans_path(
@@ -82,7 +90,14 @@ async def search_pub_trans_path(
     search_path_type: int = 1,
 ) -> dict[str, Any]:
     """지하철 위주 경로 (SearchPathType=1)."""
-    return await call_odsay(
+    cache_key = (
+        f"{round(sx, 5)}|{round(sy, 5)}|{round(ex, 5)}|{round(ey, 5)}|{search_path_type}"
+    )
+    cached = cache_get("path", cache_key)
+    if cached is not None:
+        return cached
+
+    data = await call_odsay(
         "searchPubTransPathT",
         {
             "SX": sx,
@@ -94,3 +109,5 @@ async def search_pub_trans_path(
             "SearchPathType": search_path_type,
         },
     )
+    cache_set("path", cache_key, data)
+    return data

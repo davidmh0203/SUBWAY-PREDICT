@@ -14,6 +14,7 @@ from app.odsay_client import (
     search_pub_trans_path,
     search_station,
 )
+from app.odsay_cache import cache_get, cache_set
 from app.schemas import congestion_level
 
 
@@ -210,6 +211,13 @@ async def predict_route_with_odsay(
     if not is_configured():
         return build_mock_route(start, end, departure_time.hour)
 
+    start_key = normalize_station_name(start)
+    end_key = normalize_station_name(end)
+    cache_key = f"{start_key}|{end_key}|{departure_time.hour}"
+    cached = cache_get("route", cache_key)
+    if cached is not None:
+        return cached
+
     try:
         _, sx, sy = await resolve_station_coords(start)
         _, ex, ey = await resolve_station_coords(end)
@@ -218,6 +226,7 @@ async def predict_route_with_odsay(
         if not paths:
             raise OdsayError("경로 결과가 없습니다.")
         route_body = _route_from_odsay_path(start, end, departure_time, paths[0])
+        cache_set("route", cache_key, route_body)
         return route_body
     except OdsayError:
         return build_mock_route(start, end, departure_time.hour)

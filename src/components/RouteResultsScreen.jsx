@@ -37,19 +37,21 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
     return () => clearTimeout(timer);
   }, [sliderIndex, form.targetTime, onTimeChange]);
 
+  // ODsay /predict/route는 출발·도착·검색 시각 기준 1회만 호출 (슬라이더 조절 시 재호출 안 함)
   useEffect(() => {
     let cancelled = false;
     setRoutesLoading(true);
+    const fetchTime = form.targetTime;
 
     (async () => {
       try {
-        const apiRoutes = await fetchRoutesFromApi(depName, destName, debouncedTime);
+        const apiRoutes = await fetchRoutesFromApi(depName, destName, fetchTime);
         if (cancelled) return;
         setRoutes(apiRoutes);
         setRouteSource("api");
       } catch {
         if (cancelled) return;
-        setRoutes(buildRoutes(debouncedTime, depName, destName));
+        setRoutes(buildRoutes(fetchTime, depName, destName));
         setRouteSource("mock");
       } finally {
         if (!cancelled) setRoutesLoading(false);
@@ -59,13 +61,13 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
     return () => {
       cancelled = true;
     };
-  }, [debouncedTime, depName, destName]);
+  }, [depName, destName, form.targetTime]);
 
   useEffect(() => {
     setDirection(`${destName} 방면`);
   }, [destName]);
 
-  const loading = sliderLoading || routesLoading;
+  const loading = sliderLoading;
   const activeHour = debouncedTime.getHours();
   const hourlyData = useMemo(() => getHourlyCongestionData(activeHour), [activeHour]);
 
