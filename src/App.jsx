@@ -138,7 +138,9 @@ export default function App() {
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-white">
-      <div className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4" : "px-4 pt-6"}`}>
+      <div
+        className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4" : "px-4 pt-6"}`}
+      >
         {view === "home" && (
           <HomeScreen
             form={form}
@@ -188,7 +190,9 @@ export default function App() {
                 onClick={() => navigate(id)}
                 className={cn(
                   "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-xs transition-all",
-                  active ? "text-slate-800 font-medium" : "text-slate-400 hover:text-slate-600",
+                  active
+                    ? "text-slate-800 font-medium"
+                    : "text-slate-400 hover:text-slate-600",
                   disabled && "opacity-30 pointer-events-none",
                 )}
               >

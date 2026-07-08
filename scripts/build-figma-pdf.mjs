@@ -9,7 +9,7 @@ import { PDFDocument } from "pdf-lib";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 const screensDir = path.join(root, "figma-export/screens");
-const outPath = path.join(root, "figma-export/SUBWAY-PREDICT-prototype.pdf");
+const outPath = path.join(root, "figma-export/yeoyuro-prototype.pdf");
 
 const FRAME_W = 390;
 const FRAME_H = 844;
@@ -23,8 +23,8 @@ const pages = [
 
 async function main() {
   const pdf = await PDFDocument.create();
-  pdf.setTitle("SUBWAY PREDICT Prototype");
-  pdf.setAuthor("subway-predict-dashboard");
+  pdf.setTitle("여유로 Prototype");
+  pdf.setAuthor("yeoyuro");
 
   for (const { file, title } of pages) {
     const pngPath = path.join(screensDir, file);

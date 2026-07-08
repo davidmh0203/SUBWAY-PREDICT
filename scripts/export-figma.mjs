@@ -1,5 +1,5 @@
 /**
- * Figma import package generator for SUBWAY PREDICT prototype.
+ * Figma import package generator for 여유로 prototype.
  * Run: npm run export-figma
  */
 import fs from "node:fs";
@@ -155,7 +155,7 @@ function buildDesignTokens() {
   }
 
   return {
-    name: "SUBWAY PREDICT",
+    name: "여유로",
     frame: { width: 390, height: 844, device: "iPhone 14" },
     colors: {
       background: "#ffffff",
@@ -192,7 +192,7 @@ function buildDesignTokens() {
 }
 
 function buildImportGuide() {
-  return `# SUBWAY PREDICT → Figma 가져오기
+  return `# 여유로 → Figma 가져오기
 
 이 폴더는 프로토타입을 Figma로 옮기기 위한 export 패키지입니다.
 

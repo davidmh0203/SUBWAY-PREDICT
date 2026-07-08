@@ -1,14 +1,14 @@
-# SUBWAY PREDICT → Figma 가져오기
+# 여유로 → Figma 가져오기
 
 ## 방법 0 — Talk to Figma MCP (에이전트 자동 생성)
 
 설정: [docs/FIGMA_MCP_SETUP.md](../docs/FIGMA_MCP_SETUP.md)
 
 1. `bun socket` 실행 (WebSocket 3055)
-2. Figma 플러그인 → 채널 `subway-predict` join
-3. Cursor 채팅: **"채널 subway-predict 연결했어. Figma에 프로토타입 올려줘"**
+2. Figma 플러그인 → 채널 `yeoyuro` join
+3. Cursor 채팅: **"채널 yeoyuro 연결했어. Figma에 프로토타입 올려줘"**
 
-에이전트가 `SUBWAY PREDICT` 부모 Frame + 4개 화면 Frame(390×844)을 생성합니다.  
+에이전트가 `여유로` 부모 Frame + 4개 화면 Frame(390×844)을 생성합니다.  
 화면 이미지는 MCP로 직접 import 불가 → 아래 PDF/PNG 보조 사용.
 
 ---

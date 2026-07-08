@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Build SUBWAY PREDICT dashboard UI directly in Figma via WebSocket relay.
+ * Build 여유로 dashboard UI directly in Figma via WebSocket relay.
  * Usage: bun scripts/build-figma-ui.mjs
  */
 import { randomUUID } from "node:crypto";
@@ -241,7 +241,7 @@ async function buildHome(client) {
   const header = await client.frame(pid, "Header", 16, 16, 358, 44);
   if (header?.id) {
     await client.text(header.id, "Settings", 0, 10, "⚙", { size: 18, color: C.slate600 });
-    await client.text(header.id, "Title", 90, 8, "SUBWAY PREDICT", { size: 16, weight: 700, color: C.slate800 });
+    await client.text(header.id, "Title", 90, 8, "여유로", { size: 16, weight: 700, color: C.slate800 });
     await client.text(header.id, "Train", 72, 10, "🚇", { size: 16 });
     await client.text(header.id, "Profile", 334, 10, "👤", { size: 18, color: C.slate600 });
   }

@@ -11,7 +11,7 @@ import {
   getLineKeyForColor,
   getUniqueLineLegend,
   segmentMatchesLine,
-  washLineColor
+  washLineColor,
 } from "@/lib/metro-network";
 import { TransferStationMarker } from "@/components/TransferStationMarker";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
@@ -19,7 +19,7 @@ import {
   BASE_STATION_R,
   getLabelLayout,
   getStationMarkerRadius,
-  getStationMeta
+  getStationMeta,
 } from "@/lib/metro-label-layout";
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 4;
@@ -45,7 +45,7 @@ function InteractiveMetroMap({
     startX: 0,
     startY: 0,
     origX: 0,
-    origY: 0
+    origY: 0,
   });
   const lineLegend = useMemo(() => {
     const all = getUniqueLineLegend();
@@ -53,13 +53,18 @@ function InteractiveMetroMap({
     return all.filter((line) => SEOUL_LINE_PATTERN.test(line.lineKey));
   }, [seoulOnly]);
   const visibleStations = useMemo(
-    () => (seoulOnly ? METRO_STATIONS.filter((s) => isSeoulMetroStation(s.name)) : METRO_STATIONS),
+    () =>
+      seoulOnly
+        ? METRO_STATIONS.filter((s) => isSeoulMetroStation(s.name))
+        : METRO_STATIONS,
     [seoulOnly],
   );
   const visibleLineSegments = useMemo(
     () =>
       seoulOnly
-        ? METRO_LINE_SEGMENTS.filter((seg) => SEOUL_LINE_PATTERN.test(getLineKeyForColor(seg.color)))
+        ? METRO_LINE_SEGMENTS.filter((seg) =>
+            SEOUL_LINE_PATTERN.test(getLineKeyForColor(seg.color)),
+          )
         : METRO_LINE_SEGMENTS,
     [seoulOnly],
   );
@@ -71,7 +76,7 @@ function InteractiveMetroMap({
       }
       return !focusedLineKey || focusedLineKey === lineKey;
     },
-    [focusedLineKey, highlightedLineKeys, routeHighlightOnly]
+    [focusedLineKey, highlightedLineKeys, routeHighlightOnly],
   );
   const stationOnFocusedLine = useCallback(
     (lineKeys, lineColor) => {
@@ -83,7 +88,7 @@ function InteractiveMetroMap({
       if (lineKeys.includes(focusedLineKey)) return true;
       return getLineKeyForColor(lineColor) === focusedLineKey;
     },
-    [focusedLineKey, highlightedLineKeys, routeHighlightOnly]
+    [focusedLineKey, highlightedLineKeys, routeHighlightOnly],
   );
   const congestionSegments = useMemo(
     () =>
@@ -97,7 +102,10 @@ function InteractiveMetroMap({
   );
   const zoom = useCallback((factor, centerX, centerY) => {
     setTransform((prev) => {
-      const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, prev.scale * factor));
+      const next = Math.min(
+        MAX_SCALE,
+        Math.max(MIN_SCALE, prev.scale * factor),
+      );
       if (centerX === void 0 || !containerRef.current) {
         return { ...prev, scale: next };
       }
@@ -108,7 +116,7 @@ function InteractiveMetroMap({
       return {
         scale: next,
         x: cx - (cx - prev.x) * ratio,
-        y: cy - (cy - prev.y) * ratio
+        y: cy - (cy - prev.y) * ratio,
       };
     });
   }, []);
@@ -121,7 +129,7 @@ function InteractiveMetroMap({
     setTransform({
       x: (w - VB_W * scale) / 2,
       y: (h - VB_H * scale) / 2,
-      scale
+      scale,
     });
   }, []);
   useEffect(() => {
@@ -144,7 +152,7 @@ function InteractiveMetroMap({
       startX: e.clientX,
       startY: e.clientY,
       origX: transform.x,
-      origY: transform.y
+      origY: transform.y,
     };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
@@ -153,7 +161,7 @@ function InteractiveMetroMap({
     setTransform((prev) => ({
       ...prev,
       x: dragRef.current.origX + (e.clientX - dragRef.current.startX),
-      y: dragRef.current.origY + (e.clientY - dragRef.current.startY)
+      y: dragRef.current.origY + (e.clientY - dragRef.current.startY),
     }));
   };
   const onPointerUp = () => {
@@ -173,235 +181,341 @@ function InteractiveMetroMap({
     }));
   }, [focusStationId, visibleStations]);
   const showLabels = transform.scale >= 0.95;
-  return /* @__PURE__ */ React.createElement("div", { className: "relative" }, !hideLegendChips && /* @__PURE__ */ React.createElement("div", { className: "mb-2 max-h-16 overflow-y-auto px-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-x-1.5 gap-y-1" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      type: "button",
-        onClick: () => !routeHighlightOnly && setFocusedLineKey(null),
-      className: `rounded-full px-2 py-0.5 text-[9px] transition-colors ${focusedLineKey === null ? "bg-slate-800 text-white" : "bg-white text-slate-500 shadow-[0_1px_2px_rgba(15,23,42,0.08)] hover:bg-slate-50"}`
-    },
-    "전체"
-  ), lineLegend.map((line) => {
-    const active = focusedLineKey === line.lineKey;
-    return /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        key: line.lineKey,
-        type: "button",
-        onClick: () => !routeHighlightOnly && setFocusedLineKey((prev) => prev === line.lineKey ? null : line.lineKey),
-        className: `flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] transition-all ${active ? "bg-white text-slate-800 shadow-[0_0_0_2px_var(--line-color)]" : focusedLineKey ? "bg-white/60 text-slate-400 hover:bg-white hover:text-slate-600" : "bg-white text-slate-600 shadow-[0_1px_2px_rgba(15,23,42,0.08)] hover:bg-slate-50"}`,
-        style: { "--line-color": line.color }
-      },
-      /* @__PURE__ */ React.createElement(
-        "span",
-        {
-          className: "h-1.5 w-3 rounded-full",
-          style: { backgroundColor: line.color, opacity: active || !focusedLineKey ? 1 : 0.45 }
-        }
-      ),
-      line.name
-    );
-  }))), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement(
     "div",
-    {
-      ref: containerRef,
-      className: "relative h-[min(62vh,460px)] w-full cursor-grab overflow-hidden rounded-2xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)] active:cursor-grabbing",
-      onPointerDown,
-      onPointerMove,
-      onPointerUp,
-      onPointerLeave: onPointerUp
-    },
+    { className: "relative" },
+    !hideLegendChips &&
+      /* @__PURE__ */ React.createElement(
+        "div",
+        { className: "mb-2 max-h-16 overflow-y-auto px-1" },
+        /* @__PURE__ */ React.createElement(
+          "div",
+          { className: "flex flex-wrap gap-x-1.5 gap-y-1" },
+          /* @__PURE__ */ React.createElement(
+            "button",
+            {
+              type: "button",
+              onClick: () => !routeHighlightOnly && setFocusedLineKey(null),
+              className: `rounded-full px-2 py-0.5 text-[9px] transition-colors ${focusedLineKey === null ? "bg-slate-800 text-white" : "bg-white text-slate-500 shadow-[0_1px_2px_rgba(15,23,42,0.08)] hover:bg-slate-50"}`,
+            },
+            "전체",
+          ),
+          lineLegend.map((line) => {
+            const active = focusedLineKey === line.lineKey;
+            return /* @__PURE__ */ React.createElement(
+              "button",
+              {
+                key: line.lineKey,
+                type: "button",
+                onClick: () =>
+                  !routeHighlightOnly &&
+                  setFocusedLineKey((prev) =>
+                    prev === line.lineKey ? null : line.lineKey,
+                  ),
+                className: `flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] transition-all ${active ? "bg-white text-slate-800 shadow-[0_0_0_2px_var(--line-color)]" : focusedLineKey ? "bg-white/60 text-slate-400 hover:bg-white hover:text-slate-600" : "bg-white text-slate-600 shadow-[0_1px_2px_rgba(15,23,42,0.08)] hover:bg-slate-50"}`,
+                style: { "--line-color": line.color },
+              },
+              /* @__PURE__ */ React.createElement("span", {
+                className: "h-1.5 w-3 rounded-full",
+                style: {
+                  backgroundColor: line.color,
+                  opacity: active || !focusedLineKey ? 1 : 0.45,
+                },
+              }),
+              line.name,
+            );
+          }),
+        ),
+      ),
     /* @__PURE__ */ React.createElement(
       "div",
       {
-        style: {
-          transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
-          transformOrigin: "0 0",
-          width: VB_W,
-          height: VB_H
-        }
+        ref: containerRef,
+        className:
+          "relative h-[min(62vh,460px)] w-full cursor-grab overflow-hidden rounded-2xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)] active:cursor-grabbing",
+        onPointerDown,
+        onPointerMove,
+        onPointerUp,
+        onPointerLeave: onPointerUp,
       },
       /* @__PURE__ */ React.createElement(
-        "svg",
+        "div",
         {
-          viewBox: `0 0 ${VB_W} ${VB_H}`,
-          width: VB_W,
-          height: VB_H,
-          className: "select-none"
+          style: {
+            transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
+            transformOrigin: "0 0",
+            width: VB_W,
+            height: VB_H,
+          },
         },
-        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, visibleLineSegments.map((seg) => {
-          const focused = routeHighlightOnly
-            ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
-            : segmentMatchesLine(seg, focusedLineKey);
-          return /* @__PURE__ */ React.createElement(
-            "line",
-            {
-              key: seg.id,
-              x1: seg.x1,
-              y1: seg.y1,
-              x2: seg.x2,
-              y2: seg.y2,
-              stroke: focused ? seg.color : washLineColor(seg.color),
-              strokeWidth: focused && focusedLineKey ? (seg.width ?? 3) + 0.8 : seg.width ?? 3,
-              strokeLinecap: "round",
-              opacity: focused ? 1 : 0.2,
-              className: "transition-all duration-300"
-            }
-          );
-        })),
-        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, congestionSegments.map((seg) => {
-          const focused = routeHighlightOnly
-            ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
-            : segmentMatchesLine(seg, focusedLineKey);
-          if ((focusedLineKey && !focused) || (routeHighlightOnly && !focused)) return null;
-          return /* @__PURE__ */ React.createElement(
-            "line",
-            {
-              key: `c-${seg.id}`,
-              x1: seg.x1,
-              y1: seg.y1,
-              x2: seg.x2,
-              y2: seg.y2,
-              stroke: CROWD_COLORS[seg.level],
-              strokeWidth: 6,
-              strokeLinecap: "round",
-              opacity: focused ? 0.88 : 0.1,
-              className: "transition-all duration-500"
-            }
-          );
-        })),
-        showLabels && /* @__PURE__ */ React.createElement("g", { className: "pointer-events-none transition-opacity duration-300" }, visibleStations.map((station) => {
-          const meta = getStationMeta(station);
-          const focused = stationOnFocusedLine(meta.lineKeys, meta.lineColor);
-          const lbl = getLabelLayout(station.id);
-          return /* @__PURE__ */ React.createElement(
-            "text",
-            {
-              key: `lbl-${station.id}`,
-              x: lbl.x,
-              y: lbl.y,
-              textAnchor: lbl.anchor,
-              transform: `rotate(${lbl.rotate} ${lbl.x} ${lbl.y})`,
-              fill: focused ? "#334155" : "#94a3b8",
-              stroke: "#ffffff",
-              strokeWidth: 2.5,
-              paintOrder: "stroke fill",
-              opacity: focused ? 1 : 0.35,
-              style: { fontSize: 4.8, fontFamily: "system-ui, sans-serif" }
-            },
-            station.name
-          );
-        })),
-        /* @__PURE__ */ React.createElement("g", { className: "pointer-events-none transition-opacity duration-300" }, LINE_END_BADGES.filter((badge) => !seoulOnly || SEOUL_LINE_PATTERN.test(badge.lineKey)).map((badge) => {
-          const focused = isLineFocused(badge.lineKey);
-          const br = badge.label.length <= 2 ? 7 : badge.label.length <= 4 ? 8.5 : 10;
-          const fs = badge.label.length <= 1 ? 6.5 : badge.label.length <= 2 ? 5.5 : 4.2;
-          return /* @__PURE__ */ React.createElement("g", { key: badge.id, opacity: focused ? 1 : 0.25 }, /* @__PURE__ */ React.createElement(
-            "circle",
-            {
-              cx: badge.x,
-              cy: badge.y,
-              r: br,
-              fill: focused ? badge.color : washLineColor(badge.color)
-            }
-          ), /* @__PURE__ */ React.createElement(
-            "text",
-            {
-              x: badge.x,
-              y: badge.y + 0.5,
-              textAnchor: "middle",
-              dominantBaseline: "middle",
-              fill: "#ffffff",
-              style: {
-                fontSize: fs,
-                fontWeight: 700,
-                fontFamily: "system-ui, sans-serif"
-              }
-            },
-            badge.label
-          ));
-        })),
-        /* @__PURE__ */ React.createElement("g", { className: "transition-opacity duration-300" }, visibleStations.map((station) => {
-          const meta = getStationMeta(station);
-          const focused = stationOnFocusedLine(meta.lineKeys, meta.lineColor);
-          const isTransfer = meta.isTransfer;
-          const markerR = getStationMarkerRadius(meta);
-          const isDep = station.id === departureStationId;
-          const isDest = station.id === destinationStationId;
-          const ringR = markerR + 5;
-          const stationHighlighted =
-            routeHighlightOnly && highlightedStationIds?.length
-              ? highlightedStationIds.includes(station.id)
-              : true;
-          const dimOpacity = stationHighlighted ? (focused ? 1 : 0.35) : 0.12;
-          return /* @__PURE__ */ React.createElement(
+        /* @__PURE__ */ React.createElement(
+          "svg",
+          {
+            viewBox: `0 0 ${VB_W} ${VB_H}`,
+            width: VB_W,
+            height: VB_H,
+            className: "select-none",
+          },
+          /* @__PURE__ */ React.createElement(
+            "g",
+            { className: "transition-opacity duration-300" },
+            visibleLineSegments.map((seg) => {
+              const focused = routeHighlightOnly
+                ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
+                : segmentMatchesLine(seg, focusedLineKey);
+              return /* @__PURE__ */ React.createElement("line", {
+                key: seg.id,
+                x1: seg.x1,
+                y1: seg.y1,
+                x2: seg.x2,
+                y2: seg.y2,
+                stroke: focused ? seg.color : washLineColor(seg.color),
+                strokeWidth:
+                  focused && focusedLineKey
+                    ? (seg.width ?? 3) + 0.8
+                    : (seg.width ?? 3),
+                strokeLinecap: "round",
+                opacity: focused ? 1 : 0.2,
+                className: "transition-all duration-300",
+              });
+            }),
+          ),
+          /* @__PURE__ */ React.createElement(
+            "g",
+            { className: "transition-opacity duration-300" },
+            congestionSegments.map((seg) => {
+              const focused = routeHighlightOnly
+                ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
+                : segmentMatchesLine(seg, focusedLineKey);
+              if (
+                (focusedLineKey && !focused) ||
+                (routeHighlightOnly && !focused)
+              )
+                return null;
+              return /* @__PURE__ */ React.createElement("line", {
+                key: `c-${seg.id}`,
+                x1: seg.x1,
+                y1: seg.y1,
+                x2: seg.x2,
+                y2: seg.y2,
+                stroke: CROWD_COLORS[seg.level],
+                strokeWidth: 6,
+                strokeLinecap: "round",
+                opacity: focused ? 0.88 : 0.1,
+                className: "transition-all duration-500",
+              });
+            }),
+          ),
+          showLabels &&
+            /* @__PURE__ */ React.createElement(
+              "g",
+              {
+                className:
+                  "pointer-events-none transition-opacity duration-300",
+              },
+              visibleStations.map((station) => {
+                const meta = getStationMeta(station);
+                const focused = stationOnFocusedLine(
+                  meta.lineKeys,
+                  meta.lineColor,
+                );
+                const lbl = getLabelLayout(station.id);
+                return /* @__PURE__ */ React.createElement(
+                  "text",
+                  {
+                    key: `lbl-${station.id}`,
+                    x: lbl.x,
+                    y: lbl.y,
+                    textAnchor: lbl.anchor,
+                    transform: `rotate(${lbl.rotate} ${lbl.x} ${lbl.y})`,
+                    fill: focused ? "#334155" : "#94a3b8",
+                    stroke: "#ffffff",
+                    strokeWidth: 2.5,
+                    paintOrder: "stroke fill",
+                    opacity: focused ? 1 : 0.35,
+                    style: {
+                      fontSize: 4.8,
+                      fontFamily: "system-ui, sans-serif",
+                    },
+                  },
+                  station.name,
+                );
+              }),
+            ),
+          /* @__PURE__ */ React.createElement(
             "g",
             {
-              key: station.id,
-              "data-station": true,
-              className: "cursor-pointer transition-opacity duration-300",
-              opacity: dimOpacity,
+              className: "pointer-events-none transition-opacity duration-300",
+            },
+            LINE_END_BADGES.filter(
+              (badge) => !seoulOnly || SEOUL_LINE_PATTERN.test(badge.lineKey),
+            ).map((badge) => {
+              const focused = isLineFocused(badge.lineKey);
+              const br =
+                badge.label.length <= 2
+                  ? 7
+                  : badge.label.length <= 4
+                    ? 8.5
+                    : 10;
+              const fs =
+                badge.label.length <= 1
+                  ? 6.5
+                  : badge.label.length <= 2
+                    ? 5.5
+                    : 4.2;
+              return /* @__PURE__ */ React.createElement(
+                "g",
+                { key: badge.id, opacity: focused ? 1 : 0.25 },
+                /* @__PURE__ */ React.createElement("circle", {
+                  cx: badge.x,
+                  cy: badge.y,
+                  r: br,
+                  fill: focused ? badge.color : washLineColor(badge.color),
+                }),
+                /* @__PURE__ */ React.createElement(
+                  "text",
+                  {
+                    x: badge.x,
+                    y: badge.y + 0.5,
+                    textAnchor: "middle",
+                    dominantBaseline: "middle",
+                    fill: "#ffffff",
+                    style: {
+                      fontSize: fs,
+                      fontWeight: 700,
+                      fontFamily: "system-ui, sans-serif",
+                    },
+                  },
+                  badge.label,
+                ),
+              );
+            }),
+          ),
+          /* @__PURE__ */ React.createElement(
+            "g",
+            { className: "transition-opacity duration-300" },
+            visibleStations.map((station) => {
+              const meta = getStationMeta(station);
+              const focused = stationOnFocusedLine(
+                meta.lineKeys,
+                meta.lineColor,
+              );
+              const isTransfer = meta.isTransfer;
+              const markerR = getStationMarkerRadius(meta);
+              const isDep = station.id === departureStationId;
+              const isDest = station.id === destinationStationId;
+              const ringR = markerR + 5;
+              const stationHighlighted =
+                routeHighlightOnly && highlightedStationIds?.length
+                  ? highlightedStationIds.includes(station.id)
+                  : true;
+              const dimOpacity = stationHighlighted
+                ? focused
+                  ? 1
+                  : 0.35
+                : 0.12;
+              return /* @__PURE__ */ React.createElement(
+                "g",
+                {
+                  key: station.id,
+                  "data-station": true,
+                  className: "cursor-pointer transition-opacity duration-300",
+                  opacity: dimOpacity,
+                  onClick: (e) => {
+                    e.stopPropagation();
+                    if (onStationClick) onStationClick(station, pickRole);
+                  },
+                },
+                isDep &&
+                  /* @__PURE__ */ React.createElement("circle", {
+                    cx: station.x,
+                    cy: station.y,
+                    r: ringR,
+                    fill: "none",
+                    stroke: "#16a34a",
+                    strokeWidth: 2,
+                  }),
+                isDest &&
+                  /* @__PURE__ */ React.createElement("circle", {
+                    cx: station.x,
+                    cy: station.y,
+                    r: ringR,
+                    fill: "none",
+                    stroke: "#e11d48",
+                    strokeWidth: 2,
+                  }),
+                isTransfer
+                  ? /* @__PURE__ */ React.createElement(TransferStationMarker, {
+                      x: station.x,
+                      y: station.y,
+                    })
+                  : /* @__PURE__ */ React.createElement("circle", {
+                      cx: station.x,
+                      cy: station.y,
+                      r: BASE_STATION_R,
+                      fill: "#ffffff",
+                      stroke: focused
+                        ? meta.lineColor
+                        : washLineColor(meta.lineColor),
+                      strokeWidth: 2.2,
+                    }),
+              );
+            }),
+          ),
+        ),
+      ),
+      /* @__PURE__ */ React.createElement(
+        "div",
+        { className: "absolute right-3 top-3 flex flex-col gap-1.5" },
+        [
+          { icon: Plus, fn: () => zoom(1.25) },
+          { icon: Minus, fn: () => zoom(0.8) },
+          { icon: Maximize2, fn: resetView },
+        ].map(({ icon: Icon, fn }, i) =>
+          /* @__PURE__ */ React.createElement(
+            "button",
+            {
+              key: i,
+              type: "button",
               onClick: (e) => {
                 e.stopPropagation();
-                if (onStationClick) onStationClick(station, pickRole);
-              }
+                fn();
+              },
+              className:
+                "flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-600 shadow-[0_1px_4px_rgba(15,23,42,0.12)] hover:bg-slate-50",
             },
-            isDep && /* @__PURE__ */ React.createElement(
-              "circle",
-              {
-                cx: station.x,
-                cy: station.y,
-                r: ringR,
-                fill: "none",
-                stroke: "#16a34a",
-                strokeWidth: 2
-              }
-            ),
-            isDest && /* @__PURE__ */ React.createElement(
-              "circle",
-              {
-                cx: station.x,
-                cy: station.y,
-                r: ringR,
-                fill: "none",
-                stroke: "#e11d48",
-                strokeWidth: 2
-              }
-            ),
-            isTransfer ? /* @__PURE__ */ React.createElement(TransferStationMarker, { x: station.x, y: station.y }) : /* @__PURE__ */ React.createElement(
-              "circle",
-              {
-                cx: station.x,
-                cy: station.y,
-                r: BASE_STATION_R,
-                fill: "#ffffff",
-                stroke: focused ? meta.lineColor : washLineColor(meta.lineColor),
-                strokeWidth: 2.2
-              }
-            )
-          );
-        }))
-      )
+            /* @__PURE__ */ React.createElement(Icon, { className: "h-4 w-4" }),
+          ),
+        ),
+      ),
     ),
-    /* @__PURE__ */ React.createElement("div", { className: "absolute right-3 top-3 flex flex-col gap-1.5" }, [
-      { icon: Plus, fn: () => zoom(1.25) },
-      { icon: Minus, fn: () => zoom(0.8) },
-      { icon: Maximize2, fn: resetView }
-    ].map(({ icon: Icon, fn }, i) => /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        key: i,
-        type: "button",
-        onClick: (e) => {
-          e.stopPropagation();
-          fn();
-        },
-        className: "flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-600 shadow-[0_1px_4px_rgba(15,23,42,0.12)] hover:bg-slate-50"
-      },
-      /* @__PURE__ */ React.createElement(Icon, { className: "h-4 w-4" })
-    )))
-  ), /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex flex-wrap items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("p", { className: "text-[10px] text-slate-400" }, "노선 색: 열차 구간 혼잡도 · 상단 호선 클릭 시 강조"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) => /* @__PURE__ */ React.createElement("span", { key: l, className: "flex items-center gap-1 text-[9px] text-slate-500" }, /* @__PURE__ */ React.createElement("span", { className: "h-1.5 w-1.5 rounded-full", style: { backgroundColor: CROWD_COLORS[l] } }), CROWD_LABELS[l])))));
+    /* @__PURE__ */ React.createElement(
+      "div",
+      { className: "mt-2 flex flex-wrap items-center justify-between gap-2" },
+      /* @__PURE__ */ React.createElement(
+        "p",
+        { className: "text-[10px] text-slate-400" },
+        "노선 색: 열차 구간 혼잡도 · 상단 호선 클릭 시 강조",
+      ),
+      /* @__PURE__ */ React.createElement(
+        "div",
+        { className: "flex gap-2" },
+        ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) =>
+          /* @__PURE__ */ React.createElement(
+            "span",
+            {
+              key: l,
+              className: "flex items-center gap-1 text-[9px] text-slate-500",
+            },
+            /* @__PURE__ */ React.createElement("span", {
+              className: "h-1.5 w-1.5 rounded-full",
+              style: { backgroundColor: CROWD_COLORS[l] },
+            }),
+            CROWD_LABELS[l],
+          ),
+        ),
+      ),
+    ),
+  );
 }
-export {
-  InteractiveMetroMap
-};
+export { InteractiveMetroMap };

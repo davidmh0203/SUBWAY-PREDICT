@@ -6,6 +6,7 @@ import { TimeBottomSheet, TimePickerButton } from "@/components/TimeBottomSheet"
 import { TrafficForecastCarousel } from "@/components/TrafficForecastCarousel";
 import { TODAY_EVENTS } from "@/lib/mock-data";
 import { CROWD_LABELS } from "@/lib/congestion";
+import { APP_NAME } from "@/lib/app-brand";
 
 export function HomeScreen({
   form,
@@ -25,7 +26,7 @@ export function HomeScreen({
         </Button>
         <div className="flex items-center gap-2">
           <Train className="h-5 w-5 text-slate-600" />
-          <h1 className="text-lg font-bold tracking-tight text-slate-800">SUBWAY PREDICT</h1>
+          <h1 className="text-lg font-bold tracking-tight text-slate-800">{APP_NAME}</h1>
         </div>
         <div className="w-10" aria-hidden />
       </header>

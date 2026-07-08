@@ -285,7 +285,7 @@ async function buildHome(client, pid, opts={}) {
   // pt-6=24: Header  (flex items-center justify-between)
   await icon(client, pid, 16, 32, T.s400);         // Settings gear
   await icon(client, pid, 36, 32, T.s600);         // Train icon  
-  await client.text(pid, "hd-title", 58, 30, "SUBWAY PREDICT", { size:17, weight:700, color:T.s800 });
+  await client.text(pid, "hd-title", 58, 30, "여유로", { size:17, weight:700, color:T.s800 });
   await icon(client, pid, 358, 32, T.s400);         // User icon
 
   // Alert card: bg-amber-50 (y=88, h=96)
