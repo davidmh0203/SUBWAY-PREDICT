@@ -16,14 +16,39 @@
 
 ## 기술 스택
 
-React (JSX) · Vite · Tailwind CSS · Recharts
+React (JSX) · Vite · Tailwind CSS · Recharts · FastAPI (백엔드, `backend/`)
 
 ## 실행 방법
+
+### 프론트만 (목업 fallback)
 
 ```bash
 npm install
 npm run dev
 ```
+
+### 프론트 + 백엔드 API 연동 (로컬)
+
+터미널 1 — 백엔드 (`:8000`):
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+fastapi dev app/main.py
+```
+
+터미널 2 — 프론트 (`:5173`, `/api` → 백엔드 프록시):
+
+```bash
+npm run dev
+```
+
+API 문서: http://localhost:8000/docs  
+경로 검색은 `POST /predict/route`를 사용합니다. 백엔드가 꺼져 있으면 경로 결과 화면은 자동으로 기존 목업 데이터로 fallback 합니다.
+
+환경 변수 예시: [`.env.example`](.env.example) (`VITE_API_BASE_URL=/api`)
 
 빌드 및 배포:
 

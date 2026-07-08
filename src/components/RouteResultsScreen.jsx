@@ -13,34 +13,59 @@ import {
   dateToSliderIndex,
   sliderIndexToDate,
 } from "@/lib/mock-data";
+import { fetchRoutesFromApi } from "@/lib/api/client";
 
 export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }) {
   const [sliderIndex, setSliderIndex] = useState(() => dateToSliderIndex(form.targetTime));
   const [debouncedTime, setDebouncedTime] = useState(form.targetTime);
-  const [loading, setLoading] = useState(false);
+  const [sliderLoading, setSliderLoading] = useState(false);
+  const [routes, setRoutes] = useState([]);
+  const [routesLoading, setRoutesLoading] = useState(true);
+  const [routeSource, setRouteSource] = useState(null);
   const depName = form.departure.replace(/역.*$/, "");
   const destName = form.destination.replace(/역.*$/, "");
   const [direction, setDirection] = useState(`${destName} 방면`);
 
   useEffect(() => {
-    setLoading(true);
+    setSliderLoading(true);
     const timer = setTimeout(() => {
       const next = sliderIndexToDate(sliderIndex, form.targetTime);
       setDebouncedTime(next);
       onTimeChange(next);
-      setLoading(false);
+      setSliderLoading(false);
     }, 280);
     return () => clearTimeout(timer);
   }, [sliderIndex, form.targetTime, onTimeChange]);
 
   useEffect(() => {
+    let cancelled = false;
+    setRoutesLoading(true);
+
+    (async () => {
+      try {
+        const apiRoutes = await fetchRoutesFromApi(depName, destName, debouncedTime);
+        if (cancelled) return;
+        setRoutes(apiRoutes);
+        setRouteSource("api");
+      } catch {
+        if (cancelled) return;
+        setRoutes(buildRoutes(debouncedTime, depName, destName));
+        setRouteSource("mock");
+      } finally {
+        if (!cancelled) setRoutesLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedTime, depName, destName]);
+
+  useEffect(() => {
     setDirection(`${destName} 방면`);
   }, [destName]);
 
-  const routes = useMemo(
-    () => buildRoutes(debouncedTime, depName, destName),
-    [debouncedTime, depName, destName],
-  );
+  const loading = sliderLoading || routesLoading;
   const activeHour = debouncedTime.getHours();
   const hourlyData = useMemo(() => getHourlyCongestionData(activeHour), [activeHour]);
 
@@ -96,8 +121,23 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
       </Card>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-slate-600">추천 경로</h2>
-        {routes.map((route, idx) => {
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-600">추천 경로</h2>
+          {routeSource && (
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+              {routeSource === "api" ? "API" : "목업"}
+            </span>
+          )}
+        </div>
+        {routesLoading && routes.length === 0 ? (
+          <Card>
+            <CardContent className="flex items-center justify-center gap-2 p-8 text-sm text-slate-500">
+              <RefreshCw className="h-4 w-4 animate-spin" />
+              경로를 불러오는 중...
+            </CardContent>
+          </Card>
+        ) : (
+          routes.map((route, idx) => {
           const crowdLevel = rateToCrowdLevel(route.maxCongestion);
           return (
             <Card
@@ -140,7 +180,8 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
               </CardContent>
             </Card>
           );
-        })}
+        })
+        )}
       </section>
     </div>
   );
