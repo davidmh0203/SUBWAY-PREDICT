@@ -1,11 +1,20 @@
 import stationsJson from "./generated/metro-stations.json";
 import segmentsJson from "./generated/metro-line-segments.json";
 import viewboxJson from "./generated/metro-viewbox.json";
+import {
+  SVG_HEX_TO_LINE_KEY,
+  colorForLineKey,
+  officialColorForSvgHex,
+} from "./station-line-colors";
+
 const METRO_STATIONS = stationsJson;
 const METRO_LINE_SEGMENTS = segmentsJson;
 const MAP_VIEWBOX = viewboxJson;
 const stationById = new Map(METRO_STATIONS.map((s) => [s.id, s]));
 const stationByName = new Map(METRO_STATIONS.map((s) => [s.name, s]));
+
+const LINE_COLOR_LABELS = { ...SVG_HEX_TO_LINE_KEY };
+
 function getStation(id) {
   return stationById.get(id) ?? stationByName.get(id.replace(/역$/, ""));
 }
@@ -13,33 +22,11 @@ function getStationByName(name) {
   const clean = name.replace(/역.*$/, "").trim();
   return stationByName.get(clean);
 }
-const LINE_COLOR_LABELS = {
-  "#0054a6": "1호선",
-  "#005daa": "1호선",
-  "#00a44a": "2호선",
-  "#f47d30": "3호선",
-  "#00a9dc": "4호선",
-  "#936fb1": "5호선",
-  "#fda600": "5호선",
-  "#ed8000": "6호선",
-  "#677718": "7호선",
-  "#ea545d": "8호선",
-  "#c6b182": "9호선",
-  "#9a6292": "신분당선",
-  "#d31145": "경의중앙",
-  "#178c72": "경춘선",
-  "#6789ca": "공항철도",
-  "#76c4a3": "경강선",
-  "#4ea346": "우이신설",
-  "#8fc31e": "2호선(성수지선)",
-  "#b0ce18": "경의선",
-  "#6fa0ce": "인천1",
-  "#3681b7": "인천2",
-  "#a4dcff": "인천공항",
-  "#ad8605": "김포골드",
-  "#f99d1c": "수인분당",
-  "#c77539": "서해선"
-};
+
+function normalizeLineColor(color) {
+  return officialColorForSvgHex(color);
+}
+
 function getLineKeyForColor(color) {
   return LINE_COLOR_LABELS[color.toLowerCase()] ?? color.toLowerCase();
 }
@@ -60,7 +47,7 @@ function getUniqueLineLegend() {
   const byKey = /* @__PURE__ */ new Map();
   for (const seg of METRO_LINE_SEGMENTS) {
     const key = getLineKeyForColor(seg.color);
-    if (!byKey.has(key)) byKey.set(key, seg.color);
+    if (!byKey.has(key)) byKey.set(key, colorForLineKey(key));
   }
   return [...byKey.entries()].map(([lineKey, color]) => ({ lineKey, color, name: lineKey })).sort((a, b) => a.name.localeCompare(b.name, "ko"));
 }
@@ -76,12 +63,12 @@ function pointToSegmentDistance(px, py, seg) {
 }
 function getNearestSegmentColor(x, y) {
   let bestDist = Infinity;
-  let bestColor = "#0054a6";
+  let bestColor = colorForLineKey("1호선");
   for (const seg of METRO_LINE_SEGMENTS) {
     const d = pointToSegmentDistance(x, y, seg);
     if (d < bestDist) {
       bestDist = d;
-      bestColor = seg.color;
+      bestColor = normalizeLineColor(seg.color);
     }
   }
   return bestColor;
@@ -113,7 +100,7 @@ function getNearestStationsByGeo(lat, lng, limit = 5) {
     .map((x) => x.station);
 }
 function getSegmentCrowdLevel(seg, time) {
-  if (seg.color.toLowerCase() !== "#00a44a") return null;
+  if (getLineKeyForColor(seg.color) !== "2호선") return null;
   const mx = (seg.x1 + seg.x2) / 2;
   const my = (seg.y1 + seg.y2) / 2;
   if (mx < 560 || mx > 1e3 || my < 530 || my > 680) return null;
@@ -138,6 +125,7 @@ export {
   getStationByName,
   getStationLineColor,
   getNearestStationsByGeo,
+  normalizeLineColor,
   getUniqueLineLegend,
   pointToSegmentDistance,
   segmentMatchesLine,

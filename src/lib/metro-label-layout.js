@@ -2,9 +2,12 @@ import {
   LINE_COLOR_LABELS,
   METRO_LINE_SEGMENTS,
   METRO_STATIONS,
-  getNearestSegmentColor
+  getNearestSegmentColor,
+  normalizeLineColor,
 } from "./metro-network";
 import { LINE_END_BADGES } from "./metro-line-badges";
+import { getRegistryLines } from "./station-line-registry";
+import { colorForLineKey } from "./station-line-colors";
 const BASE_STATION_R = 4.5;
 const TRANSFER_STATION_R = BASE_STATION_R * 1.5;
 const ENDPOINT_TOL = 8;
@@ -34,15 +37,24 @@ function computeAllStationMeta() {
     for (const seg of METRO_LINE_SEGMENTS) {
       const nearStart = Math.hypot(seg.x1 - station.x, seg.y1 - station.y) < ENDPOINT_TOL;
       const nearEnd = Math.hypot(seg.x2 - station.x, seg.y2 - station.y) < ENDPOINT_TOL;
-      if (nearStart || nearEnd) endpointColors.add(seg.color.toLowerCase());
+      const onSegment =
+        pointToSegmentDistance(station.x, station.y, seg) < (seg.width ?? 3) / 2 + 2;
+      if (nearStart || nearEnd || onSegment) endpointColors.add(seg.color.toLowerCase());
     }
     const colorByKey = /* @__PURE__ */ new Map();
     for (const color of endpointColors) {
       const key = colorToLineKey(color);
       if (!colorByKey.has(key)) colorByKey.set(key, color);
     }
-    const lineKeys = [...colorByKey.keys()].sort((a, b) => a.localeCompare(b, "ko"));
-    const lineColors = lineKeys.map((key) => colorByKey.get(key));
+    let lineKeys = [...colorByKey.keys()].sort((a, b) => a.localeCompare(b, "ko"));
+    let lineColors = lineKeys.map((key) => normalizeLineColor(colorByKey.get(key)));
+
+    const registryLines = getRegistryLines(station.name);
+    if (registryLines) {
+      lineKeys = registryLines;
+      lineColors = registryLines.map((key) => colorForLineKey(key));
+    }
+
     const isTransfer = lineKeys.length >= 2;
     const lineColor = getNearestSegmentColor(station.x, station.y).toLowerCase();
     map.set(station.id, { isTransfer, lineColor, lineKeys, lineColors });

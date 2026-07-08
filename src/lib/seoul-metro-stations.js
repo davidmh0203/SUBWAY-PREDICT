@@ -1,5 +1,6 @@
 import { METRO_STATIONS } from "./metro-network";
 import { getStationLineColor, getLineKeyForColor } from "./metro-network";
+import { baseStationId } from "./station-id";
 
 const SEOUL_LINE_PATTERN = /^[1-9]호선/;
 
@@ -23,7 +24,7 @@ function buildSeoulStationSet() {
 const SEOUL_STATION_IDS = buildSeoulStationSet();
 
 function isSeoulMetroStation(stationIdOrName) {
-  const clean = String(stationIdOrName).replace(/역.*$/, "").trim();
+  const clean = baseStationId(stationIdOrName);
   return SEOUL_STATION_IDS.has(clean);
 }
 

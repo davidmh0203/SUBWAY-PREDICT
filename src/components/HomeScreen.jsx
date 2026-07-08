@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TimeBottomSheet, TimePickerButton } from "@/components/TimeBottomSheet";
 import { TrafficForecastCarousel } from "@/components/TrafficForecastCarousel";
+import { StationSearchField } from "@/components/StationSearchField";
 import { TODAY_EVENTS } from "@/lib/mock-data";
 import { CROWD_LABELS } from "@/lib/congestion";
 import { APP_NAME } from "@/lib/app-brand";
@@ -17,6 +18,7 @@ export function HomeScreen({
   onRequestLocation,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const canSearch = Boolean(form.departureStationId && form.destinationStationId);
 
   return (
     <div className="animate-fade-in space-y-5 pb-24">
@@ -87,32 +89,42 @@ export function HomeScreen({
         <h2 className="mb-3 text-sm font-medium text-slate-600">어디로 이동하시나요?</h2>
         <Card>
           <CardContent className="space-y-3 p-4">
-            <label className="block">
-              <span className="mb-1.5 flex items-center gap-2 text-xs text-slate-500">
-                <MapPin className="h-3.5 w-3.5" /> 출발
-              </span>
-              <input
-                value={form.departure}
-                onChange={(e) =>
-                  onFormChange({ ...form, departure: e.target.value, departureStationId: null })
-                }
-                className="w-full rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-[inset_0_1px_3px_rgba(15,23,42,0.06)] outline-none transition focus:bg-white focus:shadow-[inset_0_1px_3px_rgba(15,23,42,0.08),0_0_0_2px_rgba(148,163,184,0.25)]"
-              />
-            </label>
-            <label className="block">
-              <span className="mb-1.5 flex items-center gap-2 text-xs text-slate-500">도착</span>
-              <input
-                value={form.destination}
-                onChange={(e) =>
-                  onFormChange({ ...form, destination: e.target.value, destinationStationId: null })
-                }
-                className="w-full rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-[inset_0_1px_3px_rgba(15,23,42,0.06)] outline-none transition focus:bg-white focus:shadow-[inset_0_1px_3px_rgba(15,23,42,0.08),0_0_0_2px_rgba(148,163,184,0.25)]"
-              />
-            </label>
+            <StationSearchField
+              label="출발"
+              icon={MapPin}
+              value={form.departure}
+              stationId={form.departureStationId}
+              excludeStationId={form.destinationStationId}
+              onChange={({ text, stationId }) =>
+                onFormChange({
+                  ...form,
+                  departure: text,
+                  departureStationId: stationId,
+                })
+              }
+            />
+            <StationSearchField
+              label="도착"
+              value={form.destination}
+              stationId={form.destinationStationId}
+              excludeStationId={form.departureStationId}
+              onChange={({ text, stationId }) =>
+                onFormChange({
+                  ...form,
+                  destination: text,
+                  destinationStationId: stationId,
+                })
+              }
+            />
             <TimePickerButton value={form.targetTime} onClick={() => setSheetOpen(true)} />
-            <Button size="lg" className="w-full" onClick={onSearch}>
+            <Button size="lg" className="w-full" onClick={onSearch} disabled={!canSearch}>
               경로 예측 검색
             </Button>
+            {!canSearch && (
+              <p className="text-center text-[11px] text-slate-500">
+                출발·도착 역을 목록에서 선택해 주세요
+              </p>
+            )}
           </CardContent>
         </Card>
       </section>

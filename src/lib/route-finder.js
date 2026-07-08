@@ -1,46 +1,87 @@
-import { METRO_STATIONS, METRO_LINE_SEGMENTS, LINE_COLOR_LABELS } from "./metro-network";
+import { METRO_STATIONS, METRO_LINE_SEGMENTS, getLineKeyForColor, normalizeLineColor } from "./metro-network";
 import { getStatusFromRate } from "./congestion";
+import {
+  MOCK_MINUTES_PER_STOP,
+  MOCK_WALK_TRANSFER_MINUTES,
+  formatArrivalTime,
+  estimateLocalRouteMinutes,
+  estimateSubwayPayment,
+} from "./route-timing";
+
 let _graph = null;
+
+const STATION_ON_SEGMENT_TOL = 10;
+const SEGMENT_ENDPOINT_TOL = 12;
+
+function pointToSegmentDistance(px, py, seg) {
+  const { x1, y1, x2, y2 } = seg;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len2 = dx * dx + dy * dy;
+  if (len2 === 0) return Math.hypot(px - x1, py - y1);
+  let t = ((px - x1) * dx + (py - y1) * dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+function projectionOnSegment(px, py, seg) {
+  const { x1, y1, x2, y2 } = seg;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len2 = dx * dx + dy * dy || 1;
+  let t = ((px - x1) * dx + (py - y1) * dy) / len2;
+  return Math.max(0, Math.min(1, t));
+}
+
+function stationOnSegment(station, seg) {
+  const nearStart =
+    Math.hypot(seg.x1 - station.x, seg.y1 - station.y) < SEGMENT_ENDPOINT_TOL;
+  const nearEnd =
+    Math.hypot(seg.x2 - station.x, seg.y2 - station.y) < SEGMENT_ENDPOINT_TOL;
+  const onSegment =
+    pointToSegmentDistance(station.x, station.y, seg) < STATION_ON_SEGMENT_TOL;
+  return nearStart || nearEnd || onSegment;
+}
+
+function addGraphEdge(graph, from, to, color) {
+  if (from === to) return;
+  for (const [a, b] of [
+    [from, to],
+    [to, from],
+  ]) {
+    if (!graph.has(a)) graph.set(a, []);
+    const list = graph.get(a);
+    if (!list.some((edge) => edge.neighborId === b && edge.color === color)) {
+      list.push({ neighborId: b, color });
+    }
+  }
+}
+
 function buildGraph() {
   if (_graph) return _graph;
-  const coordMap = /* @__PURE__ */ new Map();
-  for (const st of METRO_STATIONS) {
-    for (let dx = -2; dx <= 2; dx++) {
-      for (let dy = -2; dy <= 2; dy++) {
-        const key = `${Math.round(st.x) + dx}_${Math.round(st.y) + dy}`;
-        if (!coordMap.has(key)) coordMap.set(key, st.id);
-      }
-    }
-  }
-  function nearestStation(x, y) {
-    for (let r = 0; r <= 3; r++) {
-      for (let dx = -r; dx <= r; dx++) {
-        for (let dy = -r; dy <= r; dy++) {
-          const id = coordMap.get(`${Math.round(x) + dx}_${Math.round(y) + dy}`);
-          if (id) return id;
-        }
-      }
-    }
-    return void 0;
-  }
   const graph = /* @__PURE__ */ new Map();
+
   for (const seg of METRO_LINE_SEGMENTS) {
-    const a = nearestStation(seg.x1, seg.y1);
-    const b = nearestStation(seg.x2, seg.y2);
-    if (!a || !b || a === b) continue;
-    for (const [from, to] of [[a, b], [b, a]]) {
-      if (!graph.has(from)) graph.set(from, []);
-      const list = graph.get(from);
-      if (!list.some((e) => e.neighborId === to && e.color === seg.color)) {
-        list.push({ neighborId: to, color: seg.color });
+    const onSegment = [];
+    for (const station of METRO_STATIONS) {
+      if (stationOnSegment(station, seg)) {
+        onSegment.push({
+          id: station.id,
+          t: projectionOnSegment(station.x, station.y, seg),
+        });
       }
     }
+    onSegment.sort((a, b) => a.t - b.t || a.id.localeCompare(b.id, "ko"));
+    for (let i = 0; i < onSegment.length - 1; i++) {
+      addGraphEdge(graph, onSegment[i].id, onSegment[i + 1].id, seg.color);
+    }
   }
+
   _graph = graph;
   return graph;
 }
-function dijkstra(graph, startId, endId) {
-  const TRANSFER_PENALTY = 20;
+
+function dijkstra(graph, startId, endId, transferPenalty = 20) {
   const dist = /* @__PURE__ */ new Map();
   const prevStation = /* @__PURE__ */ new Map();
   const prevColor = /* @__PURE__ */ new Map();
@@ -52,13 +93,15 @@ function dijkstra(graph, startId, endId) {
     if (id === endId) break;
     if (cost > (dist.get(id) ?? Infinity)) continue;
     for (const edge of graph.get(id) ?? []) {
-      const transfer = lineColor && lineColor !== edge.color ? TRANSFER_PENALTY : 0;
+      const edgeColor = normalizeLineColor(edge.color);
+      const activeColor = lineColor ? normalizeLineColor(lineColor) : null;
+      const transfer = activeColor && activeColor !== edgeColor ? transferPenalty : 0;
       const newCost = cost + 1 + transfer;
       if (newCost < (dist.get(edge.neighborId) ?? Infinity)) {
         dist.set(edge.neighborId, newCost);
         prevStation.set(edge.neighborId, id);
         prevColor.set(edge.neighborId, edge.color);
-        queue.push({ id: edge.neighborId, lineColor: edge.color, cost: newCost });
+        queue.push({ id: edge.neighborId, lineColor: edgeColor, cost: newCost });
       }
     }
   }
@@ -72,11 +115,16 @@ function dijkstra(graph, startId, endId) {
   path.unshift({ id: startId, lineColor: path[0]?.lineColor ?? "" });
   return path;
 }
+
 function pathToSegments(path, targetTime) {
   const segments = [];
   let currentSeg = null;
+  let offsetMin = 0;
+  const walkTransfers = [];
+
   for (let i = 0; i < path.length; i++) {
-    const { id, lineColor } = path[i];
+    const { id, lineColor: rawLineColor } = path[i];
+    const lineColor = normalizeLineColor(rawLineColor);
     const stationName = METRO_STATIONS.find((s) => s.id === id)?.name ?? id;
     const isFirst = i === 0;
     const isLast = i === path.length - 1;
@@ -84,55 +132,105 @@ function pathToSegments(path, targetTime) {
     if (isFirst) type = "departure";
     else if (isLast) type = "arrival";
     else if (currentSeg && currentSeg.lineColor !== lineColor) type = "transfer";
-    const arrivalDate = new Date(targetTime.getTime() + i * 3 * 6e4);
-    const arrivalTime = arrivalDate.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false
-    });
-    const congestionRate = Math.round(50 + Math.random() * 60);
+
+    if (type === "transfer" && currentSeg) {
+      walkTransfers.push({
+        afterStationIndex: i - 1,
+        minutes: MOCK_WALK_TRANSFER_MINUTES,
+      });
+      offsetMin += MOCK_WALK_TRANSFER_MINUTES;
+    }
+
+    if (i > 0) offsetMin += MOCK_MINUTES_PER_STOP;
+
+    const arrivalTime = formatArrivalTime(targetTime, offsetMin);
+    const congestionRate = Math.round(50 + ((i * 17) % 60));
     const congestionStatus = getStatusFromRate(congestionRate);
     const station = {
       name: stationName,
       type,
       arrivalTime,
+      arrival_offset_min: Math.round(offsetMin),
       congestionRate,
-      congestionStatus
+      congestionStatus,
     };
-    if (!currentSeg || type === "transfer" && currentSeg.lineColor !== lineColor) {
+
+    if (!currentSeg || currentSeg.lineColor !== lineColor) {
       currentSeg = {
-        lineName: LINE_COLOR_LABELS[lineColor] ?? lineColor,
+        lineName: getLineKeyForColor(rawLineColor),
         lineColor,
-        stations: []
+        stations: [],
       };
       segments.push(currentSeg);
     }
     currentSeg.stations.push(station);
   }
-  return segments;
+
+  for (const wt of walkTransfers) {
+    const anchorIdx = wt.afterStationIndex;
+    const anchorName = path[anchorIdx]
+      ? (METRO_STATIONS.find((s) => s.id === path[anchorIdx].id)?.name ?? path[anchorIdx].id)
+      : null;
+    if (!anchorName) continue;
+    for (const seg of segments) {
+      if (seg.stations.some((s) => s.name === anchorName)) {
+        seg.walkAfter = { minutes: wt.minutes };
+        break;
+      }
+    }
+  }
+
+  return { segments, walkTransfers };
 }
+
 function resolveId(name) {
   const clean = name.replace(/역.*$/, "").trim();
-  return METRO_STATIONS.find((s) => s.id === clean || s.name === clean)?.id;
+  const base = clean.split("|")[0].trim();
+  return METRO_STATIONS.find((s) => s.id === base || s.name === base)?.id;
 }
-function findRoute(depName, destName, targetTime) {
+
+function findPath(depName, destName, transferPenalty) {
   const depId = resolveId(depName);
   const destId = resolveId(destName);
   if (!depId || !destId) return null;
   const graph = buildGraph();
-  const path = dijkstra(graph, depId, destId);
+  return dijkstra(graph, depId, destId, transferPenalty);
+}
+
+function findRoute(depName, destName, targetTime, transferPenalty = 20) {
+  const path = findPath(depName, destName, transferPenalty);
   if (!path) return null;
-  const segments = pathToSegments(path, targetTime);
+  const { segments, walkTransfers } = pathToSegments(path, targetTime);
   const transfers = Math.max(0, segments.length - 1);
   const stations = path.map(
-    ({ id }) => METRO_STATIONS.find((s) => s.id === id)?.name ?? id
+    ({ id }) => METRO_STATIONS.find((s) => s.id === id)?.name ?? id,
   );
-  return { segments, stations, transfers, totalStops: path.length };
+  const totalTime = estimateLocalRouteMinutes(path.length, transfers);
+  const payment = estimateSubwayPayment(stations.length, transfers);
+  return {
+    segments,
+    stations,
+    transfers,
+    totalStops: path.length,
+    totalTime,
+    payment,
+    walkTransfers,
+  };
 }
+
+/** 최단(낮은 환승 패널티) + 대안(높은 환승 패널티로 다른 경로 탐색) */
+function findRouteVariants(depName, destName, targetTime) {
+  const fast = findRoute(depName, destName, targetTime, 15);
+  const alt = findRoute(depName, destName, targetTime, 45);
+  const samePath =
+    fast &&
+    alt &&
+    fast.stations.join("|") === alt.stations.join("|");
+  return { fast, alt: samePath ? null : alt };
+}
+
 function routePrimaryColor(segments) {
   return segments[0]?.lineColor ?? "#94a3b8";
 }
-export {
-  findRoute,
-  routePrimaryColor
-};
+
+export { findRoute, findRouteVariants, routePrimaryColor };

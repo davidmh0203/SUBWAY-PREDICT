@@ -58,6 +58,7 @@ class RouteStation(BaseModel):
 class RouteSummary(BaseModel):
     total_time_min: int
     transfer_count: int
+    payment: int | None = None
     overall_congestion: int
     overall_level: str
 
