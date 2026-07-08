@@ -8,18 +8,20 @@ from app.schemas import (
     StationCongestion,
     congestion_level,
 )
-from app.mock_data import STATIONS, build_mock_route, _base_congestion
+from app.mock_data import STATIONS, _base_congestion
+from app.odsay_service import predict_route_with_odsay
 
 router = APIRouter()
 
 
 @router.post("/predict/route", response_model=RouteResponse, tags=["예측"])
-def predict_route(req: RouteRequest):
-    """★핵심★ 출발역·도착역·출발시각으로 경로 전체 혼잡도를 예측.
+async def predict_route(req: RouteRequest):
+    """출발역·도착역·출발시각으로 경로 혼잡도 예측.
 
-    지금은 가짜 데이터. 나중에 (1) 경로 탐색 (2) 모델 예측으로 속만 교체.
+    ODsay searchPubTransPathT로 경로를 구하고, 혼잡도는 mock 모델로 채웁니다.
+    ODsay 미설정·인증 실패 시 mock 경로로 fallback.
     """
-    result = build_mock_route(req.start, req.end, req.departure_time.hour)
+    result = await predict_route_with_odsay(req.start, req.end, req.departure_time)
     return {
         "start": req.start,
         "end": req.end,

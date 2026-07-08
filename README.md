@@ -46,9 +46,11 @@ npm run dev
 ```
 
 API 문서: http://localhost:8000/docs  
-경로 검색은 `POST /predict/route`를 사용합니다. 백엔드가 꺼져 있으면 경로 결과 화면은 자동으로 기존 목업 데이터로 fallback 합니다.
+경로 검색은 `POST /predict/route`를 사용합니다 (ODsay 경로 + mock 혼잡도). 백엔드가 꺼져 있으면 경로 결과 화면은 자동으로 기존 목업 데이터로 fallback 합니다.
 
-환경 변수 예시: [`.env.example`](.env.example) (`VITE_API_BASE_URL=/api`)
+**ODsay 연동:** `ODSAY_API_KEY`는 `backend/.env` 또는 루트 `.env`에 **Server API 키**로 설정하세요. Web 키는 백엔드에서 `ApiKeyAuthFailed`가 납니다. [ODsay LAB](https://lab.odsay.com/)에서 IP 등록 후 Server 키 발급.
+
+환경 변수 예시: [`.env.example`](.env.example) · [`backend/.env.example`](backend/.env.example)
 
 빌드 및 배포:
 
