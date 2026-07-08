@@ -1,0 +1,120 @@
+{
+  "result": {
+    "searchType": 0,
+    "startRadius": 700,
+    "endRadius": 700,
+    "path": [
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 2000,
+            "sectionTime": 9,
+            "lane": {
+              "name": "수도권 2호선",
+              "subwayCode": 2,
+              "subwayCityCode": 1000
+            },
+            "stationCount": 1,
+            "passStopList": {
+              "stations": [
+                {
+                  "index": 0,
+                  "stationName": "당산",
+                  "stationID": 237,
+                  "x": 126.902682,
+                  "y": 37.534863
+                },
+                {
+                  "index": 1,
+                  "stationName": "합정",
+                  "stationID": 238,
+                  "x": 126.914543,
+                  "y": 37.549942
+                }
+              ]
+            },
+            "way": "합정",
+            "wayCode": 2,
+            "startName": "당산",
+            "endName": "합정",
+            "startID": 237,
+            "endID": 238
+          }
+        ],
+        "info": {
+          "mapObj": "2:2:237:238",
+          "payment": 1250,
+          "busTransitCount": 0,
+          "subwayTransitCount": 0,
+          "busStationCount": 0,
+          "subwayStationCount": 1,
+          "totalStationCount": 1,
+          "totalTime": 9,
+          "totalWalk": 0,
+          "trafficDistance": 2000,
+          "totalDistance": 2000,
+          "firstStartStation": "당산",
+          "lastEndStation": "합정",
+          "totalWalkTime": 0
+        }
+      },
+      {
+        "pathType": 3,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 4200,
+            "sectionTime": 14,
+            "lane": [{ "name": "수도권 3호선", "subwayCode": 3 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "연신내", "stationID": 309 },
+                { "stationName": "불광", "stationID": 310 },
+                { "stationName": "홍제", "stationID": 311 },
+                { "stationName": "고속터미널", "stationID": 320 }
+              ]
+            },
+            "way": "대화",
+            "startName": "연신내",
+            "endName": "고속터미널"
+          },
+          {
+            "trafficType": 3,
+            "distance": 180,
+            "sectionTime": 4,
+            "startName": "고속터미널",
+            "endName": "고속터미널"
+          },
+          {
+            "trafficType": 1,
+            "distance": 3600,
+            "sectionTime": 11,
+            "lane": [{ "name": "수도권 9호선", "subwayCode": 9 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "고속터미널", "stationID": 901 },
+                { "stationName": "신논현", "stationID": 902 },
+                { "stationName": "봉은사", "stationID": 903 }
+              ]
+            },
+            "way": "중앙보훈병원",
+            "startName": "고속터미널",
+            "endName": "봉은사"
+          }
+        ],
+        "info": {
+          "payment": 1650,
+          "subwayTransitCount": 1,
+          "subwayStationCount": 6,
+          "totalTime": 29,
+          "totalWalk": 180,
+          "totalWalkTime": 4,
+          "firstStartStation": "연신내",
+          "lastEndStation": "봉은사"
+        }
+      }
+    ]
+  }
+}

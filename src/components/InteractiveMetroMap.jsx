@@ -12,7 +12,9 @@ import {
   getUniqueLineLegend,
   segmentMatchesLine,
   washLineColor,
+  normalizeLineColor,
 } from "@/lib/metro-network";
+import { sameStation } from "@/lib/station-id";
 import { TransferStationMarker } from "@/components/TransferStationMarker";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import {
@@ -102,16 +104,17 @@ function InteractiveMetroMap({
   );
   const zoom = useCallback((factor, centerX, centerY) => {
     setTransform((prev) => {
+      const el = containerRef.current;
       const next = Math.min(
         MAX_SCALE,
         Math.max(MIN_SCALE, prev.scale * factor),
       );
-      if (centerX === void 0 || !containerRef.current) {
-        return { ...prev, scale: next };
-      }
-      const rect = containerRef.current.getBoundingClientRect();
-      const cx = centerX - rect.left;
-      const cy = (centerY ?? 0) - rect.top;
+      if (!el) return { ...prev, scale: next };
+      const rect = el.getBoundingClientRect();
+      const cx =
+        centerX !== undefined ? centerX - rect.left : rect.width / 2;
+      const cy =
+        centerY !== undefined ? centerY - rect.top : rect.height / 2;
       const ratio = next / prev.scale;
       return {
         scale: next,
@@ -229,15 +232,18 @@ function InteractiveMetroMap({
       ),
     /* @__PURE__ */ React.createElement(
       "div",
-      {
-        ref: containerRef,
-        className:
-          "relative h-[min(62vh,460px)] w-full cursor-grab overflow-hidden rounded-2xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)] active:cursor-grabbing",
-        onPointerDown,
-        onPointerMove,
-        onPointerUp,
-        onPointerLeave: onPointerUp,
-      },
+      { className: "relative" },
+      /* @__PURE__ */ React.createElement(
+        "div",
+        {
+          ref: containerRef,
+          className:
+            "relative h-[min(62vh,460px)] w-full cursor-grab overflow-hidden rounded-2xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)] active:cursor-grabbing",
+          onPointerDown,
+          onPointerMove,
+          onPointerUp,
+          onPointerLeave: onPointerUp,
+        },
       /* @__PURE__ */ React.createElement(
         "div",
         {
@@ -269,7 +275,9 @@ function InteractiveMetroMap({
                 y1: seg.y1,
                 x2: seg.x2,
                 y2: seg.y2,
-                stroke: focused ? seg.color : washLineColor(seg.color),
+                stroke: focused
+                  ? normalizeLineColor(seg.color)
+                  : washLineColor(normalizeLineColor(seg.color)),
                 strokeWidth:
                   focused && focusedLineKey
                     ? (seg.width ?? 3) + 0.8
@@ -370,7 +378,7 @@ function InteractiveMetroMap({
                   cx: badge.x,
                   cy: badge.y,
                   r: br,
-                  fill: focused ? badge.color : washLineColor(badge.color),
+                  fill: focused ? normalizeLineColor(badge.color) : washLineColor(normalizeLineColor(badge.color)),
                 }),
                 /* @__PURE__ */ React.createElement(
                   "text",
@@ -402,8 +410,8 @@ function InteractiveMetroMap({
               );
               const isTransfer = meta.isTransfer;
               const markerR = getStationMarkerRadius(meta);
-              const isDep = station.id === departureStationId;
-              const isDest = station.id === destinationStationId;
+              const isDep = sameStation(station.id, departureStationId);
+              const isDest = sameStation(station.id, destinationStationId);
               const ringR = markerR + 5;
               const stationHighlighted =
                 routeHighlightOnly && highlightedStationIds?.length
@@ -455,8 +463,8 @@ function InteractiveMetroMap({
                       r: BASE_STATION_R,
                       fill: "#ffffff",
                       stroke: focused
-                        ? meta.lineColor
-                        : washLineColor(meta.lineColor),
+                        ? normalizeLineColor(meta.lineColor)
+                        : washLineColor(normalizeLineColor(meta.lineColor)),
                       strokeWidth: 2.2,
                     }),
               );
@@ -464,12 +472,32 @@ function InteractiveMetroMap({
           ),
         ),
       ),
+      ),
       /* @__PURE__ */ React.createElement(
         "div",
-        { className: "absolute right-3 top-3 flex flex-col gap-1.5" },
+        {
+          className:
+            "pointer-events-none absolute right-3 top-3 z-30 flex flex-col gap-1.5",
+        },
         [
-          { icon: Plus, fn: () => zoom(1.25) },
-          { icon: Minus, fn: () => zoom(0.8) },
+          {
+            icon: Plus,
+            fn: () => {
+              const el = containerRef.current;
+              if (!el) return zoom(1.25);
+              const rect = el.getBoundingClientRect();
+              zoom(1.25, rect.left + rect.width / 2, rect.top + rect.height / 2);
+            },
+          },
+          {
+            icon: Minus,
+            fn: () => {
+              const el = containerRef.current;
+              if (!el) return zoom(0.8);
+              const rect = el.getBoundingClientRect();
+              zoom(0.8, rect.left + rect.width / 2, rect.top + rect.height / 2);
+            },
+          },
           { icon: Maximize2, fn: resetView },
         ].map(({ icon: Icon, fn }, i) =>
           /* @__PURE__ */ React.createElement(
@@ -481,8 +509,12 @@ function InteractiveMetroMap({
                 e.stopPropagation();
                 fn();
               },
+              onPointerDown: (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              },
               className:
-                "flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-600 shadow-[0_1px_4px_rgba(15,23,42,0.12)] hover:bg-slate-50",
+                "pointer-events-auto flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-600 shadow-[0_1px_4px_rgba(15,23,42,0.12)] hover:bg-slate-50 active:scale-95",
             },
             /* @__PURE__ */ React.createElement(Icon, { className: "h-4 w-4" }),
           ),

@@ -1,16 +1,9 @@
 import { getStatusFromRate } from "@/lib/congestion";
-
-const LINE_NAME_TO_COLOR = {
-  "1호선": "#0054a6",
-  "2호선": "#00a44a",
-  "3호선": "#f47d30",
-  "4호선": "#00a9dc",
-  "5호선": "#fda600",
-  "6호선": "#ed8000",
-  "7호선": "#677718",
-  "8호선": "#ea545d",
-  "9호선": "#c6b182",
-};
+import {
+  apiCongestionToRate,
+} from "@/lib/api/odsay-to-route";
+import { colorForLineKey } from "@/lib/station-line-colors";
+import { formatArrivalTime } from "@/lib/route-timing";
 
 const API_LEVEL_BADGE = {
   여유: "여유",
@@ -20,29 +13,24 @@ const API_LEVEL_BADGE = {
 };
 
 function lineNameToColor(lineName) {
-  return LINE_NAME_TO_COLOR[lineName] ?? "#94a3b8";
+  return colorForLineKey(lineName) ?? "#94a3b8";
 }
 
-function apiCongestionToRate(value) {
-  return Math.min(150, Math.round(Number(value) * 1.4));
-}
-
-function formatArrivalTime(departureTime, stopIndex) {
-  const d = new Date(departureTime.getTime() + stopIndex * 3 * 60_000);
-  return d.toLocaleTimeString("ko-KR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+function stationNamesKey(stations) {
+  return (stations ?? []).map((s) => s.name).join("|");
 }
 
 /**
- * @param {Array<{ name: string, line: string, station_congestion: number, level: string, is_transfer: boolean, station_id: string }>} apiStations
+ * @param {Array<{ name: string, line: string, station_congestion: number, is_transfer: boolean, station_id: string, arrival_offset_min?: number, heading?: string }>} apiStations
  * @param {Date} departureTime
+ * @param {Array<{ afterStationIndex: number, minutes: number }>} walkTransfers
  */
-function buildSegmentsFromApiStations(apiStations, departureTime) {
+export function buildSegmentsFromRouteStations(apiStations, departureTime, walkTransfers = []) {
   const segments = [];
   let current = null;
+  const walkByIndex = new Map(
+    walkTransfers.map((w) => [w.afterStationIndex, w.minutes]),
+  );
 
   apiStations.forEach((st, i) => {
     const isFirst = i === 0;
@@ -55,8 +43,12 @@ function buildSegmentsFromApiStations(apiStations, departureTime) {
     const lineName = st.line;
     const lineColor = lineNameToColor(lineName);
     const congestionRate = apiCongestionToRate(st.station_congestion);
+    const offsetMin = st.arrival_offset_min ?? i * 3;
 
     if (!current || current.lineName !== lineName) {
+      if (current && walkByIndex.has(i - 1)) {
+        current.walkAfter = { minutes: walkByIndex.get(i - 1) };
+      }
       current = { lineName, lineColor, stations: [] };
       segments.push(current);
     }
@@ -64,19 +56,31 @@ function buildSegmentsFromApiStations(apiStations, departureTime) {
     current.stations.push({
       name: st.name,
       type,
-      arrivalTime: formatArrivalTime(departureTime, i),
+      arrivalTime: formatArrivalTime(departureTime, offsetMin),
       congestionRate,
       congestionStatus: getStatusFromRate(congestionRate),
+      heading: st.heading,
     });
   });
+
+  if (current && walkByIndex.has(apiStations.length - 1)) {
+    current.walkAfter = { minutes: walkByIndex.get(apiStations.length - 1) };
+  }
+
+  for (const wt of walkTransfers) {
+    const anchor = apiStations[wt.afterStationIndex]?.name;
+    if (!anchor) continue;
+    for (const seg of segments) {
+      if (seg.stations.some((s) => s.name === anchor)) {
+        seg.walkAfter = { minutes: wt.minutes };
+        break;
+      }
+    }
+  }
 
   return segments;
 }
 
-/**
- * @param {ReturnType<typeof buildSegmentsFromApiStations>} segments
- * @param {number} factor
- */
 function scaleSegments(segments, factor) {
   return segments.map((seg) => ({
     ...seg,
@@ -91,37 +95,40 @@ function scaleSegments(segments, factor) {
   }));
 }
 
-/**
- * @param {Array<{ station_id: string, name: string, station_congestion: number, level: string }>} apiStations
- * @param {Date} departureTime
- * @param {number} [factor=1]
- */
 function buildStationPredictions(apiStations, departureTime, factor = 1) {
-  return apiStations.map((st, idx) => {
+  return apiStations.map((st) => {
     const congestionRate = Math.max(
       40,
       Math.round(apiCongestionToRate(st.station_congestion) * factor),
     );
+    const offsetMin = st.arrival_offset_min ?? 0;
     return {
       stationId: st.station_id,
       stationName: st.name,
       congestionRate,
       status: getStatusFromRate(congestionRate),
-      heading: "방면",
-      arrivalTime: formatArrivalTime(departureTime, idx),
+      heading: st.heading ?? "방면",
+      arrivalTime: formatArrivalTime(departureTime, offsetMin),
     };
   });
 }
 
-/**
- * @param {object} apiResponse
- * @param {Date} departureTime
- */
-function buildRouteFromApi(apiResponse, departureTime, options) {
-  const { id, label, badge, recommended, comfortFactor = 1, timeExtra = 0 } = options;
-  const { summary, stations: apiStations = [] } = apiResponse;
+function buildRouteFromResponse(apiResponse, departureTime, options) {
+  const {
+    id,
+    label,
+    badge,
+    recommended,
+    comfortFactor = 1,
+    timeExtra = 0,
+  } = options;
+  const { summary, stations: apiStations = [], walk_transfers = [] } = apiResponse;
   const stationNames = apiStations.map((s) => s.name);
-  const segments = buildSegmentsFromApiStations(apiStations, departureTime);
+  const segments = buildSegmentsFromRouteStations(
+    apiStations,
+    departureTime,
+    walk_transfers,
+  );
   const scaledSegments =
     comfortFactor === 1 ? segments : scaleSegments(segments, comfortFactor);
   const predictions = buildStationPredictions(apiStations, departureTime, comfortFactor);
@@ -132,7 +139,7 @@ function buildRouteFromApi(apiResponse, departureTime, options) {
     label,
     badge: badge ?? API_LEVEL_BADGE[summary.overall_level] ?? summary.overall_level,
     totalTime: summary.total_time_min + timeExtra,
-    payment: 1400,
+    payment: summary.payment ?? 1400,
     transfers: summary.transfer_count,
     lineName: segments[0]?.lineName ?? "2호선",
     maxCongestion,
@@ -142,33 +149,62 @@ function buildRouteFromApi(apiResponse, departureTime, options) {
     stationPredictions: predictions,
     segments: scaledSegments,
     recommended,
-    source: "api",
+    source: apiResponse.source ?? "api",
   };
 }
 
+function isSamePath(a, b) {
+  return stationNamesKey(a?.stations) === stationNamesKey(b?.stations);
+}
+
 /**
- * FastAPI RouteResponse → 프론트 buildRoutes()와 동일한 2카드 배열
+ * RouteResponse (+ optional alternative) → 추천 2카드
  * @param {object} apiResponse
  * @param {Date} departureTime
  */
 export function adaptApiRouteResponse(apiResponse, departureTime) {
-  const levelBadge = API_LEVEL_BADGE[apiResponse.summary?.overall_level] ?? "시간 우선";
+  const levelBadge =
+    API_LEVEL_BADGE[apiResponse.summary?.overall_level] ?? "시간 우선";
 
-  const fast = buildRouteFromApi(apiResponse, departureTime, {
+  const fast = buildRouteFromResponse(apiResponse, departureTime, {
     id: "fast",
     label: "최단 시간 경로",
     badge: levelBadge,
     recommended: false,
   });
 
-  const comfort = buildRouteFromApi(apiResponse, departureTime, {
+  const altBody = apiResponse.alternative;
+  if (altBody && !isSamePath(apiResponse, altBody)) {
+    const alt = buildRouteFromResponse(altBody, departureTime, {
+      id: "alt",
+      label: "대안 경로",
+      badge: API_LEVEL_BADGE[altBody.summary?.overall_level] ?? "환승·경로 대안",
+      recommended: true,
+    });
+    return [fast, alt];
+  }
+
+  const comfort = buildRouteFromResponse(apiResponse, departureTime, {
     id: "comfort",
     label: "추천 쾌적 경로",
     badge: "쾌적 우선",
     recommended: true,
     comfortFactor: 0.55,
-    timeExtra: 7,
+    timeExtra: 0,
   });
 
   return [fast, comfort];
 }
+
+/**
+ * 로컬/목업 RouteResponse 형태 → UiRoute 1건
+ */
+export function buildUiRouteFromResponse(routeResponse, departureTime, options) {
+  return buildRouteFromResponse(
+    { ...routeResponse, source: "mock" },
+    departureTime,
+    options,
+  );
+}
+
+export { lineNameToColor, API_LEVEL_BADGE };

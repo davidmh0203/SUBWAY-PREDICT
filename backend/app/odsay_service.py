@@ -195,6 +195,7 @@ def _route_from_odsay_path(
         "summary": {
             "total_time_min": int(info.get("totalTime", 0) or 0),
             "transfer_count": transfer_count,
+            "payment": int(info.get("payment", 0) or 0) or None,
             "overall_congestion": overall,
             "overall_level": congestion_level(overall),
         },

@@ -1,5 +1,7 @@
 import { getStatusFromRate } from "./congestion";
-import { findRoute } from "./route-finder";
+import { findRouteVariants } from "./route-finder";
+import { adaptApiRouteResponse } from "./api/route-adapter";
+import { estimateLocalRouteMinutes, estimateSubwayPayment } from "./route-timing";
 const BASE_PREDICTIONS = [
   { stationId: 234, stationName: "신도림", baseRate: 55 },
   { stationId: 230, stationName: "신림", baseRate: 85 },
@@ -124,160 +126,103 @@ function getChartData() {
     return { time, index, status: getStatusFromRate(index) };
   });
 }
-function fallbackSegments(stationNames, targetTime, departure, destination) {
+function congestionLevel(value) {
+  if (value <= 40) return "여유";
+  if (value <= 65) return "보통";
+  if (value <= 80) return "주의";
+  return "혼잡";
+}
+
+function finderToRouteResponse(found, departure, destination) {
+  const stations = [];
+  found.segments.forEach((seg, segIdx) => {
+    seg.stations.forEach((st) => {
+      const isTransfer = st.type === "transfer";
+      if (stations.length && stations[stations.length - 1].name === st.name) {
+        stations[stations.length - 1].is_transfer = true;
+        stations[stations.length - 1].line = seg.lineName;
+        if (st.arrival_offset_min != null) {
+          stations[stations.length - 1].arrival_offset_min = st.arrival_offset_min;
+        }
+        return;
+      }
+      stations.push({
+        station_id: st.name,
+        name: st.name,
+        line: seg.lineName,
+        station_congestion: Math.round(st.congestionRate / 1.4),
+        level: congestionLevel(Math.round(st.congestionRate / 1.4)),
+        is_transfer: isTransfer && stations.length > 0,
+        arrival_offset_min: st.arrival_offset_min ?? 0,
+      });
+    });
+  });
+
+  if (stations.length) stations[0].is_transfer = false;
+
+  const overall = Math.max(...stations.map((s) => s.station_congestion), 40);
+
+  return {
+    start: departure,
+    end: destination,
+    summary: {
+      total_time_min: found.totalTime,
+      transfer_count: found.transfers,
+      payment: found.payment,
+      overall_congestion: overall,
+      overall_level: congestionLevel(overall),
+    },
+    stations,
+    walk_transfers: found.walkTransfers ?? [],
+    segments: [],
+  };
+}
+
+function fallbackRouteResponse(targetTime, departure, destination) {
   const dep = departure.replace(/역$/, "");
   const dest = destination.replace(/역$/, "");
+  const stationNames = [dep, dest];
+  const offsetMin = estimateLocalRouteMinutes(2, 0);
+  const stations = stationNames.map((name, i) => ({
+    station_id: name,
+    name,
+    line: "2호선",
+    station_congestion: 60 + i * 5,
+    level: congestionLevel(60 + i * 5),
+    is_transfer: false,
+    arrival_offset_min: Math.round(i * (offsetMin / Math.max(1, stationNames.length - 1))),
+  }));
 
-  if (dep === "연신내" && dest === "봉은사") {
-    const segmentAStations = ["연신내", "불광", "홍제", "경복궁", "종로3가", "고속터미널"];
-    const segmentBStations = ["고속터미널", "신논현", "선정릉", "봉은사"];
-    const all = [...segmentAStations, ...segmentBStations.slice(1)];
+  return {
+    start: departure,
+    end: destination,
+    summary: {
+      total_time_min: offsetMin,
+      transfer_count: 0,
+      payment: estimateSubwayPayment(2, 0),
+      overall_congestion: 65,
+      overall_level: congestionLevel(65),
+    },
+    stations,
+    walk_transfers: [],
+    segments: [],
+  };
+}
 
-    const buildStation = (name, idx, type, base = 72) => {
-      const arrivalDate = new Date(targetTime.getTime() + idx * 3 * 6e4);
-      const rate = base + ((idx % 3) * 8);
-      return {
-        name,
-        type,
-        arrivalTime: arrivalDate.toLocaleTimeString("ko-KR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }),
-        congestionRate: rate,
-        congestionStatus: getStatusFromRate(rate),
-      };
-    };
+function buildRoutes(targetTime, departure = "연신내", destination = "봉은사") {
+  const { fast, alt } = findRouteVariants(departure, destination, targetTime);
 
-    return [
-      {
-        lineName: "3호선",
-        lineColor: "#f47d30",
-        stations: segmentAStations.map((name, i) =>
-          buildStation(
-            name,
-            all.indexOf(name),
-            i === 0 ? "departure" : i === segmentAStations.length - 1 ? "transfer" : "waypoint",
-            76,
-          ),
-        ),
-      },
-      {
-        lineName: "9호선",
-        lineColor: "#c6b182",
-        stations: segmentBStations.map((name, i) =>
-          buildStation(
-            name,
-            all.indexOf(name),
-            i === 0 ? "transfer" : i === segmentBStations.length - 1 ? "arrival" : "waypoint",
-            68,
-          ),
-        ),
-      },
-    ];
+  if (fast) {
+    const primary = finderToRouteResponse(fast, departure, destination);
+    const alternative = alt ? finderToRouteResponse(alt, departure, destination) : undefined;
+    return adaptApiRouteResponse(
+      { ...primary, alternative, source: "mock" },
+      targetTime,
+    );
   }
 
-  if (!stationNames?.length) return [];
-  return [
-    {
-      lineName: "2호선",
-      lineColor: "#00a44a",
-      stations: stationNames.map((name, i) => {
-        const arrivalDate = new Date(targetTime.getTime() + i * 3 * 6e4);
-        return {
-          name,
-          type:
-            i === 0 ? "departure" : i === stationNames.length - 1 ? "arrival" : "waypoint",
-          arrivalTime: arrivalDate.toLocaleTimeString("ko-KR", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          }),
-          congestionRate: 70,
-          congestionStatus: getStatusFromRate(70),
-        };
-      }),
-    },
-  ];
-}
-function buildRoutes(targetTime, departure = "연신내", destination = "봉은사") {
-  const found = findRoute(departure, destination, targetTime);
-  const routeSegments =
-    found?.segments ?? fallbackSegments(found?.stations, targetTime, departure, destination);
-  const fastStations =
-    found?.stations ??
-    routeSegments.flatMap((seg, idx) =>
-      idx === 0 ? seg.stations.map((s) => s.name) : seg.stations.slice(1).map((s) => s.name),
-    );
-  const fastPredictions = (() => {
-    if (departure === "연신내" && destination === "봉은사") {
-      return getPredictionsForTime(targetTime).predictions;
-    }
-    return fastStations.map((name, idx) => {
-      const rate = Math.round(45 + Math.random() * 70 + (idx === 2 ? 40 : 0));
-      const d = new Date(targetTime.getTime() + idx * 3 * 6e4);
-      return {
-        stationId: idx,
-        stationName: name,
-        congestionRate: rate,
-        status: getStatusFromRate(rate),
-        heading: "방면",
-        arrivalTime: d.toLocaleTimeString("ko-KR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false
-        })
-      };
-    });
-  })();
-  const maxFast = Math.max(...fastPredictions.map((p) => p.congestionRate));
-  const firstLineName = routeSegments[0]?.lineName ?? "2호선";
-  const comfortPredictions = fastPredictions.map((p) => ({
-    ...p,
-    congestionRate: Math.max(40, Math.round(p.congestionRate * 0.55)),
-    status: getStatusFromRate(Math.max(40, Math.round(p.congestionRate * 0.55)))
-  }));
-  const maxComfort = Math.max(...comfortPredictions.map((p) => p.congestionRate));
-  const comfortSegments = routeSegments.map((seg) => ({
-    ...seg,
-    stations: seg.stations.map((st) => ({
-      ...st,
-      congestionRate: Math.max(40, Math.round((st.congestionRate ?? 60) * 0.55)),
-    })),
-  }));
-  return [
-    {
-      id: "fast",
-      label: "최단 시간 경로",
-      badge: "시간 우선",
-      totalTime: found ? Math.round(found.totalStops * 2.8) : 32,
-      payment: 1400,
-      transfers: found?.transfers ?? 0,
-      lineName: firstLineName,
-      maxCongestion: maxFast,
-      overallStatus: getStatusFromRate(maxFast),
-      description: fastStations.join(" ─ "),
-      stations: fastStations,
-      stationPredictions: fastPredictions,
-      segments: routeSegments
-    },
-    {
-      id: "comfort",
-      label: "추천 쾌적 경로",
-      badge: "쾌적 우선",
-      totalTime: found ? Math.round(found.totalStops * 2.8) + 7 : 39,
-      payment: 1400,
-      transfers: found?.transfers ?? 1,
-      lineName: firstLineName,
-      maxCongestion: maxComfort,
-      overallStatus: getStatusFromRate(maxComfort),
-      description: "혼잡 구간 우회 코스",
-      stations: fastStations,
-      stationPredictions: comfortPredictions,
-      recommended: true,
-      segments: comfortSegments
-    }
-  ];
+  const fallback = fallbackRouteResponse(targetTime, departure, destination);
+  return adaptApiRouteResponse({ ...fallback, source: "mock" }, targetTime);
 }
 const SLIDER_MARKS = ["17:30", "18:00", "18:30", "19:00", "19:30"];
 

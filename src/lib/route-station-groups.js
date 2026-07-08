@@ -36,11 +36,14 @@ export function buildRidingLegs(segments) {
         lineColor: seg.lineColor,
         lineName: seg.lineName,
       };
-      waypoints = seg.stations.slice(1).map((st) => ({
-        ...st,
-        lineColor: seg.lineColor,
-        lineName: seg.lineName,
-      }));
+      waypoints = seg.stations
+        .slice(1)
+        .filter((st) => st.name !== alighting.name)
+        .map((st) => ({
+          ...st,
+          lineColor: seg.lineColor,
+          lineName: seg.lineName,
+        }));
     }
 
     return {

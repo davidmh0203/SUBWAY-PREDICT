@@ -5,6 +5,7 @@ import { InteractiveMetroMap } from "@/components/InteractiveMetroMap";
 import { SLIDER_MARKS } from "@/lib/mock-data";
 import { formatTime } from "@/lib/congestion";
 import { getNearestStationsByGeo } from "@/lib/metro-network";
+import { sameStation } from "@/lib/station-id";
 
 export function MacroViewScreen({
   form,
@@ -25,14 +26,14 @@ export function MacroViewScreen({
         ...form,
         departure: label,
         departureStationId: station.id,
-        ...(form.destinationStationId === station.id
+        ...(sameStation(form.destinationStationId, station.id)
           ? { destination: "", destinationStationId: null }
           : {}),
       });
       setPickRole("destination");
       return;
     }
-    if (station.id === form.departureStationId) return;
+    if (sameStation(station.id, form.departureStationId)) return;
     onFormChange({
       ...form,
       destination: label,

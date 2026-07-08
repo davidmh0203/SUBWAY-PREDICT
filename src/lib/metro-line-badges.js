@@ -1,6 +1,7 @@
 import {
   LINE_COLOR_LABELS,
-  METRO_LINE_SEGMENTS
+  METRO_LINE_SEGMENTS,
+  normalizeLineColor,
 } from "./metro-network";
 const NODE_MERGE_TOL = 8;
 const MIN_COMPONENT_SEGS = 3;
@@ -25,7 +26,9 @@ function lineKeyToBadgeLabel(lineKey) {
     인천공항: "AREX",
     김포골드: "G",
     수인분당: "분당",
-    서해선: "서해"
+    분당선: "분당",
+    서해선: "서해",
+    "GTX-A": "GTX",
   };
   return shorts[lineKey] ?? lineKey.replace(/선$/, "").slice(0, 3);
 }
@@ -194,7 +197,7 @@ function computeLineEndBadges() {
         id: `badge-${idx++}`,
         x: pt.x + pt.dirX * offset,
         y: pt.y + pt.dirY * offset,
-        color,
+        color: normalizeLineColor(color),
         lineKey,
         label
       });

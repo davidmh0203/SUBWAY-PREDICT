@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { officialColorForSvgHex } from "../src/lib/station-line-colors.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -101,11 +102,14 @@ for (const m of styleBlock.matchAll(/\.(cls-\d+),\s*\.(cls-\d+)[^{]*\{[^}]*strok
 }
 
 const lineRegex = /<line class="(cls-\d+)" x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/g;
+function normalizeExtractedColor(color) {
+  return officialColorForSvgHex(color);
+}
 const segments = [];
 let segIdx = 0;
 while ((match = lineRegex.exec(svg)) !== null) {
   const cls = match[1];
-  const color = lineClassColors[cls] ?? "#94a3b8";
+  const color = normalizeExtractedColor(lineClassColors[cls] ?? "#94a3b8");
   const width = lineClassStrokes[cls] ?? 3;
   segments.push({
     id: `seg-${segIdx++}`,

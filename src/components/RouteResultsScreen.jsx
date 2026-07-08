@@ -47,8 +47,16 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
       try {
         const apiRoutes = await fetchRoutesFromApi(depName, destName, fetchTime);
         if (cancelled) return;
-        setRoutes(apiRoutes);
-        setRouteSource("api");
+        const localRoutes = buildRoutes(fetchTime, depName, destName);
+        const apiStops = Math.max(...apiRoutes.map((r) => r.stations?.length ?? 0), 0);
+        const localStops = Math.max(...localRoutes.map((r) => r.stations?.length ?? 0), 0);
+        if (localStops > apiStops) {
+          setRoutes(localRoutes);
+          setRouteSource("mock-graph");
+        } else {
+          setRoutes(apiRoutes);
+          setRouteSource("api");
+        }
       } catch {
         if (cancelled) return;
         setRoutes(buildRoutes(fetchTime, depName, destName));
@@ -141,6 +149,8 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
         ) : (
           routes.map((route, idx) => {
           const crowdLevel = rateToCrowdLevel(route.maxCongestion);
+          const baseTime = routes[0]?.totalTime ?? route.totalTime;
+          const timeDiff = route.totalTime - baseTime;
           return (
             <Card
               key={route.id}
@@ -150,7 +160,7 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
               <CardContent className="p-4">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <span className="font-semibold text-slate-800">
-                    {idx === 0 ? "최단 시간" : "쾌적 우선"}
+                    {route.label ?? (idx === 0 ? "최단 시간" : "대안 경로")}
                   </span>
                   <Badge variant="primary">{route.badge}</Badge>
                   {route.recommended && (
@@ -164,7 +174,9 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
                   <span className="flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5" />
                     {route.totalTime}분
-                    {idx === 1 && <span className="text-slate-400">(+7분)</span>}
+                    {timeDiff > 0 && (
+                      <span className="text-slate-400">(+{timeDiff}분)</span>
+                    )}
                   </span>
                   <span className="flex items-center gap-1">
                     <Coins className="h-3.5 w-3.5" />
@@ -174,6 +186,10 @@ export function RouteResultsScreen({ form, onBack, onSelectRoute, onTimeChange }
                     {route.lineName} · 환승 {route.transfers}회
                   </span>
                 </div>
+
+                {route.description && (
+                  <p className="mt-1 truncate text-xs text-slate-400">{route.description}</p>
+                )}
 
                 <p className="mt-2 text-sm text-slate-500">
                   혼잡도 <strong className="text-slate-700">{CROWD_LABELS[crowdLevel]}</strong>{" "}
