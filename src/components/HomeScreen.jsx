@@ -34,6 +34,7 @@ export function HomeScreen({
       </header>
 
       <TrafficForecastCarousel events={TODAY_EVENTS} />
+      {/* 이벤트를 받아서 자식인 TrafficForecastCarousel에 던져준다 */}
 
       <section>
         <div className="mb-2 flex items-center justify-between">

@@ -16,7 +16,7 @@ import {
 } from "@/lib/metro-network";
 import { sameStation } from "@/lib/station-id";
 import { TransferStationMarker } from "@/components/TransferStationMarker";
-import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
+import { isSeoulMetroStation, SEOUL_LINE_PATTERN } from "@/lib/seoul-metro-stations";
 import {
   BASE_STATION_R,
   getLabelLayout,
@@ -26,7 +26,6 @@ import {
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 4;
 const { width: VB_W, height: VB_H } = MAP_VIEWBOX;
-const SEOUL_LINE_PATTERN = /^[1-9]호선/;
 function InteractiveMetroMap({
   selectedTime = "18:30",
   departureStationId,
