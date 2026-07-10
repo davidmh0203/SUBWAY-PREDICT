@@ -55,15 +55,16 @@ def build_mock_route(start: str, end: str, hour: int) -> dict:
             "level": congestion_level(c),
         })
 
-    # 역별 역사 내 혼잡도
+    # 역별 역사 내 혼잡도 (구간 line 과 일치)
     stations = []
     for i, name in enumerate(path):
         c = min(base + i * 4, 100)
-        is_transfer = name == "교대"
+        seg_line = segments[min(i, len(segments) - 1)]["line"] if segments else "2호선"
+        is_transfer = i > 0 and i < len(path) - 1 and name == "교대"
         stations.append({
             "station_id": _find_id(name),
             "name": name,
-            "line": "3호선" if is_transfer else "2호선",
+            "line": seg_line,
             "station_congestion": c,
             "level": congestion_level(c),
             "is_transfer": is_transfer,
@@ -74,6 +75,7 @@ def build_mock_route(start: str, end: str, hour: int) -> dict:
         "summary": {
             "total_time_min": len(path) * 14,
             "transfer_count": sum(1 for s in stations if s["is_transfer"]),
+            "payment": 1400 + sum(1 for s in stations if s["is_transfer"]) * 50,
             "overall_congestion": overall,
             "overall_level": congestion_level(overall),
         },

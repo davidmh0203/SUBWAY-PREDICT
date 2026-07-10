@@ -3,7 +3,8 @@ import { CONGESTION_STYLES } from "@/lib/congestion";
 import { buildRidingLegs } from "@/lib/route-station-groups";
 import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
 
-function WalkConnector({ prevColor, nextColor }) {
+function WalkConnector({ prevColor, nextColor, minutes }) {
+  const label = minutes ? `도보 환승 ${minutes}분` : "도보 환승";
   return (
     <div className="relative -mt-2 mb-1 flex items-center gap-2 py-1 pl-[11px]">
       <div
@@ -15,7 +16,7 @@ function WalkConnector({ prevColor, nextColor }) {
       />
       <div className="ml-8 flex items-center gap-1.5 text-xs text-slate-500">
         <Footprints className="h-3.5 w-3.5" />
-        <span>도보 환승</span>
+        <span>{label}</span>
       </div>
       <div
         className="absolute bottom-0 left-[11px] h-1/2 w-[4px]"
@@ -46,6 +47,9 @@ function BoardingRow({ leg }) {
             <p className="mt-0.5 font-mono text-xs tabular-nums text-slate-400">
               {boarding.arrivalTime}
             </p>
+          )}
+          {boarding.heading && (
+            <p className="mt-0.5 text-xs text-slate-500">{boarding.heading}</p>
           )}
           {boarding.congestionRate !== undefined && congStyle && (
             <div className="mt-1 flex items-center gap-1.5">
@@ -168,6 +172,7 @@ export function RouteSchematic({ segments, expandedGroups, onToggleGroup }) {
             <WalkConnector
               prevColor={legs[i - 1].lineColor}
               nextColor={leg.lineColor}
+              minutes={segments[i - 1]?.walkAfter?.minutes}
             />
           )}
           <RidingLegBlock

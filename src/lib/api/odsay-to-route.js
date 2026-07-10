@@ -1,0 +1,186 @@
+import { getStatusFromRate } from "@/lib/congestion";
+import { estimateSubwayPayment, distributeStopOffsets } from "@/lib/route-timing";
+
+const LINE_PATTERN =
+  /(\d+호선|신분당선|경의중앙선|공항철도|경춘선|수인분당선|수인\.분당선|에버라인|우이신설|김포골드|신림선|GTX-[A-Z]|서해선)/;
+
+export function lineLabelFromLane(laneName) {
+  if (!laneName) return "지하철";
+  const match = laneName.match(LINE_PATTERN);
+  if (match) {
+    return match[1].replace("수인.분당선", "수인분당선");
+  }
+  return laneName.replace("수도권 ", "");
+}
+
+function mockCongestion(hour, index) {
+  let base = 42;
+  if ([7, 8, 9, 18, 19, 20].includes(hour)) base = 82;
+  else if ([6, 10, 17, 21, 22].includes(hour)) base = 60;
+  return Math.min(base + index * 4, 100);
+}
+
+function congestionLevel(value) {
+  if (value <= 40) return "여유";
+  if (value <= 65) return "보통";
+  if (value <= 80) return "주의";
+  return "혼잡";
+}
+
+function laneNameFromSubPath(subPath) {
+  const lane = subPath.lane;
+  if (Array.isArray(lane)) return lineLabelFromLane(lane[0]?.name);
+  return lineLabelFromLane(lane?.name);
+}
+
+function stopsFromSubPath(subPath) {
+  const listed = subPath.passStopList?.stations;
+  if (listed?.length) return listed;
+  if (subPath.startName && subPath.endName) {
+    return [
+      { stationName: subPath.startName, stationID: subPath.startID ?? "" },
+      { stationName: subPath.endName, stationID: subPath.endID ?? "" },
+    ];
+  }
+  return [];
+}
+
+/**
+ * ODsay path[] 항목 하나 → RouteResponse 형태
+ * @param {object} pathItem
+ * @param {{ start: string, end: string, departureTime: Date }} options
+ */
+export function parseOdsayPathItem(pathItem, options) {
+  const { departureTime } = options;
+  const hour = departureTime.getHours();
+  const info = pathItem.info ?? {};
+  const subPaths = pathItem.subPath ?? [];
+
+  const stations = [];
+  const walkTransfers = [];
+  const edgeSegments = [];
+  let offsetMin = 0;
+  let subwayLegIndex = 0;
+
+  subPaths.forEach((sp) => {
+    const trafficType = sp.trafficType;
+    const sectionTime = Number(sp.sectionTime) || 0;
+
+    if (trafficType === 3) {
+      if (stations.length > 0) {
+        walkTransfers.push({
+          afterStationIndex: stations.length - 1,
+          minutes: sectionTime,
+        });
+      }
+      offsetMin += sectionTime;
+      return;
+    }
+
+    if (trafficType !== 1) return;
+
+    const lineName = laneNameFromSubPath(sp);
+    const stops = stopsFromSubPath(sp);
+    const way = sp.way ? `${sp.way} 방면` : undefined;
+    const stopOffsets = distributeStopOffsets(stops.length, sectionTime);
+    const legStartOffset = offsetMin;
+
+    stops.forEach((stop, i) => {
+      const arrivalOffset = Math.round(legStartOffset + stopOffsets[i]);
+      const isTransfer =
+        stations.length > 0 &&
+        i === 0 &&
+        stations[stations.length - 1].name !== stop.stationName;
+
+      if (
+        stations.length > 0 &&
+        stations[stations.length - 1].name === stop.stationName
+      ) {
+        stations[stations.length - 1].is_transfer = true;
+        stations[stations.length - 1].line = lineName;
+        if (way) stations[stations.length - 1].heading = way;
+        stations[stations.length - 1].arrival_offset_min = arrivalOffset;
+        return;
+      }
+
+      const congestion = mockCongestion(hour, stations.length);
+      stations.push({
+        station_id: String(stop.stationID ?? ""),
+        name: stop.stationName,
+        line: lineName,
+        station_congestion: congestion,
+        level: congestionLevel(congestion),
+        is_transfer: isTransfer,
+        arrival_offset_min: arrivalOffset,
+        heading: way,
+      });
+    });
+
+    for (let i = 0; i < stops.length - 1; i += 1) {
+      const a = stops[i];
+      const b = stops[i + 1];
+      const c = mockCongestion(hour, edgeSegments.length);
+      edgeSegments.push({
+        line: lineName,
+        from_station: a.stationName,
+        to_station: b.stationName,
+        train_congestion: c,
+        level: congestionLevel(c),
+      });
+    }
+
+    offsetMin += sectionTime;
+    subwayLegIndex += 1;
+  });
+
+  if (stations.length > 0) {
+    stations[0].is_transfer = false;
+  }
+
+  const overall = Math.min(mockCongestion(hour, 0) + 6, 100);
+
+  return {
+    start: options.start,
+    end: options.end,
+    departure_time: departureTime.toISOString(),
+    summary: {
+      total_time_min: Number(info.totalTime) || offsetMin,
+      transfer_count: Number(info.subwayTransitCount) || 0,
+      payment:
+        Number(info.payment) ||
+        estimateSubwayPayment(stations.length, Number(info.subwayTransitCount) || 0),
+      overall_congestion: overall,
+      overall_level: congestionLevel(overall),
+    },
+    segments: edgeSegments,
+    stations,
+    walk_transfers: walkTransfers,
+  };
+}
+
+/**
+ * ODsay result 객체 → primary + optional alternative
+ * @param {object} result - data.result
+ * @param {{ start: string, end: string, departureTime: Date }} options
+ */
+export function parseOdsayResult(result, options) {
+  const paths = result?.path ?? [];
+  if (!paths.length) {
+    throw new Error("ODsay 경로 결과가 없습니다.");
+  }
+
+  const primary = parseOdsayPathItem(paths[0], options);
+  const alternative =
+    paths.length > 1 ? parseOdsayPathItem(paths[1], options) : undefined;
+
+  return { primary, alternative };
+}
+
+/** 목업 혼잡도 → UI rate */
+export function apiCongestionToRate(value) {
+  return Math.min(150, Math.round(Number(value) * 1.4));
+}
+
+export function getStatusFromCongestion(value) {
+  return getStatusFromRate(apiCongestionToRate(value));
+}
