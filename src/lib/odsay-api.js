@@ -1,49 +1,75 @@
-import { normalizeStationSearchQuery } from "@/lib/odsay-station.js";
+import { normalizeStationSearchQuery } from '@/lib/odsay-station.js'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api'
 
 /** 백엔드 ODsay 프록시 상태 */
 export async function getOdsayStatus() {
-  const res = await fetch(`${API_BASE}/odsay/status`);
-  if (!res.ok) throw new Error(`status ${res.status}`);
-  return res.json();
+  const res = await fetch(`${API_BASE}/odsay/status`)
+  if (!res.ok) throw new Error(`status ${res.status}`)
+  return res.json()
+}
+
+/**
+ * 길찾기 경로 테스트 — 백엔드 /odsay/path 경유 (mock fallback 없음, 진단용)
+ * @param {string} start 출발역 이름
+ * @param {string} end 도착역 이름
+ * @param {{ raw?: boolean }} [options]
+ */
+export async function getOdsayPath(start, end, options = {}) {
+  const { raw = false } = options
+  const params = new URLSearchParams({ start, end })
+  if (raw) params.set('raw', 'true')
+
+  const res = await fetch(`${API_BASE}/odsay/path?${params}`)
+  const data = await res.json()
+
+  if (!res.ok) {
+    const message = data?.detail ?? `경로 조회 오류 (${res.status})`
+    throw new Error(
+      typeof message === 'string' ? message : JSON.stringify(message),
+    )
+  }
+  return data
 }
 
 /**
  * 역 검색 — ODsay 직연결 대신 백엔드 /odsay/search-station 경유
  */
 export async function searchOdsayStation(rawQuery, options = {}) {
-  const {
-    cid = undefined,
-    displayCnt = 20,
-    normalize = true,
-  } = options;
+  const { cid = undefined, displayCnt = 20, normalize = true } = options
 
   const stationName = normalize
     ? normalizeStationSearchQuery(rawQuery)
-    : rawQuery.trim();
+    : rawQuery.trim()
 
   if (stationName.length < 2) {
-    throw new Error("역 이름은 2자 이상이어야 합니다. (「역」만 입력하면 검색되지 않습니다)");
+    throw new Error(
+      '역 이름은 2자 이상이어야 합니다. (「역」만 입력하면 검색되지 않습니다)',
+    )
   }
 
-  const params = new URLSearchParams({ query: rawQuery, displayCnt: String(displayCnt) });
-  if (cid != null) params.set("cid", String(cid));
-  if (!normalize) params.set("normalize", "false");
+  const params = new URLSearchParams({
+    query: rawQuery,
+    displayCnt: String(displayCnt),
+  })
+  if (cid != null) params.set('cid', String(cid))
+  if (!normalize) params.set('normalize', 'false')
 
-  const res = await fetch(`${API_BASE}/odsay/search-station?${params}`);
-  const data = await res.json();
+  const res = await fetch(`${API_BASE}/odsay/search-station?${params}`)
+  const data = await res.json()
 
   if (!res.ok) {
-    const message = data?.detail ?? `ODsay 프록시 오류 (${res.status})`;
-    throw new Error(typeof message === "string" ? message : JSON.stringify(message));
+    const message = data?.detail ?? `ODsay 프록시 오류 (${res.status})`
+    throw new Error(
+      typeof message === 'string' ? message : JSON.stringify(message),
+    )
   }
 
   if (data.error) {
     const message = Array.isArray(data.error)
-      ? data.error.map((e) => e.message).join(", ")
-      : String(data.error);
-    throw new Error(message);
+      ? data.error.map((e) => e.message).join(', ')
+      : String(data.error)
+    throw new Error(message)
   }
 
   return {
@@ -55,5 +81,5 @@ export async function searchOdsayStation(rawQuery, options = {}) {
       stripped역: normalize && rawQuery.trim() !== stationName,
       normalized: normalize,
     },
-  };
+  }
 }

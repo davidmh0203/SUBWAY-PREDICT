@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from datetime import datetime
 from typing import Any
 
@@ -16,26 +15,18 @@ from app.odsay_client import (
 )
 from app.odsay_cache import cache_get, cache_set
 from app.schemas import congestion_level
+from app.station_registry import line_label as _line_label
+from app.station_registry import resolve as _resolve_station
 
 
-def _line_label(lane_name: str | None) -> str:
-    if not lane_name:
-        return "지하철"
-    match = re.search(
-        r"(\d+호선|신분당선|경의중앙선|공항철도|경춘선|수인분당선|수인\.분당선|에버라인|우이신설|김포골드|신림선|GTX-[A-Z]|서해선)",
-        lane_name,
-    )
-    if match:
-        return match.group(1).replace("수인.분당선", "수인분당선")
-    return lane_name.replace("수도권 ", "")
-
-
-def _score_match(station_name: str, query: str) -> int:
-    if station_name == query:
+def _score_match(station_name: str, normalized_query: str) -> int:
+    # 역명 끝 "역"을 양쪽 모두 제거한 뒤 비교 (ODsay는 "서울역"처럼 역이 붙은 경우가 섞임)
+    name = normalize_station_name(station_name)
+    if name == normalized_query:
         return 100
-    if station_name.startswith(query):
+    if name.startswith(normalized_query):
         return 80
-    if query in station_name:
+    if normalized_query in name:
         return 60
     return 0
 
@@ -44,7 +35,14 @@ def _pick_best_station(stations: list[dict[str, Any]], query: str) -> dict[str, 
     if not stations:
         return None
     normalized = normalize_station_name(query)
-    return max(stations, key=lambda s: _score_match(s.get("stationName", ""), normalized))
+    # 점수 동률이면 노선 번호(type)가 낮은 지하철 우선 → 서울역이면 1호선 선택
+    return max(
+        stations,
+        key=lambda s: (
+            _score_match(s.get("stationName", ""), normalized),
+            -int(s.get("type", 999) or 999),
+        ),
+    )
 
 
 def _odsay_station_to_api(station: dict[str, Any]) -> dict[str, str | list[str]]:
@@ -150,12 +148,15 @@ def _build_segments_from_subpaths(
             )
 
         for i, stop in enumerate(stops):
-            is_transfer = idx_sp > 0 and i == 0
+            fallback_transfer = idx_sp > 0 and i == 0
+            row = _resolve_station(line, stop.get("stationName", ""))
+            is_transfer = row["is_transfer"] if row else fallback_transfer
             if route_stations and route_stations[-1]["name"] == stop.get("stationName"):
                 route_stations[-1]["is_transfer"] = (
                     route_stations[-1]["is_transfer"] or is_transfer
                 )
                 continue
+            # TODO(step2): congestion lookup — resolve()+daytype()+time_bucket()+resolve_direction()
             c = min(base + len(route_stations) * 4, 100)
             route_stations.append(
                 {

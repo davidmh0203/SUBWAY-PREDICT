@@ -7,6 +7,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import station_registry
 from app.routers import stations, congestion, odsay
 
 app = FastAPI(title="여유로 API", version="0.1.0")
@@ -30,3 +31,8 @@ app.include_router(odsay.router)
 def health():
     """서버 상태 확인용."""
     return {"status": "ok"}
+
+
+@app.get("/registry/stats", tags=["기본"])
+def registry_stats():
+    return station_registry.stats()

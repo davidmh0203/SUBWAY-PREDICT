@@ -1,0 +1,12 @@
+[
+  { "line": "2호선", "name": "홍대입구", "name_norm": "홍대입구", "station_code": "239", "seq": 1 },
+  { "line": "2호선", "name": "교대", "name_norm": "교대", "station_code": "222-1", "seq": 2 },
+  { "line": "2호선", "name": "강남", "name_norm": "강남", "station_code": "222", "seq": 3 },
+  { "line": "2호선", "name": "역삼", "name_norm": "역삼", "station_code": "223", "seq": 4 },
+  { "line": "2호선", "name": "삼성", "name_norm": "삼성", "station_code": "220", "seq": 5 },
+  { "line": "2호선", "name": "잠실", "name_norm": "잠실", "station_code": "216", "seq": 6 },
+  { "line": "3호선", "name": "교대", "name_norm": "교대", "station_code": "331", "seq": 1 },
+  { "line": "1호선", "name": "서울역", "name_norm": "서울", "station_code": "133", "seq": 1 },
+  { "line": "4호선", "name": "서울역", "name_norm": "서울", "station_code": "426", "seq": 1 },
+  { "line": "8호선", "name": "잠실", "name_norm": "잠실", "station_code": "814", "seq": 1 }
+]
