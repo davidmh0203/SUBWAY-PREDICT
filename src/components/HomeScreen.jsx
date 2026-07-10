@@ -1,5 +1,5 @@
 import { Settings, MapPin, Train, LocateFixed } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TimeBottomSheet, TimePickerButton } from "@/components/TimeBottomSheet";
@@ -8,6 +8,8 @@ import { StationSearchField } from "@/components/StationSearchField";
 import { TODAY_EVENTS } from "@/lib/mock-data";
 import { CROWD_LABELS } from "@/lib/congestion";
 import { APP_NAME } from "@/lib/app-brand";
+import { fetchTodayDayContext } from "@/lib/api/calendar-client";
+import { enrichForecastEvents } from "@/lib/event-enrichment";
 
 export function HomeScreen({
   form,
@@ -18,7 +20,24 @@ export function HomeScreen({
   onRequestLocation,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [dayContext, setDayContext] = useState(null);
   const canSearch = Boolean(form.departureStationId && form.destinationStationId);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const ctx = await fetchTodayDayContext();
+      if (!cancelled) setDayContext(ctx);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const forecastEvents = useMemo(
+    () => enrichForecastEvents(TODAY_EVENTS, dayContext),
+    [dayContext],
+  );
 
   return (
     <div className="animate-fade-in space-y-5 pb-24">
@@ -33,8 +52,7 @@ export function HomeScreen({
         <div className="w-10" aria-hidden />
       </header>
 
-      <TrafficForecastCarousel events={TODAY_EVENTS} />
-      {/* 이벤트를 받아서 자식인 TrafficForecastCarousel에 던져준다 */}
+      <TrafficForecastCarousel events={forecastEvents} />
 
       <section>
         <div className="mb-2 flex items-center justify-between">

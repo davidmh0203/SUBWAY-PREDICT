@@ -8,7 +8,7 @@ import {
 import { LINE_END_BADGES } from "./metro-line-badges";
 import { getRegistryLines } from "./station-line-registry";
 import { colorForLineKey } from "./station-line-colors";
-import { isSupportedSeoulLine } from "./seoul-metro-stations";
+import { isExcludedLine, isSupportedSeoulLine } from "./seoul-metro-stations";
 const BASE_STATION_R = 4.5;
 const TRANSFER_STATION_R = BASE_STATION_R * 1.5;
 const ENDPOINT_TOL = 8;
@@ -56,7 +56,9 @@ function computeAllStationMeta() {
       lineColors = registryLines.map((key) => colorForLineKey(key));
     }
 
-    lineKeys = lineKeys.filter((key) => isSupportedSeoulLine(key) || !/^\d+호선/.test(key));
+    lineKeys = lineKeys.filter(
+      (key) => !isExcludedLine(key) && (isSupportedSeoulLine(key) || !/^\d+호선/.test(key)),
+    );
     lineColors = lineKeys.map((key) => colorForLineKey(key));
 
     const isTransfer = lineKeys.length >= 2;

@@ -13,3 +13,9 @@ load_dotenv(_root / "backend" / ".env")
 ODSAY_API_KEY = os.getenv("ODSAY_API_KEY", "").strip()
 ODSAY_API_BASE = os.getenv("ODSAY_API_BASE", "https://api.odsay.com/v1/api").rstrip("/")
 ODSAY_SEOUL_CID = int(os.getenv("ODSAY_SEOUL_CID", "1000"))
+
+DATA_GO_API_KEY = os.getenv("DATA_GO_API_KEY", "").strip()
+SPCDE_API_BASE = os.getenv(
+    "SPCDE_API_BASE",
+    "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService",
+).rstrip("/")

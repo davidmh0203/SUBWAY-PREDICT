@@ -7,7 +7,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import stations, congestion, odsay
+from app.routers import stations, congestion, odsay, calendar
 
 app = FastAPI(title="여유로 API", version="0.1.0")
 
@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(stations.router)
 app.include_router(congestion.router)
 app.include_router(odsay.router)
+app.include_router(calendar.router)
 
 
 @app.get("/health", tags=["기본"])

@@ -20,5 +20,7 @@ export const STATION_LINE_REGISTRY = {
 
 export function getRegistryLines(stationName) {
   const clean = stationName.replace(/역.*$/, "").trim();
-  return STATION_LINE_REGISTRY[clean] ?? null;
+  const lines = STATION_LINE_REGISTRY[clean];
+  if (!lines) return null;
+  return lines.filter((lineKey) => lineKey !== "9호선");
 }

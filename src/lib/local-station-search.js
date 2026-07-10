@@ -2,7 +2,7 @@ import { METRO_STATIONS } from "@/lib/metro-network";
 import { getStationMeta } from "@/lib/metro-label-layout";
 import { normalizeStationSearchQuery } from "@/lib/odsay-station";
 import { colorForLineKey } from "@/lib/station-line-colors";
-import { isSupportedSeoulLine } from "@/lib/seoul-metro-stations";
+import { isSelectableLineKey } from "@/lib/seoul-metro-stations";
 import { sameStation, stationIdWithLine } from "@/lib/station-id";
 
 function scoreMatch(name, query) {
@@ -14,26 +14,31 @@ function scoreMatch(name, query) {
 }
 
 function expandLineVariants(station, meta) {
-  if (meta.lineKeys.length <= 1) {
+  const selectableLines = meta.lineKeys.filter((lineKey) => isSelectableLineKey(lineKey));
+  if (selectableLines.length === 0) return [];
+
+  if (selectableLines.length === 1) {
+    const lineKey = selectableLines[0];
     return [
       {
-        id: station.id,
+        id: stationIdWithLine(station.id, lineKey),
         name: station.name,
-        lineKeys: meta.lineKeys,
-        lineColors: meta.lineColors,
+        lineKeys: [lineKey],
+        lineColors: [
+          meta.lineColors[meta.lineKeys.indexOf(lineKey)] ?? colorForLineKey(lineKey),
+        ],
+        primaryLine: lineKey,
       },
     ];
   }
 
-  return meta.lineKeys
-    .filter((lineKey) => isSupportedSeoulLine(lineKey))
-    .map((lineKey) => ({
-      id: stationIdWithLine(station.id, lineKey),
-      name: station.name,
-      lineKeys: [lineKey],
-      lineColors: [meta.lineColors[meta.lineKeys.indexOf(lineKey)] ?? colorForLineKey(lineKey)],
-      primaryLine: lineKey,
-    }));
+  return selectableLines.map((lineKey) => ({
+    id: stationIdWithLine(station.id, lineKey),
+    name: station.name,
+    lineKeys: [lineKey],
+    lineColors: [meta.lineColors[meta.lineKeys.indexOf(lineKey)] ?? colorForLineKey(lineKey)],
+    primaryLine: lineKey,
+  }));
 }
 
 /**
@@ -51,11 +56,7 @@ export function searchLocalStations(rawQuery, options = {}) {
     const s = scoreMatch(station.name, query);
     if (s === 0) continue;
     const meta = getStationMeta(station);
-    const variants = expandLineVariants(station, meta).filter(
-      (variant) =>
-        variant.lineKeys.length === 0 ||
-        variant.lineKeys.some((lineKey) => isSupportedSeoulLine(lineKey)),
-    );
+    const variants = expandLineVariants(station, meta);
     if (variants.length === 0) continue;
     for (const variant of variants) {
       if (excludeId && sameStation(variant.id, excludeId)) continue;
