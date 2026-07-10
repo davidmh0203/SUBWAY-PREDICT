@@ -4,6 +4,7 @@ import viewboxJson from "./generated/metro-viewbox.json";
 import {
   SVG_HEX_TO_LINE_KEY,
   colorForLineKey,
+  lineKeyForSvgHex,
   officialColorForSvgHex,
 } from "./station-line-colors";
 
@@ -28,7 +29,16 @@ function normalizeLineColor(color) {
 }
 
 function getLineKeyForColor(color) {
-  return LINE_COLOR_LABELS[color.toLowerCase()] ?? color.toLowerCase();
+  if (!color) return color;
+  const normalized = color.toLowerCase();
+  const direct = LINE_COLOR_LABELS[normalized];
+  if (direct) return direct;
+
+  // 공식색으로 정규화된 HEX(#BDB092 등)도 호선 키로 인식
+  const fromHex = lineKeyForSvgHex(normalized);
+  if (fromHex) return fromHex;
+
+  return normalized;
 }
 function segmentMatchesLine(seg, lineKey) {
   if (!lineKey) return true;

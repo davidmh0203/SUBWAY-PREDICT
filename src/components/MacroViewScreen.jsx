@@ -76,7 +76,7 @@ export function MacroViewScreen({
           <p className="mt-0.5 text-[11px] text-rose-600">위치 권한을 허용하면 내 위치로 이동할 수 있어요.</p>
         )}
         <p className="mt-1 rounded-lg bg-blue-50 px-2.5 py-1.5 text-[11px] text-blue-800">
-          1~9호선 서울 지하철 역만 표시됩니다. 경기·인천 등 수도권 외 역은 경로 텍스트에서만
+          1~8호선 서울 지하철 역만 표시됩니다. 경기·인천 등 수도권 외 역은 경로 텍스트에서만
           확인할 수 있습니다.
         </p>
       </header>

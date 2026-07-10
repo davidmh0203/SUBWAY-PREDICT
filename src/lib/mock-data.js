@@ -265,6 +265,7 @@ const TODAY_EVENTS = [
     impactScore: 60,
     emoji: "📢",
     title: "출근 시간대 안내",
+    category: "commute",
     summary: "7~9시 1·4호선 혼잡 예상 · 여유 시간 확보 권장",
   },
 ];

@@ -2,7 +2,23 @@ import { METRO_STATIONS } from "./metro-network";
 import { getStationLineColor, getLineKeyForColor } from "./metro-network";
 import { baseStationId } from "./station-id";
 
-const SEOUL_LINE_PATTERN = /^[1-9]호선/;
+/** 서울 지하철 1~8호선만 지원 (9호선 제외) */
+const SEOUL_LINE_PATTERN = /^[1-8]호선/;
+const EXCLUDED_LINE_KEYS = new Set(["9호선"]);
+
+function isExcludedLine(lineKey) {
+  return EXCLUDED_LINE_KEYS.has(lineKey);
+}
+
+function isSupportedSeoulLine(lineKey) {
+  if (!lineKey || isExcludedLine(lineKey)) return false;
+  return SEOUL_LINE_PATTERN.test(lineKey);
+}
+
+/** 역 검색·배지에 노출할 호선인지 (1~8호선만) */
+function isSelectableLineKey(lineKey) {
+  return isSupportedSeoulLine(lineKey);
+}
 
 const EXTRA_STATIONS = [
   "신도림", "구로디지털", "신림", "봉천", "사당", "방배", "서초", "강남",
@@ -28,4 +44,12 @@ function isSeoulMetroStation(stationIdOrName) {
   return SEOUL_STATION_IDS.has(clean);
 }
 
-export { SEOUL_STATION_IDS, isSeoulMetroStation };
+export {
+  EXCLUDED_LINE_KEYS,
+  SEOUL_LINE_PATTERN,
+  SEOUL_STATION_IDS,
+  isExcludedLine,
+  isSeoulMetroStation,
+  isSelectableLineKey,
+  isSupportedSeoulLine,
+};

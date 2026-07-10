@@ -18,16 +18,22 @@ function createDefaultTime() {
 
 function readHashView() {
   const hash = window.location.hash.replace("#", "");
+  // 현재페이지의 location: 주소 url 에서 #과 뒤에 있는 문자를 가져온다 -> url의 해시: 프레그먼트를
+  // #와 그 뒤에 붙는 문자열을 가져온다 ex: #section1
+  //가져온문자열에서 #를 "" 순수 빈 문자열로 바꾸고  순수한값만 추출-> section1만
+  // 그렇게 가져온 순수 값을 hash 라는 변수에 담음
   return VIEWS.includes(hash) ? hash : null;
+  // 가져온 해시가 VIEW에 담긴 라우터와 일치하면 그대로, 아니면 null 리턴
 }
 
 export default function App() {
   const [view, setView] = useState(() => readHashView() ?? "home");
+  // 해시 받아왔을때 그게 참이면 그 값으로 , 유효하지않은 null/false이면 ?? 뒤에 있는 문자열로 사용
   const [form, setForm] = useState({
-    departure: "연신내역",
-    destination: "봉은사역",
-    departureStationId: "연신내",
-    destinationStationId: "봉은사",
+    departure: "강남역",
+    destination: "잠실역",
+    departureStationId: "강남|2호선",
+    destinationStationId: "잠실|2호선",
     targetTime: createDefaultTime(),
   });
   const [selectedRoute, setSelectedRoute] = useState(null);
@@ -38,18 +44,30 @@ export default function App() {
     () => getNearbyStationCongestion(form.targetTime, geoLocation, 4),
     [form.targetTime, geoLocation],
   );
-
+  // 페이지를 어디로 보내주는 함수
+  //useCallback : 컴포넌트 리렌더링될때 함수 새로 생성하지않고 재사용(메모이제이션)하게 해주는 훅
+  // 불피요한 함수 재생성 막기- > 자식컴포넌트 렌더링 최적화
+  // 컴포넌트 렌더링될때마다 내부함수들도 모두 새로 만들어짐 ->
+  // 자식컴포넌트의 props로 전달되면 자식컴포넌트가 함수 바뀐줄 알고 불필요하게 리렌더링
+  // useCallback 하면 의존성 배열의 값 변경되지 않는한 기존에 만든 함수객체를 그대로 유지
+  // useCallback 함수 저장? 자식에게 함수 전달되어도 리렌더링시 함수 객체가 사라지지 않게
   const navigateTo = useCallback(
     (next) => {
+      // next라는 데이터 전달.  next는 움직일 페이지 정보 -> 해시 라우팅이니까 움직이고 싶은 페이지의 해시값을 넣어주면됨
       if (next === "detail") {
+        // 입력받은 다음 페이지 데이터가  디테일이면
         setSelectedRoute((prev) => {
-          if (prev) return prev;
+          // 선택된 경로정보 수정 하는 함수
+          if (prev) return prev; // 전달받은 데이터 있으면 prev: 전달받은그 데이터 반환
           const routes = buildRoutes(
+            // 그게 아니면 경로 정보들을 form 에 담긴 걸로 가져오기, '역' 텍스트는 ""로 대체해주고.
             form.targetTime,
             form.departure.replace(/역.*$/, ""),
             form.destination.replace(/역.*$/, ""),
           );
-          return routes[0] ?? null;
+          return routes[0] ?? null; // 그리고 경로정보 리스트의 0번째 를 리턴해
+          // 경로정보 배열이 참이면: 배열이 채워져있으면 0번째 데이터 반환
+          // 그게 아니면 null 리턴
         });
       }
       if (readHashView() !== next) {
@@ -153,7 +171,7 @@ export default function App() {
         )}
         {view === "results" && (
           <RouteResultsScreen
-            form={form}
+            form={form} // form 정보 prop으로 받기
             onBack={() => navigateTo("home")}
             onSelectRoute={handleSelectRoute}
             onTimeChange={handleTimeChange}
