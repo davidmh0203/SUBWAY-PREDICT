@@ -1,13 +1,13 @@
 import {
-  LINE_COLOR_LABELS,
   METRO_LINE_SEGMENTS,
+  getLineKeyForColor,
   normalizeLineColor,
 } from "./metro-network";
 const NODE_MERGE_TOL = 8;
 const MIN_COMPONENT_SEGS = 3;
 const BRANCH_SEG_RATIO = 0.2;
 function colorToLineKey(color) {
-  return LINE_COLOR_LABELS[color.toLowerCase()] ?? color.toLowerCase();
+  return getLineKeyForColor(color);
 }
 function lineKeyToBadgeLabel(lineKey) {
   const num = lineKey.match(/^(\d+)호선/);

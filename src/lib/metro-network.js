@@ -2,8 +2,8 @@ import stationsJson from "./generated/metro-stations.json";
 import segmentsJson from "./generated/metro-line-segments.json";
 import viewboxJson from "./generated/metro-viewbox.json";
 import {
-  SVG_HEX_TO_LINE_KEY,
   colorForLineKey,
+  lineKeyForSvgHex,
   officialColorForSvgHex,
 } from "./station-line-colors";
 
@@ -12,8 +12,6 @@ const METRO_LINE_SEGMENTS = segmentsJson;
 const MAP_VIEWBOX = viewboxJson;
 const stationById = new Map(METRO_STATIONS.map((s) => [s.id, s]));
 const stationByName = new Map(METRO_STATIONS.map((s) => [s.name, s]));
-
-const LINE_COLOR_LABELS = { ...SVG_HEX_TO_LINE_KEY };
 
 function getStation(id) {
   return stationById.get(id) ?? stationByName.get(id.replace(/역$/, ""));
@@ -28,7 +26,7 @@ function normalizeLineColor(color) {
 }
 
 function getLineKeyForColor(color) {
-  return LINE_COLOR_LABELS[color.toLowerCase()] ?? color.toLowerCase();
+  return lineKeyForSvgHex(color) ?? color.toLowerCase();
 }
 function segmentMatchesLine(seg, lineKey) {
   if (!lineKey) return true;
@@ -114,7 +112,6 @@ function getSegmentCrowdLevel(seg, time) {
   return levels[time] ?? null;
 }
 export {
-  LINE_COLOR_LABELS,
   MAP_VIEWBOX,
   METRO_LINE_SEGMENTS,
   METRO_STATIONS,
