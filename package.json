@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "npm run extract-metro && vite build",
     "extract-metro": "node scripts/extract-metro-data.mjs",
+    "verify:seoul-lines": "node scripts/verify-seoul-line-filter.mjs",
     "export-figma": "node scripts/export-figma.mjs",
     "export-figma:screens": "node scripts/capture-figma-screens.mjs",
     "export-figma:pdf": "node scripts/build-figma-pdf.mjs",

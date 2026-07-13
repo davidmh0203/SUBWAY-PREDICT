@@ -2,7 +2,7 @@ import stationsJson from "./generated/metro-stations.json";
 import segmentsJson from "./generated/metro-line-segments.json";
 import viewboxJson from "./generated/metro-viewbox.json";
 import {
-  SVG_HEX_TO_LINE_KEY,
+  HEX_TO_LINE_KEY,
   colorForLineKey,
   lineKeyForSvgHex,
   officialColorForSvgHex,
@@ -14,7 +14,8 @@ const MAP_VIEWBOX = viewboxJson;
 const stationById = new Map(METRO_STATIONS.map((s) => [s.id, s]));
 const stationByName = new Map(METRO_STATIONS.map((s) => [s.name, s]));
 
-const LINE_COLOR_LABELS = { ...SVG_HEX_TO_LINE_KEY };
+/** SVG 원본 + 공식 상징색 HEX → 호선 키 (seoulOnly 필터용) */
+const LINE_COLOR_LABELS = { ...HEX_TO_LINE_KEY };
 
 function getStation(id) {
   return stationById.get(id) ?? stationByName.get(id.replace(/역$/, ""));

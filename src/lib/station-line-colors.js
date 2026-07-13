@@ -1,6 +1,10 @@
 /**
  * 수도권 전철 노선 상징색 (위키백과/서울시 노선도 가이드 기준)
  * @see https://ko.wikipedia.org/wiki/위키프로젝트:철도/지하철
+ *
+ * extract 결과는 공식색(#00A84D 등)으로 저장되고, SVG 원본은 다른 HEX(#00a44a 등)를
+ * 쓸 수 있다. seoulOnly 필터는 키가 `1호선` 형태일 때만 통과하므로
+ * 공식색 → 호선키 매핑이 빠지면 6호선(#CD7C2F, SVG와 동일)만 남는 버그가 난다.
  */
 
 export const LINE_KEY_COLORS = {
@@ -61,17 +65,39 @@ export const SVG_HEX_TO_LINE_KEY = {
   "#c77539": "서해선",
 };
 
+const SEOUL_NUMERIC_LINE = /^[1-9]호선$/;
+
+/** 같은 HEX에 키가 여러 개일 때 seoulOnly에 유리한 `N호선`을 우선 */
+function preferLineKey(existing, next) {
+  if (!existing) return next;
+  if (!next) return existing;
+  const existingSeoul = SEOUL_NUMERIC_LINE.test(existing);
+  const nextSeoul = SEOUL_NUMERIC_LINE.test(next);
+  if (nextSeoul && !existingSeoul) return next;
+  if (existingSeoul && !nextSeoul) return existing;
+  return existing;
+}
+
+/**
+ * SVG 원본 HEX + 공식 상징색 HEX → 호선 키
+ * (공식색만 있고 SVG 맵에 없으면 예전엔 seoulOnly에서 거의 전부 탈락함)
+ */
+export const HEX_TO_LINE_KEY = (() => {
+  const map = {};
+  for (const [lineKey, color] of Object.entries(LINE_KEY_COLORS)) {
+    const hex = color.toLowerCase();
+    map[hex] = preferLineKey(map[hex], lineKey);
+  }
+  for (const [hex, lineKey] of Object.entries(SVG_HEX_TO_LINE_KEY)) {
+    const key = hex.toLowerCase();
+    map[key] = preferLineKey(map[key], lineKey);
+  }
+  return map;
+})();
+
 export function lineKeyForSvgHex(hex) {
   if (!hex) return null;
-  const normalized = hex.toLowerCase();
-  const mapped = SVG_HEX_TO_LINE_KEY[normalized];
-  if (mapped) return mapped;
-
-  // Fallback: 이미 공식색으로 정규화된 HEX도 호선 키로 역매핑
-  for (const [lineKey, lineColor] of Object.entries(LINE_KEY_COLORS)) {
-    if (lineColor.toLowerCase() === normalized) return lineKey;
-  }
-  return null;
+  return HEX_TO_LINE_KEY[hex.toLowerCase()] ?? null;
 }
 
 export function colorForLineKey(lineKey) {
@@ -82,7 +108,7 @@ export function colorForLineKey(lineKey) {
 /** SVG/레거시 HEX → 공식 상징색 */
 export function officialColorForSvgHex(hex) {
   if (!hex) return hex;
-  const lineKey = SVG_HEX_TO_LINE_KEY[hex.toLowerCase()];
+  const lineKey = lineKeyForSvgHex(hex);
   if (lineKey) return colorForLineKey(lineKey);
   return hex.toLowerCase();
 }
