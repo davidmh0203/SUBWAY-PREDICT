@@ -9,15 +9,22 @@ from pydantic import BaseModel
 
 
 # ---------- 공통 헬퍼 ----------
-def congestion_level(value: int) -> str:
-    """혼잡도 지수(0~100)를 단계 라벨로 변환. (명세 2번 표 기준)"""
-    if value <= 40:
-        return "여유"
-    if value <= 65:
+def congestion_level(value: int | float) -> str:
+    """혼잡도 %(역 최대 대비) → 모델 단계 라벨.
+
+    CongestionPredictor CONGESTION_LEVELS와 동일:
+    여유 <30 / 보통 <60 / 혼잡 <80 / 매우혼잡 <100 / 극혼잡 ≥100
+    """
+    pct = float(value)
+    if pct >= 100:
+        return "극혼잡"
+    if pct >= 80:
+        return "매우혼잡"
+    if pct >= 60:
+        return "혼잡"
+    if pct >= 30:
         return "보통"
-    if value <= 80:
-        return "주의"
-    return "혼잡"
+    return "여유"
 
 
 # ---------- /stations ----------
@@ -42,7 +49,7 @@ class Segment(BaseModel):
     line: str
     from_station: str
     to_station: str
-    train_congestion: int      # 열차 혼잡도
+    train_congestion: int      # 열차 혼잡도 (역 최대 대비 %)
     level: str
 
 
@@ -50,9 +57,16 @@ class RouteStation(BaseModel):
     station_id: str
     name: str
     line: str
-    station_congestion: int    # 역사 내 혼잡도
+    station_congestion: int    # 혼잡도 % (모델 congestion_pct 반올림)
     level: str
     is_transfer: bool
+    congestion_pct: float | None = None
+    congestion_label: str | None = None  # increase | normal | decrease
+    congestion_color: str | None = None
+    prob_increase: float | None = None
+    prob_normal: float | None = None
+    prob_decrease: float | None = None
+    source: str | None = None  # model | mock
 
 
 class RouteSummary(BaseModel):
@@ -61,6 +75,7 @@ class RouteSummary(BaseModel):
     payment: int | None = None
     overall_congestion: int
     overall_level: str
+    model_source: str | None = None
 
 
 class RouteOption(BaseModel):
@@ -88,3 +103,46 @@ class StationCongestion(BaseModel):
     time: datetime
     station_congestion: int
     level: str
+    congestion_pct: float | None = None
+    congestion_label: str | None = None
+    congestion_color: str | None = None
+    prob_increase: float | None = None
+    prob_normal: float | None = None
+    prob_decrease: float | None = None
+    source: str | None = None
+
+
+# ---------- /congestion/hourly (ODsay 없음 — 모델만) ----------
+class HourlyCongestionPoint(BaseModel):
+    hour: int
+    rate: int
+    level: str
+    congestion_pct: float | None = None
+    source: str | None = None
+
+
+class HourlyCongestionResponse(BaseModel):
+    name: str
+    date: str
+    source: str
+    points: list[HourlyCongestionPoint]
+
+
+# ---------- /congestion/batch (ODsay 없음 — 모델만, 슬라이더용) ----------
+class BatchCongestionRequest(BaseModel):
+    names: list[str]
+    departure_time: datetime
+
+
+class BatchCongestionItem(BaseModel):
+    name: str
+    station_congestion: int
+    level: str
+    congestion_pct: float | None = None
+    source: str | None = None
+
+
+class BatchCongestionResponse(BaseModel):
+    departure_time: datetime
+    source: str
+    stations: list[BatchCongestionItem]

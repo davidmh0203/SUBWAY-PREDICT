@@ -140,10 +140,12 @@ function getChartData() {
   });
 }
 function congestionLevel(value) {
-  if (value <= 40) return "여유";
-  if (value <= 65) return "보통";
-  if (value <= 80) return "주의";
-  return "혼잡";
+  const pct = Number(value) || 0;
+  if (pct >= 100) return "극혼잡";
+  if (pct >= 80) return "매우혼잡";
+  if (pct >= 60) return "혼잡";
+  if (pct >= 30) return "보통";
+  return "여유";
 }
 
 function finderToRouteResponse(found, departure, destination) {

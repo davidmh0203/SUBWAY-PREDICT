@@ -1,5 +1,5 @@
 import { ArrowLeft, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -12,7 +12,22 @@ import {
   dateToSliderIndex,
   sliderIndexToDate,
 } from "@/lib/mock-data";
-import { fetchRoutesFromApi } from "@/lib/api/client";
+import {
+  fetchBatchCongestion,
+  fetchHourlyCongestion,
+  fetchRoutesFromApi,
+} from "@/lib/api/client";
+import {
+  applyCongestionMapToRoutes,
+  collectStationNamesFromRoutes,
+} from "@/lib/api/apply-congestion";
+
+const SOURCE_LABEL = {
+  "api-model": "API·모델",
+  api: "API",
+  "mock-graph": "로컬 픽스처",
+  mock: "목업",
+};
 
 export function RouteResultsScreen({
   form,
@@ -25,61 +40,62 @@ export function RouteResultsScreen({
   );
   const [debouncedTime, setDebouncedTime] = useState(form.targetTime);
   const [sliderLoading, setSliderLoading] = useState(false);
+  const [baseRoutes, setBaseRoutes] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(true);
   const [routeSource, setRouteSource] = useState(null);
+  const [congestionLoading, setCongestionLoading] = useState(false);
+  const [hourlyData, setHourlyData] = useState(() =>
+    getHourlyCongestionData(form.targetTime.getHours()),
+  );
+  const [hourlySource, setHourlySource] = useState("mock");
+
   const depName = form.departure.replace(/역.*$/, "");
   const destName = form.destination.replace(/역.*$/, "");
   const [direction, setDirection] = useState(`${destName} 방면`);
 
+  // 경로(ODsay)는 화면 진입 시 1회만
+  const searchTimeRef = useRef(form.targetTime);
+
   useEffect(() => {
     setSliderLoading(true);
     const timer = setTimeout(() => {
-      const next = sliderIndexToDate(sliderIndex, form.targetTime);
+      const next = sliderIndexToDate(sliderIndex, searchTimeRef.current);
       setDebouncedTime(next);
       onTimeChange(next);
       setSliderLoading(false);
     }, 280);
     return () => clearTimeout(timer);
-  }, [sliderIndex, form.targetTime, onTimeChange]);
+  }, [sliderIndex, onTimeChange]);
 
-  // ODsay /predict/route는 출발·도착·검색 시각 기준 1회만 호출 (슬라이더 조절 시 재호출 안 함)
   useEffect(() => {
     let cancelled = false;
     setRoutesLoading(true);
-    const fetchTime = form.targetTime;
+    const fetchTime = searchTimeRef.current;
 
     (async () => {
       try {
-        const apiRoutes = await fetchRoutesFromApi(
-          depName,
-          destName,
-          fetchTime,
-        );
+        const apiRoutes = await fetchRoutesFromApi(depName, destName, fetchTime);
         if (cancelled) return;
-        const localRoutes = buildRoutes(fetchTime, depName, destName);
-        const apiStops = Math.max(
-          ...apiRoutes.map((r) => r.stations?.length ?? 0),
-          0,
-        );
-        const localStops = Math.max(
-          ...localRoutes.map((r) => r.stations?.length ?? 0),
-          0,
-        );
-        // 로컬 픽스처/그래프가 더 많은 실경로를 주면 우선 (예: 시청→동대문 2경로)
-        if (localRoutes.length > apiRoutes.length) {
-          setRoutes(localRoutes);
-          setRouteSource("mock-graph");
-        } else if (apiRoutes.length >= 2 || apiStops >= localStops) {
+        if (apiRoutes.length > 0) {
+          setBaseRoutes(apiRoutes);
           setRoutes(apiRoutes);
-          setRouteSource("api");
+          setRouteSource(
+            apiRoutes.some((r) => r.modelSource === "model")
+              ? "api-model"
+              : "api",
+          );
         } else {
+          const localRoutes = buildRoutes(fetchTime, depName, destName);
+          setBaseRoutes(localRoutes);
           setRoutes(localRoutes);
-          setRouteSource("mock-graph");
+          setRouteSource(localRoutes.length ? "mock-graph" : null);
         }
       } catch {
         if (cancelled) return;
-        setRoutes(buildRoutes(fetchTime, depName, destName));
+        const localRoutes = buildRoutes(fetchTime, depName, destName);
+        setBaseRoutes(localRoutes);
+        setRoutes(localRoutes);
         setRouteSource("mock");
       } finally {
         if (!cancelled) setRoutesLoading(false);
@@ -89,46 +105,88 @@ export function RouteResultsScreen({
     return () => {
       cancelled = true;
     };
-  }, [depName, destName, form.targetTime]);
+  }, [depName, destName]);
+
+  // 시간대 차트: ODsay 없이 모델만
+  useEffect(() => {
+    let cancelled = false;
+    const day = searchTimeRef.current;
+    (async () => {
+      try {
+        const { points, source } = await fetchHourlyCongestion(depName, day);
+        if (cancelled) return;
+        setHourlyData(points);
+        setHourlySource(source);
+      } catch {
+        if (cancelled) return;
+        setHourlyData(getHourlyCongestionData(day.getHours()));
+        setHourlySource("mock");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [depName]);
+
+  // 슬라이더 시각 → 경로 카드 혼잡만 모델로 재계산 (ODsay 없음)
+  useEffect(() => {
+    if (!baseRoutes.length) return;
+    let cancelled = false;
+    const names = collectStationNamesFromRoutes(baseRoutes);
+    if (!names.length) return;
+
+    setCongestionLoading(true);
+    (async () => {
+      try {
+        const { byName, source } = await fetchBatchCongestion(
+          names,
+          debouncedTime,
+        );
+        if (cancelled) return;
+        setRoutes(applyCongestionMapToRoutes(baseRoutes, byName));
+        if (source === "model") {
+          setRouteSource((prev) =>
+            prev === "api" || prev === "api-model" ? "api-model" : prev,
+          );
+        }
+      } catch {
+        // 실패 시 기존 경로 혼잡 유지
+      } finally {
+        if (!cancelled) setCongestionLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [baseRoutes, debouncedTime]);
 
   useEffect(() => {
     setDirection(`${destName} 방면`);
   }, [destName]);
 
-  const loading = sliderLoading;
+  const loading = sliderLoading || congestionLoading;
   const activeHour = debouncedTime.getHours();
-  const hourlyData = useMemo(
-    () => getHourlyCongestionData(activeHour),
-    [activeHour],
-  );
 
   return (
     <div className="animate-fade-in space-y-5 pb-24">
       <header className="flex items-center gap-3">
         <Button variant="ghost" size="icon" onClick={onBack}>
-          {/*  뒤로가기 버튼 */}
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
           <p className="text-xs text-slate-500">경로 검색 결과</p>
           <h1 className="font-semibold text-slate-800">
             {form.departure} → {form.destination}
-            {/* props로  부모 컴포넌트에게 받는 form  */}
-            {/*  출발지 -> 목적지  */}
-            {/* 꼭 이 {}로 묶어야 거기에 변수가 동적으로 들어가는건가 */}
           </h1>
         </div>
       </header>
-      {/* 헤드 -> 상단 네비게이션바? 뒤로가기 */}
 
       <Card>
         <CardContent className="space-y-4 p-4 pt-5">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500">
-              출발 시각을 조절하면 아래 차트가 갱신됩니다
-            </p>
+          <div className="flex items-center justify-end gap-2">
             {loading && (
-              <RefreshCw className="h-4 w-4 animate-spin text-slate-400" />
+              <RefreshCw className="h-4 w-4 shrink-0 animate-spin text-slate-400" />
             )}
           </div>
 
@@ -156,6 +214,7 @@ export function RouteResultsScreen({
             stationName={depName}
             lineName={routes[0]?.lineName ?? "2호선"}
             direction={direction}
+            dataSource={hourlySource}
             onDirectionSwap={() =>
               setDirection((d) =>
                 d === `${destName} 방면`
@@ -172,7 +231,7 @@ export function RouteResultsScreen({
           <h2 className="text-sm font-semibold text-slate-600">추천 경로</h2>
           {routeSource && (
             <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
-              {routeSource === "api" ? "API" : "목업"}
+              {SOURCE_LABEL[routeSource] ?? routeSource}
             </span>
           )}
         </div>

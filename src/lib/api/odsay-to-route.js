@@ -21,10 +21,12 @@ function mockCongestion(hour, index) {
 }
 
 function congestionLevel(value) {
-  if (value <= 40) return "여유";
-  if (value <= 65) return "보통";
-  if (value <= 80) return "주의";
-  return "혼잡";
+  const pct = Number(value) || 0;
+  if (pct >= 100) return "극혼잡";
+  if (pct >= 80) return "매우혼잡";
+  if (pct >= 60) return "혼잡";
+  if (pct >= 30) return "보통";
+  return "여유";
 }
 
 function laneNameFromSubPath(subPath) {
@@ -187,9 +189,11 @@ export function parseOdsayResult(result, options) {
   return { primary, alternatives };
 }
 
-/** 목업 혼잡도 → UI rate */
+/** API/모델 혼잡도 % → UI rate (모델 congestion_pct와 동일 스케일) */
 export function apiCongestionToRate(value) {
-  return Math.min(150, Math.round(Number(value) * 1.4));
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.round(n);
 }
 
 export function getStatusFromCongestion(value) {

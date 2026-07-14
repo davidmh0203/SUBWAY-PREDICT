@@ -19,7 +19,7 @@ function rideMinutesFromSegment(seg) {
   return segmentRideMinutes(seg);
 }
 
-/** 경로 segments → 타임라인 레그 (탑승 + 환승 도보) */
+/** 경로 segments → 타임라인 레그 (탑승 + 환승 도보). 합이 route.totalTime과 일치하도록 보정. */
 export function buildTimelineLegs(route) {
   const segs = route.segments ?? [];
   const legs = [];
@@ -50,11 +50,33 @@ export function buildTimelineLegs(route) {
     });
   }
 
-  return legs;
+  const target = Number(route.totalTime);
+  if (!target || !legs.length) return legs;
+
+  const walkSum = legs
+    .filter((l) => l.type === "walk")
+    .reduce((s, l) => s + l.minutes, 0);
+  const rideLegs = legs.filter((l) => l.type === "ride");
+  const rideSum = rideLegs.reduce((s, l) => s + l.minutes, 0) || 1;
+  const rideBudget = Math.max(rideLegs.length, target - walkSum);
+
+  return legs.map((leg) => {
+    if (leg.type !== "ride") return leg;
+    return {
+      ...leg,
+      minutes: Math.max(1, Math.round((leg.minutes / rideSum) * rideBudget)),
+    };
+  });
 }
 
+/** 네이버지도 비율: 막대보다 원이 크고(~1.5배), 원은 막대 시작 캡 */
+const BAR_H = 15;
+const ICON = 22;
+
 /**
- * pill 타임라인: 지하철=둥근 호선색 원+흰 기차 아이콘, 도보=각진 배지+시간
+ * 네이버지도 스타일 타임라인
+ * - 원 지름 > 막대 두께, 세로 중앙 정렬
+ * - 원이 막대 왼쪽 시작 캡 (왼쪽에 막대 잔재 없음)
  */
 export function RouteTimelineBar({ legs, totalTime }) {
   if (!legs?.length) return null;
@@ -62,24 +84,34 @@ export function RouteTimelineBar({ legs, totalTime }) {
     legs.reduce((s, l) => s + Math.max(1, l.minutes), 0) || totalTime || 1;
 
   return (
-    <div className="flex h-5 w-full items-stretch gap-px overflow-hidden rounded-full bg-slate-100 p-0.5">
+    <div
+      className="flex w-full items-center gap-0.5"
+      style={{ height: ICON }}
+    >
       {legs.map((leg, i) => {
         const flex = Math.max(1, leg.minutes) / sum;
         if (leg.type === "walk") {
           return (
             <div
               key={`w-${i}`}
-              className="relative flex min-w-[52px] items-center gap-1 rounded-sm bg-slate-200/90 px-0.5"
-              style={{ flex }}
+              className="relative flex min-w-[52px] items-center"
+              style={{ flex, height: ICON }}
               title={`환승 도보 ${leg.minutes}분`}
             >
-              <div className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm bg-slate-500">
+              <div
+                className="absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-full bg-slate-200"
+                style={{ height: BAR_H }}
+              />
+              <div
+                className="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-slate-400"
+                style={{ width: ICON, height: ICON }}
+              >
                 <Footprints
-                  className="h-2.5 w-2.5 text-white"
+                  className="h-3 w-3 text-white"
                   strokeWidth={2.5}
                 />
               </div>
-              <span className="truncate text-[9px] font-semibold leading-none text-slate-600">
+              <span className="relative z-10 truncate pl-1.5 pr-1.5 text-[10px] font-semibold leading-none text-slate-600">
                 {leg.minutes}분
               </span>
             </div>
@@ -89,17 +121,25 @@ export function RouteTimelineBar({ legs, totalTime }) {
         return (
           <div
             key={`r-${i}`}
-            className="relative flex min-w-[56px] items-center gap-1 rounded-full px-0.5"
-            style={{ flex, backgroundColor: leg.lineColor }}
+            className="relative flex min-w-[56px] items-center"
+            style={{ flex, height: ICON }}
             title={`${leg.lineName} ${leg.minutes}분`}
           >
             <div
-              className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full ring-1 ring-white/70"
-              style={{ backgroundColor: leg.lineColor }}
+              className="absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-full"
+              style={{ height: BAR_H, backgroundColor: leg.lineColor }}
+            />
+            <div
+              className="relative z-10 flex shrink-0 items-center justify-center rounded-full"
+              style={{
+                width: ICON,
+                height: ICON,
+                backgroundColor: leg.lineColor,
+              }}
             >
-              <Train className="h-2 w-2 text-white" strokeWidth={2.5} />
+              <Train className="h-3 w-3 text-white" strokeWidth={2.5} />
             </div>
-            <span className="truncate pr-1 text-[9px] font-semibold leading-none text-white drop-shadow-sm">
+            <span className="relative z-10 truncate pl-1.5 pr-2 text-[10px] font-semibold leading-none text-white drop-shadow-sm">
               {leg.minutes}분
             </span>
           </div>

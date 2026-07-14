@@ -1,15 +1,15 @@
-import { getStatusFromRate } from "@/lib/congestion";
-import {
-  apiCongestionToRate,
-} from "@/lib/api/odsay-to-route";
+import { getStatusFromApiLevel, getStatusFromRate } from "@/lib/congestion";
+import { apiCongestionToRate } from "@/lib/api/odsay-to-route";
 import { colorForLineKey } from "@/lib/station-line-colors";
-import { formatArrivalTime } from "@/lib/route-timing";
+import { distributeStopOffsets, formatArrivalTime } from "@/lib/route-timing";
 
 const API_LEVEL_BADGE = {
   여유: "여유",
   보통: "보통",
-  주의: "혼잡 주의",
   혼잡: "혼잡",
+  매우혼잡: "매우혼잡",
+  극혼잡: "극혼잡",
+  주의: "혼잡", // 구버전 호환
 };
 
 function lineNameToColor(lineName) {
@@ -18,6 +18,18 @@ function lineNameToColor(lineName) {
 
 function stationNamesKey(stations) {
   return (stations ?? []).map((s) => s.name).join("|");
+}
+
+function stationCongestionRate(st) {
+  if (st.congestion_pct != null && Number.isFinite(Number(st.congestion_pct))) {
+    return Math.round(Number(st.congestion_pct));
+  }
+  return apiCongestionToRate(st.station_congestion);
+}
+
+function stationCongestionStatus(st, rate) {
+  if (st.level) return getStatusFromApiLevel(st.level);
+  return getStatusFromRate(rate);
 }
 
 /**
@@ -42,7 +54,7 @@ export function buildSegmentsFromRouteStations(apiStations, departureTime, walkT
 
     const lineName = st.line;
     const lineColor = lineNameToColor(lineName);
-    const congestionRate = apiCongestionToRate(st.station_congestion);
+    const congestionRate = stationCongestionRate(st);
     const offsetMin = st.arrival_offset_min ?? i * 3;
 
     if (!current || current.lineName !== lineName) {
@@ -58,7 +70,9 @@ export function buildSegmentsFromRouteStations(apiStations, departureTime, walkT
       type,
       arrivalTime: formatArrivalTime(departureTime, offsetMin),
       congestionRate,
-      congestionStatus: getStatusFromRate(congestionRate),
+      congestionStatus: stationCongestionStatus(st, congestionRate),
+      congestionLevel: st.level,
+      congestionLabel: st.congestion_label,
       heading: st.heading,
     });
   });
@@ -85,7 +99,7 @@ function scaleSegments(segments, factor) {
   return segments.map((seg) => ({
     ...seg,
     stations: seg.stations.map((st) => {
-      const congestionRate = Math.max(40, Math.round(st.congestionRate * factor));
+      const congestionRate = Math.max(0, Math.round(st.congestionRate * factor));
       return {
         ...st,
         congestionRate,
@@ -97,16 +111,16 @@ function scaleSegments(segments, factor) {
 
 function buildStationPredictions(apiStations, departureTime, factor = 1) {
   return apiStations.map((st) => {
-    const congestionRate = Math.max(
-      40,
-      Math.round(apiCongestionToRate(st.station_congestion) * factor),
-    );
+    const base = stationCongestionRate(st);
+    const congestionRate = Math.max(0, Math.round(base * factor));
     const offsetMin = st.arrival_offset_min ?? 0;
     return {
       stationId: st.station_id,
       stationName: st.name,
       congestionRate,
-      status: getStatusFromRate(congestionRate),
+      status: stationCongestionStatus(st, congestionRate),
+      level: st.level,
+      congestionLabel: st.congestion_label,
       heading: st.heading ?? "방면",
       arrivalTime: formatArrivalTime(departureTime, offsetMin),
     };
@@ -124,30 +138,65 @@ function buildRouteFromResponse(apiResponse, departureTime, options) {
   } = options;
   const { summary, stations: apiStations = [], walk_transfers = [] } = apiResponse;
   const stationNames = apiStations.map((s) => s.name);
+  const totalMin = Math.max(
+    1,
+    Number(summary?.total_time_min) || Math.max(1, apiStations.length - 1) * 3,
+  );
+
+  // ODsay total_time에 맞춰 역별 도착 오프셋 배분 (없으면 i*3 → 타임라인 왜곡)
+  const hasOffsets = apiStations.some((s) => s.arrival_offset_min != null);
+  const distributed = hasOffsets
+    ? null
+    : distributeStopOffsets(apiStations.length, totalMin);
+  const stationsWithOffsets = distributed
+    ? apiStations.map((st, i) => ({
+        ...st,
+        arrival_offset_min: distributed[i],
+      }))
+    : apiStations;
+
   const segments = buildSegmentsFromRouteStations(
-    apiStations,
+    stationsWithOffsets,
     departureTime,
     walk_transfers,
   );
   const scaledSegments =
     comfortFactor === 1 ? segments : scaleSegments(segments, comfortFactor);
-  const predictions = buildStationPredictions(apiStations, departureTime, comfortFactor);
-  const maxCongestion = Math.max(...predictions.map((p) => p.congestionRate), 40);
+  const predictions = buildStationPredictions(
+    stationsWithOffsets,
+    departureTime,
+    comfortFactor,
+  );
+  const maxCongestion = Math.max(...predictions.map((p) => p.congestionRate), 0);
+
+  const trainSegments = (apiResponse.segments ?? []).map((seg) => ({
+    line: seg.line,
+    fromStation: seg.from_station,
+    toStation: seg.to_station,
+    trainCongestion: apiCongestionToRate(seg.train_congestion),
+    level: seg.level,
+  }));
 
   return {
     id,
     label,
     badge: badge ?? API_LEVEL_BADGE[summary.overall_level] ?? summary.overall_level,
-    totalTime: summary.total_time_min + timeExtra,
+    totalTime: totalMin + timeExtra,
     payment: summary.payment ?? 1400,
     transfers: summary.transfer_count,
     lineName: segments[0]?.lineName ?? "2호선",
     maxCongestion,
-    overallStatus: getStatusFromRate(maxCongestion),
+    overallStatus:
+      summary.overall_level != null
+        ? getStatusFromApiLevel(summary.overall_level)
+        : getStatusFromRate(maxCongestion),
+    overallLevel: summary.overall_level,
+    modelSource: summary.model_source,
     description: stationNames.join(" ─ "),
     stations: stationNames,
     stationPredictions: predictions,
     segments: scaledSegments,
+    trainSegments,
     recommended,
     source: apiResponse.source ?? "api",
   };
@@ -169,7 +218,6 @@ function routeBodiesFromApiResponse(apiResponse) {
   const fromList = Array.isArray(apiResponse.alternatives)
     ? apiResponse.alternatives
     : [];
-  // 레거시: alternative 단수 필드 호환
   const legacy = apiResponse.alternative ? [apiResponse.alternative] : [];
 
   const bodies = [primary, ...fromList, ...legacy];
@@ -190,9 +238,6 @@ function labelForRouteIndex(index, _total, body) {
 
 /**
  * RouteResponse (+ alternatives[]) → 추천 카드 N장
- * 실제 ODsay/목업 경로만 카드로 쓰고, 가짜 쾌적 복제는 하지 않습니다.
- * @param {object} apiResponse
- * @param {Date} departureTime
  */
 export function adaptApiRouteResponse(apiResponse, departureTime) {
   const bodies = routeBodiesFromApiResponse(apiResponse);
@@ -210,9 +255,6 @@ export function adaptApiRouteResponse(apiResponse, departureTime) {
   });
 }
 
-/**
- * 로컬/목업 RouteResponse 형태 → UiRoute 1건
- */
 export function buildUiRouteFromResponse(routeResponse, departureTime, options) {
   return buildRouteFromResponse(
     { ...routeResponse, source: "mock" },

@@ -5,6 +5,13 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
+from app.congestion_model import (
+    apply_model_to_route_stations,
+    apply_model_to_segments,
+    get_predictor,
+    overall_from_stations,
+)
+from app.fixture_routes import find_fixture_payload
 from app.mock_data import STATIONS, _base_congestion, build_mock_route
 from app.odsay_client import (
     OdsayError,
@@ -189,7 +196,18 @@ def _route_from_odsay_path(
     if not stations:
         raise OdsayError("ODsay 경로에 지하철 구간이 없습니다.")
 
-    overall = min(_base_congestion(departure_time.hour) + 6, 100)
+    model_source = "mock"
+    if get_predictor() is not None:
+        stations = apply_model_to_route_stations(stations, departure_time)
+        segments = apply_model_to_segments(segments, stations)
+        if any(s.get("source") == "model" for s in stations):
+            model_source = "model"
+
+    overall, overall_level = overall_from_stations(stations)
+    if model_source == "mock":
+        overall = min(_base_congestion(departure_time.hour) + 6, 100)
+        overall_level = congestion_level(overall)
+
     transfer_count = max(0, int(info.get("subwayTransitCount", 0) or 0))
 
     return {
@@ -198,10 +216,40 @@ def _route_from_odsay_path(
             "transfer_count": transfer_count,
             "payment": int(info.get("payment", 0) or 0) or None,
             "overall_congestion": overall,
-            "overall_level": congestion_level(overall),
+            "overall_level": overall_level,
+            "model_source": model_source,
         },
         "segments": segments,
         "stations": stations,
+    }
+
+
+def _enrich_with_model(body: dict[str, Any], departure_time: datetime) -> dict[str, Any]:
+    """mock/ODsay 경로 body에 모델 혼잡도를 덮어쓴다."""
+    if get_predictor() is None:
+        summary = dict(body.get("summary") or {})
+        summary.setdefault("model_source", "mock")
+        return {**body, "summary": summary}
+
+    stations = apply_model_to_route_stations(list(body.get("stations") or []), departure_time)
+    segments = apply_model_to_segments(list(body.get("segments") or []), stations)
+    overall, overall_level = overall_from_stations(stations)
+    source = "model" if any(s.get("source") == "model" for s in stations) else "mock"
+    summary = {
+        **(body.get("summary") or {}),
+        "overall_congestion": overall,
+        "overall_level": overall_level,
+        "model_source": source,
+    }
+    alts = []
+    for alt in body.get("alternatives") or []:
+        alts.append(_enrich_with_model(alt, departure_time))
+    return {
+        **body,
+        "summary": summary,
+        "stations": stations,
+        "segments": segments,
+        "alternatives": alts,
     }
 
 
@@ -219,13 +267,11 @@ async def predict_route_with_odsay(
     departure_time: datetime,
 ) -> dict[str, Any]:
     if not is_configured():
-        body = build_mock_route(start, end, departure_time.hour)
-        body.setdefault("alternatives", [])
-        return body
+        return _mock_or_fixture_route(start, end, departure_time)
 
     start_key = normalize_station_name(start)
     end_key = normalize_station_name(end)
-    cache_key = f"v2|{start_key}|{end_key}|{departure_time.hour}"
+    cache_key = f"v3|{start_key}|{end_key}|{departure_time.date().isoformat()}|{departure_time.hour}"
     cached = cache_get("route", cache_key)
     if cached is not None:
         return cached
@@ -262,6 +308,41 @@ async def predict_route_with_odsay(
         cache_set("route", cache_key, route_body)
         return route_body
     except OdsayError:
-        body = build_mock_route(start, end, departure_time.hour)
-        body.setdefault("alternatives", [])
-        return body
+        return _mock_or_fixture_route(start, end, departure_time)
+
+
+def _mock_or_fixture_route(
+    start: str,
+    end: str,
+    departure_time: datetime,
+) -> dict[str, Any]:
+    """ODsay 키 없음/실패 시: 데모 픽스처 우선, 없으면 단순 목업 + 혼잡 모델."""
+    fixture = find_fixture_payload(start, end)
+    if fixture:
+        paths = (fixture.get("result") or {}).get("path") or []
+        parsed: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for path_item in paths[:MAX_ROUTE_PATHS]:
+            try:
+                body = _route_from_odsay_path(start, end, departure_time, path_item)
+            except OdsayError:
+                continue
+            key = _station_names_key(body.get("stations") or [])
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            body = {**body, "source": "fixture"}
+            if body.get("summary"):
+                body["summary"] = {**body["summary"], "model_source": body["summary"].get("model_source")}
+            parsed.append(body)
+        if parsed:
+            primary = parsed[0]
+            return {
+                **primary,
+                "alternatives": parsed[1:],
+                "source": "fixture",
+            }
+
+    body = build_mock_route(start, end, departure_time.hour)
+    body.setdefault("alternatives", [])
+    return _enrich_with_model(body, departure_time)

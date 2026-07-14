@@ -11,15 +11,34 @@ import {
   RouteTimelineBar,
   buildTimelineLegs,
 } from "@/components/RouteTimelineBar";
-import { getTrainCongestionRows } from "@/lib/crowd-data";
+import { rateToCrowdLevel } from "@/lib/congestion";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
 import { getLineKeyForColor } from "@/lib/metro-network";
 
+/** 모델/API 역별 예측 → 경로 혼잡 리스트 rows (칸별 아님) */
+function buildCongestionRowsFromRoute(route) {
+  if (route.stationPredictions?.length) {
+    return route.stationPredictions.map((p) => ({
+      stationName: p.stationName,
+      overallRate: p.congestionRate,
+      level: rateToCrowdLevel(p.congestionRate),
+    }));
+  }
+  if (route.segments?.length) {
+    return route.segments.flatMap((seg) =>
+      seg.stations.map((s) => ({
+        stationName: s.name,
+        overallRate: s.congestionRate ?? 0,
+        level: rateToCrowdLevel(s.congestionRate ?? 0),
+      })),
+    );
+  }
+  return [];
+}
+
 export function RouteDetailScreen({ route, departureTime, onBack }) {
   const [fullMapOpen, setFullMapOpen] = useState(false);
-  const timeOffset =
-    departureTime.getHours() * 60 + departureTime.getMinutes() - (18 * 60 + 30);
 
   const stationNames = useMemo(() => {
     if (route.segments?.length) {
@@ -27,10 +46,8 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
     }
     return route.stations ?? [];
   }, [route.segments, route.stations]);
-  const trainRows = useMemo(
-    () => getTrainCongestionRows(timeOffset, stationNames),
-    [timeOffset, stationNames],
-  );
+
+  const trainRows = useMemo(() => buildCongestionRowsFromRoute(route), [route]);
   const timelineLegs = useMemo(() => buildTimelineLegs(route), [route]);
 
   const { expandedGroups, toggleGroup } = useRouteCollapse(route.segments);
@@ -45,7 +62,7 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
   const nonSeoulStations = stationNames.filter((name) => !isSeoulMetroStation(name));
 
   const dangerStation = route.stationPredictions.find(
-    (p) => p.trigger === "KOPIS_EVENT" || p.congestionRate >= 120,
+    (p) => p.trigger === "KOPIS_EVENT" || p.congestionRate >= 100,
   );
 
   return (
@@ -91,7 +108,6 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
                 rows={trainRows}
                 departureTime={departureTime}
                 segments={route.segments}
-                expandedGroups={expandedGroups}
               />
           </CardContent>
         </Card>

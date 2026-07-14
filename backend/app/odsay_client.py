@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-from app.config import ODSAY_API_BASE, ODSAY_API_KEY, ODSAY_SEOUL_CID
+from app.config import ODSAY_API_BASE, ODSAY_API_KEY, ODSAY_FORCE_MOCK, ODSAY_SEOUL_CID
 from app.odsay_cache import cache_get, cache_set
 
 
@@ -18,6 +18,9 @@ class OdsayError(Exception):
 
 
 def is_configured() -> bool:
+    """키가 있고 강제 목업이 아닐 때만 실호출."""
+    if ODSAY_FORCE_MOCK:
+        return False
     return bool(ODSAY_API_KEY)
 
 
