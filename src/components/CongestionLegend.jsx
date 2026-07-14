@@ -1,19 +1,19 @@
 import { CROWD_COLORS, CROWD_LABELS, CROWD_PERCENT_RANGES } from "@/lib/congestion";
 import { User } from "lucide-react";
 
-const LEVELS = ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"];
-const ICON_COUNTS = [1, 2, 3, 4];
+const LEVELS = ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY", "EXTREME"];
+const ICON_COUNTS = [1, 2, 3, 4, 5];
 
 export function CongestionLegend({ className = "", compact = false, showPercentRanges = false }) {
   return (
     <div className={`flex flex-col items-end gap-1.5 ${className}`}>
-      <div className="flex h-2.5 w-48 overflow-hidden rounded-full">
+      <div className="flex h-2.5 w-56 overflow-hidden rounded-full">
         {LEVELS.map((level) => (
           <div key={level} className="flex-1" style={{ backgroundColor: CROWD_COLORS[level] }} />
         ))}
       </div>
       {!compact && (
-        <div className="flex w-48 justify-between">
+        <div className="flex w-56 justify-between">
           {LEVELS.map((level, i) => (
             <div key={level} className="flex flex-col items-center gap-0.5">
               <div className="flex -space-x-0.5">

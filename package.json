@@ -24,7 +24,8 @@
     "spatic-assem": "npm run crawl:spatic-assem && npm run parse:spatic-assem",
     "crawl:metro-ntce": "node scripts/crawl-metro-ntce.mjs",
     "filter:metro-ntce-events": "node scripts/filter-metro-ntce-events.mjs",
-    "metro-ntce": "npm run crawl:metro-ntce && npm run filter:metro-ntce-events"
+    "metro-ntce": "npm run crawl:metro-ntce && npm run filter:metro-ntce-events",
+    "smoke:mock-predict": "ODSAY_FORCE_MOCK=1 backend/.venv/bin/python scripts/smoke-mock-predict.py"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.18",

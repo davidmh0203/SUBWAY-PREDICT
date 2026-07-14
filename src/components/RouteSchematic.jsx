@@ -4,13 +4,18 @@ import { buildRidingLegs } from "@/lib/route-station-groups";
 import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
 import { MOCK_WALK_TRANSFER_MINUTES } from "@/lib/route-timing";
 
+/** 승차/경유/하차 아이콘 열 너비(w-6=24). 세로 라인 중심 = 이 열의 중심 */
+const RAIL_COL = "w-6";
+/** (24 - 4) / 2 = 10 */
+const RAIL_LINE_LEFT = "left-[10px]";
+
 function WalkConnector({ prevColor, nextColor, minutes }) {
   const walkMin =
     minutes != null && minutes > 0 ? minutes : MOCK_WALK_TRANSFER_MINUTES;
   return (
-    <div className="relative -mt-2 mb-1 flex items-center gap-2 py-1.5 pl-[11px]">
+    <div className={`relative -mt-2 mb-1 flex items-center gap-2 py-1.5 ${RAIL_COL} pl-0`}>
       <div
-        className="absolute left-[11px] top-0 h-full w-[4px]"
+        className={`absolute ${RAIL_LINE_LEFT} top-0 h-full w-[4px]`}
         style={{
           background: `repeating-linear-gradient(to bottom, ${prevColor} 0, ${prevColor} 3px, transparent 3px, transparent 7px)`,
           opacity: 0.45,
@@ -25,7 +30,7 @@ function WalkConnector({ prevColor, nextColor, minutes }) {
         </span>
       </div>
       <div
-        className="absolute bottom-0 left-[11px] h-1/2 w-[4px]"
+        className={`absolute bottom-0 ${RAIL_LINE_LEFT} h-1/2 w-[4px]`}
         style={{ backgroundColor: nextColor, opacity: 0.3 }}
       />
     </div>
@@ -42,7 +47,7 @@ function BoardingRow({ leg }) {
     <div className="relative" style={{ minHeight: 72 }}>
       <div className="relative flex items-start gap-3">
         <div
-          className="relative z-10 mt-[2px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[3px] border-white shadow-md"
+          className={`relative z-10 mt-[2px] flex h-6 ${RAIL_COL} shrink-0 items-center justify-center rounded-full border-[3px] border-white shadow-md`}
           style={{ backgroundColor: lineColor }}
         >
           <Train className="h-3 w-3 text-white" strokeWidth={2.5} />
@@ -77,14 +82,13 @@ function WaypointRow({ station, lineColor }) {
   return (
     <div className="relative" style={{ minHeight: 36 }}>
       <div className="relative flex items-center gap-3 py-0.5">
-        <div
-          className="relative z-10 mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border-2"
-          style={{
-            marginLeft: "2px",
-            borderColor: lineColor,
-            backgroundColor: "#ffffff",
-          }}
-        />
+        {/* 레일 열(w-6) 안에 노드를 가로 중앙 → 라인 중심과 일치 */}
+        <div className={`relative z-10 flex ${RAIL_COL} shrink-0 items-center justify-center`}>
+          <div
+            className="h-3.5 w-3.5 rounded-full border-2 bg-white"
+            style={{ borderColor: lineColor }}
+          />
+        </div>
         <span className="text-sm text-slate-600">{station.name}역</span>
       </div>
     </div>
@@ -102,7 +106,7 @@ function AlightingRow({ leg }) {
     <div className="relative" style={{ minHeight: 56 }}>
       <div className="relative flex items-start gap-3">
         <div
-          className="relative z-10 mt-[2px] h-6 w-6 shrink-0 rounded-full border-[3px] border-white shadow-md"
+          className={`relative z-10 mt-[2px] h-6 ${RAIL_COL} shrink-0 rounded-full border-[3px] border-white shadow-md`}
           style={{ backgroundColor: lineColor }}
         />
         <div className="flex-1 pb-3">
@@ -136,7 +140,7 @@ function RidingLegBlock({ leg, expanded, onToggle }) {
   return (
     <div className="relative">
       <div
-        className="absolute left-[11px] top-[14px] w-[4px]"
+        className={`absolute ${RAIL_LINE_LEFT} top-[14px] w-[4px]`}
         style={{
           backgroundColor: leg.lineColor,
           height: `calc(100% - ${bottomCut}px)`,
@@ -153,7 +157,7 @@ function RidingLegBlock({ leg, expanded, onToggle }) {
             onToggle={onToggle}
           />
           {expanded_ &&
-            leg.waypoints.map((wp, i) => (
+            leg.waypoints.map((wp) => (
               <WaypointRow
                 key={wp.name}
                 station={wp}

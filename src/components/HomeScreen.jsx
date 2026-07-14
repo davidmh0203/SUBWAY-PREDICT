@@ -175,8 +175,8 @@ export function HomeScreen({
                 })}
               </div>
               <p className="text-[10px] leading-relaxed text-slate-400">
-                샘플 OD는 모두 경로 카드 2장 이상입니다. 시청→동대문 · 사당→종로3가 ·
-                서울역→왕십리 · 합정→잠실을 눌러 비교해 보세요.
+                ODsay 키 없이도 샘플 OD로 테스트됩니다 (백엔드 목업+모델). 시청→동대문 ·
+                사당→종로3가 · 서울역→왕십리 · 합정→잠실을 눌러 비교해 보세요.
               </p>
             </div>
             <TimePickerButton value={form.targetTime} onClick={() => setSheetOpen(true)} />

@@ -1,3 +1,7 @@
+/**
+ * 칸별 혼잡 히트맵 (미사용).
+ * 제품 정책: 칸별 데이터 없음 → UI 미연동. 열차별(구간) 혼잡도는 route.trainSegments 유지.
+ */
 import React from "react";
 import { CongestionLegend, CrowdBlock } from "@/components/CongestionLegend";
 import { formatDepartureLabel } from "@/lib/congestion";

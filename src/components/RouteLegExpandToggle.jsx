@@ -1,6 +1,15 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-export function RouteLegExpandToggle({ count, expanded, lineColor, onToggle }) {
+/** RouteSchematic 레일 라인과 동일: w-6 열 중심 = left 10px + 2px */
+const RAIL_LINE_LEFT = "left-[10px]";
+
+export function RouteLegExpandToggle({
+  count,
+  expanded,
+  lineColor,
+  onToggle,
+  hideRail = false,
+}) {
   if (count <= 0) return null;
 
   return (
@@ -9,10 +18,12 @@ export function RouteLegExpandToggle({ count, expanded, lineColor, onToggle }) {
       onClick={onToggle}
       className="relative flex w-full items-center gap-2 py-2 pl-10 text-left text-sm text-slate-500 transition hover:text-slate-700"
     >
-      <div
-        className="absolute left-[11px] top-0 h-full w-[4px]"
-        style={{ backgroundColor: lineColor }}
-      />
+      {!hideRail && (
+        <div
+          className={`absolute ${RAIL_LINE_LEFT} top-0 h-full w-[4px]`}
+          style={{ backgroundColor: lineColor }}
+        />
+      )}
       <span>
         <strong className="font-semibold text-slate-700">{count}개</strong> 역 이동
       </span>

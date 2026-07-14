@@ -15,9 +15,13 @@ router = APIRouter(prefix="/odsay", tags=["ODsay"])
 
 @router.get("/status")
 async def odsay_status():
+    from app.config import ODSAY_FORCE_MOCK
+
     return {
         "configured": is_configured(),
-        "hint": "서버 호출에는 ODsay LAB에서 Server API 키 + IP 등록이 필요합니다.",
+        "force_mock": ODSAY_FORCE_MOCK,
+        "mode": "mock" if not is_configured() else "live",
+        "hint": "ODSAY_FORCE_MOCK=1 이면 픽스처·목업만 사용합니다. 실호출은 Server API 키 + IP 등록이 필요합니다.",
     }
 
 
