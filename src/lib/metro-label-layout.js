@@ -1,17 +1,20 @@
 import {
   METRO_LINE_SEGMENTS,
-  METRO_STATIONS,
   getLineKeyForColor,
   getNearestSegmentColor,
   normalizeLineColor,
 } from "./metro-network";
-import { LINE_END_BADGES } from "./metro-line-badges";
+import { getLineEndBadges } from "./metro-line-badges";
 import { getRegistryLines } from "./station-line-registry";
 import { colorForLineKey } from "./station-line-colors";
 import { isExcludedLine, isSupportedSeoulLine } from "./seoul-metro-stations";
+import svgLabelPositions from "./generated/metro-label-positions.json";
+
 const BASE_STATION_R = 4.5;
-const TRANSFER_STATION_R = BASE_STATION_R * 1.5;
+const TRANSFER_STATION_R = BASE_STATION_R;
 const ENDPOINT_TOL = 8;
+const MAX_LABEL_DISTANCE = 28;
+const MIN_OWNERSHIP_MARGIN = 2;
 const LABEL_OVERRIDES = {
   김포공항: { x: 378, y: 472, anchor: "end", rotate: -38 },
   공항시장: { x: 432, y: 454, anchor: "start", rotate: -38 },
@@ -20,8 +23,42 @@ const LABEL_OVERRIDES = {
   개화산: { x: 412, y: 418, anchor: "end", rotate: -38 },
   송정: { x: 452, y: 462, anchor: "start", rotate: -38 },
   마곡: { x: 484, y: 456, anchor: "start", rotate: -38 },
-  방화: { x: 438, y: 432, anchor: "start", rotate: -38 }
+  방화: { x: 438, y: 432, anchor: "start", rotate: -38 },
+  구의: { x: 952.35, y: 551.3, anchor: "start", rotate: -45 },
+  아차산: { x: 957.14, y: 535.5, anchor: "start", rotate: -45 },
+  가산디지털단지: { x: 582, y: 641, anchor: "start", rotate: -45 },
+  서울대: { x: 712, y: 638, anchor: "start", rotate: -45 },
+  남성: { x: 739, y: 622, anchor: "start", rotate: -45 },
+  봉천: { x: 690.35, y: 625.3, anchor: "start", rotate: -45 },
+  남구로: { x: 577, y: 623, anchor: "end", rotate: -45 },
+  신풍: { x: 622.5, y: 600, anchor: "start", rotate: -45 },
+  오목교: { x: 568.5, y: 554.5, anchor: "start", rotate: -45 },
+  양평: { x: 587.5, y: 554.5, anchor: "start", rotate: -45 },
+  숭실대입구: { x: 693.14, y: 612.5, anchor: "start", rotate: -45 },
+  석바위시장: { x: 206, y: 717.5, anchor: "end", rotate: -45 },
+  검단사거리: { x: 105.5, y: 406, anchor: "start", rotate: -45 },
 };
+function isLabelOwnedByStation(station, lx, ly, allStations, margin = MIN_OWNERSHIP_MARGIN) {
+  const ownDist = Math.hypot(lx - station.x, ly - station.y);
+  if (ownDist > MAX_LABEL_DISTANCE) return false;
+  for (const other of allStations) {
+    if (other.id === station.id) continue;
+    const otherDist = Math.hypot(lx - other.x, ly - other.y);
+    if (otherDist + margin < ownDist) return false;
+  }
+  return true;
+}
+function getSvgLabelDefault(station) {
+  return (
+    LABEL_OVERRIDES[station.id] ??
+    svgLabelPositions[station.id] ?? {
+      x: station.x + 12,
+      y: station.y - 10,
+      anchor: "start",
+      rotate: -45,
+    }
+  );
+}
 function colorToLineKey(color) {
   return getLineKeyForColor(color);
 }
@@ -31,9 +68,9 @@ function getStationMarkerRadius(meta) {
 function markerOverlap(cx, cy, meta, box, pad) {
   return circleRectOverlap(cx, cy, getStationMarkerRadius(meta), box, pad);
 }
-function computeAllStationMeta() {
+function computeAllStationMeta(stations) {
   const map = /* @__PURE__ */ new Map();
-  for (const station of METRO_STATIONS) {
+  for (const station of stations) {
     const endpointColors = /* @__PURE__ */ new Set();
     for (const seg of METRO_LINE_SEGMENTS) {
       const nearStart = Math.hypot(seg.x1 - station.x, seg.y1 - station.y) < ENDPOINT_TOL;
@@ -120,28 +157,108 @@ function circleRectOverlap(cx, cy, r, box, pad = 4) {
 }
 const CANDIDATES = (() => {
   const out = [];
-  const dists = [11, 14, 17, 21, 25];
-  for (let deg = 0; deg < 360; deg += 22.5) {
-    const rad = deg * Math.PI / 180;
+  const dists = [10, 13, 16, 19, 23, 27];
+  for (let deg = 0; deg < 360; deg += 20) {
+    const rad = (deg * Math.PI) / 180;
     for (const dist of dists) {
       const ox = Math.cos(rad) * dist;
       const oy = Math.sin(rad) * dist;
       out.push({
-        x: 0,
-        y: 0,
         ox,
         oy,
         anchor: ox > 4 ? "start" : ox < -4 ? "end" : "middle",
-        rotate: -38
+        rotate: -45,
       });
     }
   }
   return out;
 })();
-function computeLabelLayouts(meta) {
+function countNearbyStations(station, allStations, radius = 18) {
+  let count = 0;
+  for (const other of allStations) {
+    if (other.id === station.id) continue;
+    if (Math.hypot(other.x - station.x, other.y - station.y) < radius) count += 1;
+  }
+  return count;
+}
+function buildLayoutCandidates(station, stationMeta) {
+  const svg = getSvgLabelDefault(station);
+  const out = [
+    { lx: svg.x, ly: svg.y, anchor: svg.anchor, rotate: svg.rotate, fromSvg: true },
+  ];
+  const scale = 1 + (stationMeta.isTransfer ? 0.2 : 0);
+  for (const cand of CANDIDATES) {
+    out.push({
+      lx: station.x + cand.ox * scale,
+      ly: station.y + cand.oy * scale,
+      anchor: cand.anchor,
+      rotate: cand.rotate,
+      fromSvg: false,
+    });
+  }
+  return out;
+}
+function scoreLabelCandidate(
+  station,
+  stationMeta,
+  lx,
+  ly,
+  rotate,
+  anchor,
+  placedBoxes,
+  fromSvg,
+  allStations,
+) {
+  const box = labelBox(lx, ly, station.name, rotate, anchor);
+  if (!isLabelOwnedByStation(station, lx, ly, allStations)) {
+    return { blocked: true, score: Infinity };
+  }
+  let score = fromSvg ? -40 : 0;
+  let hardBlock = false;
+  if (markerOverlap(station.x, station.y, stationMeta, box, 2)) {
+    score += 80;
+    if (markerOverlap(station.x, station.y, stationMeta, box, -1)) hardBlock = true;
+  }
+  for (const other of allStations) {
+    if (other.id === station.id) continue;
+    const otherMeta = {
+      isTransfer: false,
+      lineColor: "#64748b",
+      lineKeys: [],
+      lineColors: [],
+    };
+    const otherDist = Math.hypot(lx - other.x, ly - other.y);
+    const ownDist = Math.hypot(lx - station.x, ly - station.y);
+    if (otherDist < ownDist) score += 220;
+    if (markerOverlap(other.x, other.y, otherMeta, box, 1)) {
+      score += 160;
+      if (markerOverlap(other.x, other.y, otherMeta, box, -2)) hardBlock = true;
+    }
+  }
+  for (const pb of placedBoxes) {
+    if (boxesOverlap(box, pb, 1)) {
+      score += 140;
+      if (boxesOverlap(box, pb, -1)) hardBlock = true;
+    }
+  }
+  for (const badge of getLineEndBadges()) {
+    const br = badge.label.length <= 2 ? 8 : 10;
+    if (circleRectOverlap(badge.x, badge.y, br, box, 1)) {
+      score += 90;
+      if (circleRectOverlap(badge.x, badge.y, br - 1, box, -1)) hardBlock = true;
+    }
+  }
+  score += labelNearAnyLine(lx, ly, station.name, rotate, anchor, 4);
+  score += Math.hypot(lx - station.x, ly - station.y) * 0.2;
+  return { blocked: hardBlock, score };
+}
+function computeLabelLayouts(meta, stations) {
   const layouts = /* @__PURE__ */ new Map();
   const placedBoxes = [];
-  const sorted = [...METRO_STATIONS].sort((a, b) => {
+  const sorted = [...stations].sort((a, b) => {
+    const da = countNearbyStations(a, stations);
+    const db = countNearbyStations(b, stations);
+    if (db !== da) return db - da;
     const ta = meta.get(a.id)?.isTransfer ? 1 : 0;
     const tb = meta.get(b.id)?.isTransfer ? 1 : 0;
     if (tb !== ta) return tb - ta;
@@ -149,72 +266,43 @@ function computeLabelLayouts(meta) {
     return a.name.localeCompare(b.name, "ko");
   });
   for (const station of sorted) {
-    const override = LABEL_OVERRIDES[station.id];
-    if (override) {
-      layouts.set(station.id, override);
-      placedBoxes.push(
-        labelBox(override.x, override.y, station.name, override.rotate, override.anchor)
-      );
-      continue;
-    }
-    const m = meta.get(station.id);
-    const stationMeta = m ?? {
+    const stationMeta = meta.get(station.id) ?? {
       isTransfer: false,
       lineColor: "#64748b",
       lineKeys: [],
-      lineColors: []
+      lineColors: [],
     };
     let best = null;
     let bestScore = Infinity;
-    for (const cand of CANDIDATES) {
-      const scale = 1 + (stationMeta.isTransfer ? 0.25 : 0);
-      const lx = station.x + cand.ox * scale;
-      const ly = station.y + cand.oy * scale;
-      const box = labelBox(lx, ly, station.name, cand.rotate, cand.anchor);
-      let score = 0;
-      let hardBlock = false;
-      if (markerOverlap(station.x, station.y, stationMeta, box, 3)) {
-        hardBlock = true;
-      }
-      for (const other of METRO_STATIONS) {
-        if (other.id === station.id) continue;
-        const otherMeta = meta.get(other.id) ?? {
-          isTransfer: false,
-          lineColor: "#64748b",
-          lineKeys: [],
-          lineColors: []
-        };
-        if (markerOverlap(other.x, other.y, otherMeta, box, 2)) {
-          score += 120;
-          if (markerOverlap(other.x, other.y, otherMeta, box, 0)) hardBlock = true;
-        }
-      }
-      for (const pb of placedBoxes) {
-        if (boxesOverlap(box, pb, 2)) {
-          score += 150;
-          if (boxesOverlap(box, pb, 0)) hardBlock = true;
-        }
-      }
-      for (const badge of LINE_END_BADGES) {
-        const br = badge.label.length <= 2 ? 8 : 10;
-        if (circleRectOverlap(badge.x, badge.y, br, box, 2)) {
-          score += 100;
-          if (circleRectOverlap(badge.x, badge.y, br - 1, box, 0)) hardBlock = true;
-        }
-      }
-      score += labelNearAnyLine(lx, ly, station.name, cand.rotate, cand.anchor, 5);
-      score += Math.hypot(cand.ox, cand.oy) * 0.15;
-      if (!hardBlock && score < bestScore) {
+    for (const cand of buildLayoutCandidates(station, stationMeta)) {
+      const { blocked, score } = scoreLabelCandidate(
+        station,
+        stationMeta,
+        cand.lx,
+        cand.ly,
+        cand.rotate,
+        cand.anchor,
+        placedBoxes,
+        cand.fromSvg,
+        stations,
+      );
+      if (!blocked && score < bestScore) {
         bestScore = score;
-        best = { x: lx, y: ly, anchor: cand.anchor, rotate: cand.rotate };
+        best = {
+          x: cand.lx,
+          y: cand.ly,
+          anchor: cand.anchor,
+          rotate: cand.rotate,
+        };
       }
     }
     if (!best) {
+      const svg = getSvgLabelDefault(station);
       best = {
-        x: station.x + 14,
-        y: station.y - 12,
-        anchor: "start",
-        rotate: -38
+        x: svg.x,
+        y: svg.y,
+        anchor: svg.anchor,
+        rotate: svg.rotate,
       };
     }
     layouts.set(station.id, best);
@@ -222,8 +310,14 @@ function computeLabelLayouts(meta) {
   }
   return layouts;
 }
-const STATION_META = computeAllStationMeta();
-const STATION_LABELS = computeLabelLayouts(STATION_META);
+let STATION_META = /* @__PURE__ */ new Map();
+let STATION_LABELS = /* @__PURE__ */ new Map();
+
+export function initMetroMapLayout(meta, stations) {
+  STATION_META = meta;
+  STATION_LABELS = computeLabelLayouts(meta, stations);
+}
+
 function getStationMeta(station) {
   return STATION_META.get(station.id) ?? {
     isTransfer: false,
@@ -249,5 +343,5 @@ export {
   computeLabelLayouts,
   getLabelLayout,
   getStationMarkerRadius,
-  getStationMeta
+  getStationMeta,
 };

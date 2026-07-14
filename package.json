@@ -18,7 +18,13 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "deploy": "npm run build && npx vercel --prod",
-    "ship": "node scripts/ship.mjs"
+    "ship": "node scripts/ship.mjs",
+    "crawl:spatic-assem": "node scripts/crawl-spatic-assem.mjs",
+    "parse:spatic-assem": "node scripts/parse-spatic-assem.mjs",
+    "spatic-assem": "npm run crawl:spatic-assem && npm run parse:spatic-assem",
+    "crawl:metro-ntce": "node scripts/crawl-metro-ntce.mjs",
+    "filter:metro-ntce-events": "node scripts/filter-metro-ntce-events.mjs",
+    "metro-ntce": "npm run crawl:metro-ntce && npm run filter:metro-ntce-events"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.18",

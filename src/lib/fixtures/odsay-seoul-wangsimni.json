@@ -1,0 +1,187 @@
+{
+  "result": {
+    "searchType": 0,
+    "path": [
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 6400,
+            "sectionTime": 16,
+            "lane": [{ "name": "수도권 1호선", "subwayCode": 1 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "서울역", "stationID": 133 },
+                { "stationName": "시청", "stationID": 132 },
+                { "stationName": "종각", "stationID": 131 },
+                { "stationName": "종로3가", "stationID": 130 },
+                { "stationName": "종로5가", "stationID": 129 },
+                { "stationName": "동대문", "stationID": 128 },
+                { "stationName": "동묘앞", "stationID": 127 },
+                { "stationName": "신설동", "stationID": 126 },
+                { "stationName": "제기동", "stationID": 125 },
+                { "stationName": "청량리", "stationID": 124 }
+              ]
+            },
+            "way": "청량리",
+            "startName": "서울역",
+            "endName": "청량리"
+          },
+          {
+            "trafficType": 3,
+            "distance": 200,
+            "sectionTime": 4,
+            "startName": "청량리",
+            "endName": "청량리"
+          },
+          {
+            "trafficType": 1,
+            "distance": 1800,
+            "sectionTime": 5,
+            "lane": [{ "name": "수도권 경의중앙선", "subwayCode": 104 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "청량리", "stationID": 1018 },
+                { "stationName": "회기", "stationID": 1019 },
+                { "stationName": "왕십리", "stationID": 1020 }
+              ]
+            },
+            "way": "용문",
+            "startName": "청량리",
+            "endName": "왕십리"
+          }
+        ],
+        "info": {
+          "payment": 1450,
+          "subwayTransitCount": 1,
+          "subwayStationCount": 11,
+          "totalTime": 25,
+          "totalWalk": 200,
+          "totalWalkTime": 4,
+          "firstStartStation": "서울역",
+          "lastEndStation": "왕십리"
+        }
+      },
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 2800,
+            "sectionTime": 8,
+            "lane": [{ "name": "수도권 4호선", "subwayCode": 4 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "서울역", "stationID": 426 },
+                { "stationName": "회현", "stationID": 425 },
+                { "stationName": "명동", "stationID": 424 },
+                { "stationName": "충무로", "stationID": 423 },
+                { "stationName": "동대문역사문화공원", "stationID": 422 }
+              ]
+            },
+            "way": "당고개",
+            "startName": "서울역",
+            "endName": "동대문역사문화공원"
+          },
+          {
+            "trafficType": 3,
+            "distance": 180,
+            "sectionTime": 4,
+            "startName": "동대문역사문화공원",
+            "endName": "동대문역사문화공원"
+          },
+          {
+            "trafficType": 1,
+            "distance": 3600,
+            "sectionTime": 10,
+            "lane": [{ "name": "수도권 2호선", "subwayCode": 2 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "동대문역사문화공원", "stationID": 205 },
+                { "stationName": "신당", "stationID": 206 },
+                { "stationName": "상왕십리", "stationID": 207 },
+                { "stationName": "왕십리", "stationID": 208 }
+              ]
+            },
+            "way": "성수",
+            "startName": "동대문역사문화공원",
+            "endName": "왕십리"
+          }
+        ],
+        "info": {
+          "payment": 1400,
+          "subwayTransitCount": 1,
+          "subwayStationCount": 8,
+          "totalTime": 22,
+          "totalWalk": 180,
+          "totalWalkTime": 4,
+          "firstStartStation": "서울역",
+          "lastEndStation": "왕십리"
+        }
+      },
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 5200,
+            "sectionTime": 14,
+            "lane": [{ "name": "수도권 1호선", "subwayCode": 1 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "서울역", "stationID": 133 },
+                { "stationName": "시청", "stationID": 132 },
+                { "stationName": "종각", "stationID": 131 },
+                { "stationName": "종로3가", "stationID": 130 },
+                { "stationName": "종로5가", "stationID": 129 },
+                { "stationName": "동대문", "stationID": 128 },
+                { "stationName": "동묘앞", "stationID": 127 },
+                { "stationName": "신설동", "stationID": 126 }
+              ]
+            },
+            "way": "청량리",
+            "startName": "서울역",
+            "endName": "신설동"
+          },
+          {
+            "trafficType": 3,
+            "distance": 160,
+            "sectionTime": 4,
+            "startName": "신설동",
+            "endName": "신설동"
+          },
+          {
+            "trafficType": 1,
+            "distance": 2800,
+            "sectionTime": 8,
+            "lane": [{ "name": "수도권 2호선", "subwayCode": 2 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "신설동", "stationID": 211 },
+                { "stationName": "용두", "stationID": 211 },
+                { "stationName": "신답", "stationID": 210 },
+                { "stationName": "용답", "stationID": 209 },
+                { "stationName": "성수", "stationID": 211 },
+                { "stationName": "왕십리", "stationID": 208 }
+              ]
+            },
+            "way": "성수",
+            "startName": "신설동",
+            "endName": "왕십리"
+          }
+        ],
+        "info": {
+          "payment": 1450,
+          "subwayTransitCount": 1,
+          "subwayStationCount": 12,
+          "totalTime": 26,
+          "totalWalk": 160,
+          "totalWalkTime": 4,
+          "firstStartStation": "서울역",
+          "lastEndStation": "왕십리"
+        }
+      }
+    ]
+  }
+}

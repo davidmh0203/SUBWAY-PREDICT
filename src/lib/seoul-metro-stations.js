@@ -23,6 +23,7 @@ function isSelectableLineKey(lineKey) {
 const EXTRA_STATIONS = [
   "신도림", "구로디지털", "신림", "봉천", "사당", "방배", "서초", "강남",
   "잠실", "건대입구", "왕십리", "홍대입구", "을지로3가", "서울역", "종로3가",
+  "가산디지털단지",
 ];
 
 function buildSeoulStationSet() {
@@ -37,17 +38,24 @@ function buildSeoulStationSet() {
   return set;
 }
 
-const SEOUL_STATION_IDS = buildSeoulStationSet();
+let seoulStationIdsCache = null;
+
+function getSeoulStationIds() {
+  if (!seoulStationIdsCache) {
+    seoulStationIdsCache = buildSeoulStationSet();
+  }
+  return seoulStationIdsCache;
+}
 
 function isSeoulMetroStation(stationIdOrName) {
   const clean = baseStationId(stationIdOrName);
-  return SEOUL_STATION_IDS.has(clean);
+  return getSeoulStationIds().has(clean);
 }
 
 export {
   EXCLUDED_LINE_KEYS,
   SEOUL_LINE_PATTERN,
-  SEOUL_STATION_IDS,
+  getSeoulStationIds,
   isExcludedLine,
   isSeoulMetroStation,
   isSelectableLineKey,

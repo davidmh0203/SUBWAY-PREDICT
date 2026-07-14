@@ -1,0 +1,116 @@
+{
+  "result": {
+    "searchType": 0,
+    "path": [
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 3200,
+            "sectionTime": 10,
+            "lane": [{ "name": "수도권 1호선", "subwayCode": 1 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "시청", "stationID": 132 },
+                { "stationName": "종각", "stationID": 131 },
+                { "stationName": "종로3가", "stationID": 130 },
+                { "stationName": "종로5가", "stationID": 129 },
+                { "stationName": "동대문", "stationID": 128 }
+              ]
+            },
+            "way": "청량리",
+            "startName": "시청",
+            "endName": "동대문"
+          }
+        ],
+        "info": {
+          "payment": 1400,
+          "subwayTransitCount": 0,
+          "subwayStationCount": 4,
+          "totalTime": 10,
+          "totalWalk": 0,
+          "totalWalkTime": 0,
+          "firstStartStation": "시청",
+          "lastEndStation": "동대문"
+        }
+      },
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 800,
+            "sectionTime": 3,
+            "lane": [{ "name": "수도권 2호선", "subwayCode": 2 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "시청", "stationID": 201 },
+                { "stationName": "을지로입구", "stationID": 202 },
+                { "stationName": "을지로3가", "stationID": 203 }
+              ]
+            },
+            "way": "성수",
+            "startName": "시청",
+            "endName": "을지로3가"
+          },
+          {
+            "trafficType": 3,
+            "distance": 120,
+            "sectionTime": 3,
+            "startName": "을지로3가",
+            "endName": "을지로3가"
+          },
+          {
+            "trafficType": 1,
+            "distance": 600,
+            "sectionTime": 2,
+            "lane": [{ "name": "수도권 3호선", "subwayCode": 3 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "을지로3가", "stationID": 320 },
+                { "stationName": "종로3가", "stationID": 329 }
+              ]
+            },
+            "way": "대화",
+            "startName": "을지로3가",
+            "endName": "종로3가"
+          },
+          {
+            "trafficType": 3,
+            "distance": 100,
+            "sectionTime": 3,
+            "startName": "종로3가",
+            "endName": "종로3가"
+          },
+          {
+            "trafficType": 1,
+            "distance": 1400,
+            "sectionTime": 5,
+            "lane": [{ "name": "수도권 1호선", "subwayCode": 1 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "종로3가", "stationID": 130 },
+                { "stationName": "종로5가", "stationID": 129 },
+                { "stationName": "동대문", "stationID": 128 }
+              ]
+            },
+            "way": "청량리",
+            "startName": "종로3가",
+            "endName": "동대문"
+          }
+        ],
+        "info": {
+          "payment": 1400,
+          "subwayTransitCount": 2,
+          "subwayStationCount": 6,
+          "totalTime": 16,
+          "totalWalk": 220,
+          "totalWalkTime": 6,
+          "firstStartStation": "시청",
+          "lastEndStation": "동대문"
+        }
+      }
+    ]
+  }
+}

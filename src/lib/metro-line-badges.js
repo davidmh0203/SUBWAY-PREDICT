@@ -3,6 +3,8 @@ import {
   getLineKeyForColor,
   normalizeLineColor,
 } from "./metro-network";
+
+let lineEndBadgesCache = null;
 const NODE_MERGE_TOL = 8;
 const MIN_COMPONENT_SEGS = 3;
 const BRANCH_SEG_RATIO = 0.2;
@@ -205,9 +207,16 @@ function computeLineEndBadges() {
   }
   return badges;
 }
-const LINE_END_BADGES = computeLineEndBadges();
+
+function getLineEndBadges() {
+  if (!lineEndBadgesCache) {
+    lineEndBadgesCache = computeLineEndBadges();
+  }
+  return lineEndBadgesCache;
+}
+
 export {
-  LINE_END_BADGES,
+  getLineEndBadges,
   computeLineEndBadges,
-  lineKeyToBadgeLabel
+  lineKeyToBadgeLabel,
 };

@@ -6,6 +6,7 @@ import { TimeBottomSheet, TimePickerButton } from "@/components/TimeBottomSheet"
 import { TrafficForecastCarousel } from "@/components/TrafficForecastCarousel";
 import { StationSearchField } from "@/components/StationSearchField";
 import { TODAY_EVENTS } from "@/lib/mock-data";
+import { DEMO_ROUTE_PAIRS } from "@/lib/demo-route-pairs";
 import { CROWD_LABELS } from "@/lib/congestion";
 import { APP_NAME } from "@/lib/app-brand";
 import { fetchTodayDayContext } from "@/lib/api/calendar-client";
@@ -135,6 +136,49 @@ export function HomeScreen({
                 })
               }
             />
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-medium text-slate-500">
+                다중 경로 확인용 샘플
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {DEMO_ROUTE_PAIRS.map((pair) => {
+                  const active =
+                    form.departureStationId?.startsWith(
+                      pair.departure.replace(/역.*$/, "").trim(),
+                    ) &&
+                    form.destinationStationId?.startsWith(
+                      pair.destination.replace(/역.*$/, "").trim(),
+                    );
+                  return (
+                    <button
+                      key={pair.id}
+                      type="button"
+                      title={pair.hint}
+                      onClick={() =>
+                        onFormChange({
+                          ...form,
+                          departure: pair.departure,
+                          destination: pair.destination,
+                          departureStationId: pair.departureStationId,
+                          destinationStationId: pair.destinationStationId,
+                        })
+                      }
+                      className={`rounded-full px-2.5 py-1 text-[11px] transition ${
+                        active
+                          ? "bg-slate-800 text-white"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      {pair.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] leading-relaxed text-slate-400">
+                샘플 OD는 모두 경로 카드 2장 이상입니다. 시청→동대문 · 사당→종로3가 ·
+                서울역→왕십리 · 합정→잠실을 눌러 비교해 보세요.
+              </p>
+            </div>
             <TimePickerButton value={form.targetTime} onClick={() => setSheetOpen(true)} />
             <Button size="lg" className="w-full" onClick={onSearch} disabled={!canSearch}>
               경로 예측 검색

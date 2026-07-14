@@ -1,0 +1,42 @@
+{
+  "filtered_at": "2026-07-13T06:05:44.533Z",
+  "input": "data/metro-ntce/ntce-notices.csv",
+  "source_rows": 1076,
+  "kept_rows": 833,
+  "tag_counts": {
+    "nonstop": 435,
+    "crowd_ops": 37,
+    "protest": 656,
+    "strike": 31,
+    "special_event": 27
+  },
+  "primary_tag_counts": {
+    "nonstop": 104,
+    "crowd_ops": 15,
+    "protest": 656,
+    "strike": 31,
+    "special_event": 27
+  },
+  "crowd_relevance_counts": {
+    "medium": 505,
+    "high": 328
+  },
+  "by_year": {
+    "2020": 19,
+    "2021": 84,
+    "2022": 330,
+    "2023": 169,
+    "2024": 68,
+    "2025": 134,
+    "2026": 29
+  },
+  "rules": [
+    "protest",
+    "nonstop",
+    "special_event",
+    "crowd_ops",
+    "strike"
+  ],
+  "output": "data/metro-ntce/ntce-crowd-events.csv",
+  "note": "혼잡도 % 수치가 아니라 운행·시위·행사 알림. crowd_ops는 R/H 연장 등 운영 공지."
+}

@@ -1,0 +1,153 @@
+{
+  "result": {
+    "searchType": 0,
+    "path": [
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 16800,
+            "sectionTime": 38,
+            "lane": [{ "name": "수도권 2호선", "subwayCode": 2 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "합정", "stationID": 238 },
+                { "stationName": "홍대입구", "stationID": 239 },
+                { "stationName": "신촌", "stationID": 240 },
+                { "stationName": "이대", "stationID": 241 },
+                { "stationName": "아현", "stationID": 242 },
+                { "stationName": "충정로", "stationID": 243 },
+                { "stationName": "시청", "stationID": 201 },
+                { "stationName": "을지로입구", "stationID": 202 },
+                { "stationName": "을지로3가", "stationID": 203 },
+                { "stationName": "을지로4가", "stationID": 204 },
+                { "stationName": "동대문역사문화공원", "stationID": 205 },
+                { "stationName": "신당", "stationID": 206 },
+                { "stationName": "상왕십리", "stationID": 207 },
+                { "stationName": "왕십리", "stationID": 208 },
+                { "stationName": "한양대", "stationID": 209 },
+                { "stationName": "뚝섬", "stationID": 210 },
+                { "stationName": "성수", "stationID": 211 },
+                { "stationName": "건대입구", "stationID": 212 },
+                { "stationName": "구의", "stationID": 213 },
+                { "stationName": "강변", "stationID": 214 },
+                { "stationName": "잠실나루", "stationID": 215 },
+                { "stationName": "잠실", "stationID": 216 }
+              ]
+            },
+            "way": "성수",
+            "startName": "합정",
+            "endName": "잠실"
+          }
+        ],
+        "info": {
+          "payment": 1500,
+          "subwayTransitCount": 0,
+          "subwayStationCount": 21,
+          "totalTime": 38,
+          "totalWalk": 0,
+          "totalWalkTime": 0,
+          "firstStartStation": "합정",
+          "lastEndStation": "잠실"
+        }
+      },
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 5200,
+            "sectionTime": 14,
+            "lane": [{ "name": "수도권 6호선", "subwayCode": 6 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "합정", "stationID": 622 },
+                { "stationName": "상수", "stationID": 623 },
+                { "stationName": "광흥창", "stationID": 624 },
+                { "stationName": "대흥", "stationID": 625 },
+                { "stationName": "공덕", "stationID": 626 },
+                { "stationName": "효창공원앞", "stationID": 627 },
+                { "stationName": "삼각지", "stationID": 628 },
+                { "stationName": "녹사평", "stationID": 629 },
+                { "stationName": "이태원", "stationID": 630 },
+                { "stationName": "한강진", "stationID": 631 },
+                { "stationName": "버티고개", "stationID": 632 },
+                { "stationName": "약수", "stationID": 633 },
+                { "stationName": "청구", "stationID": 634 }
+              ]
+            },
+            "way": "신내",
+            "startName": "합정",
+            "endName": "청구"
+          },
+          {
+            "trafficType": 3,
+            "distance": 140,
+            "sectionTime": 4,
+            "startName": "청구",
+            "endName": "청구"
+          },
+          {
+            "trafficType": 1,
+            "distance": 6400,
+            "sectionTime": 16,
+            "lane": [{ "name": "수도권 5호선", "subwayCode": 5 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "청구", "stationID": 536 },
+                { "stationName": "신금호", "stationID": 537 },
+                { "stationName": "행당", "stationID": 538 },
+                { "stationName": "왕십리", "stationID": 539 },
+                { "stationName": "마장", "stationID": 540 },
+                { "stationName": "답십리", "stationID": 541 },
+                { "stationName": "장한평", "stationID": 542 },
+                { "stationName": "군자", "stationID": 543 },
+                { "stationName": "아차산", "stationID": 544 },
+                { "stationName": "광나루", "stationID": 545 },
+                { "stationName": "천호", "stationID": 546 }
+              ]
+            },
+            "way": "하남검단산",
+            "startName": "청구",
+            "endName": "천호"
+          },
+          {
+            "trafficType": 3,
+            "distance": 160,
+            "sectionTime": 4,
+            "startName": "천호",
+            "endName": "천호"
+          },
+          {
+            "trafficType": 1,
+            "distance": 4200,
+            "sectionTime": 11,
+            "lane": [{ "name": "수도권 8호선", "subwayCode": 8 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "천호", "stationID": 811 },
+                { "stationName": "강동구청", "stationID": 812 },
+                { "stationName": "몽촌토성", "stationID": 813 },
+                { "stationName": "잠실", "stationID": 814 }
+              ]
+            },
+            "way": "모란",
+            "startName": "천호",
+            "endName": "잠실"
+          }
+        ],
+        "info": {
+          "payment": 1550,
+          "subwayTransitCount": 2,
+          "subwayStationCount": 26,
+          "totalTime": 49,
+          "totalWalk": 300,
+          "totalWalkTime": 8,
+          "firstStartStation": "합정",
+          "lastEndStation": "잠실"
+        }
+      }
+    ]
+  }
+}

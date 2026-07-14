@@ -1,0 +1,32 @@
+{
+  "crawled_at": "2026-07-13T06:04:29.328Z",
+  "auth_env": "TRAIN_ALERT_API_DECOIND_KEY",
+  "auth_mode": "decoding",
+  "start": "20200101",
+  "end": "20260713",
+  "month_windows": 79,
+  "api_totalcount_sum_months": 1081,
+  "unique_rows": 1076,
+  "nonstop_y": 434,
+  "by_noft_se_cd": {
+    "1": 24,
+    "2": 47,
+    "3": 10,
+    "4": 50,
+    "5": 78,
+    "6": 856,
+    "7": 5,
+    "8": 6
+  },
+  "by_year": {
+    "2020": 48,
+    "2021": 101,
+    "2022": 388,
+    "2023": 219,
+    "2024": 95,
+    "2025": 176,
+    "2026": 49
+  },
+  "csv": "data/metro-ntce/ntce-notices.csv",
+  "dated_csv": "data/metro-ntce/ntce-notices-20200101-20260713.csv"
+}

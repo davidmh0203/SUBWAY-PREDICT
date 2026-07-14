@@ -1,0 +1,132 @@
+{
+  "result": {
+    "searchType": 0,
+    "path": [
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 7200,
+            "sectionTime": 18,
+            "lane": [{ "name": "수도권 4호선", "subwayCode": 4 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "사당", "stationID": 433 },
+                { "stationName": "총신대입구", "stationID": 432 },
+                { "stationName": "동작", "stationID": 431 },
+                { "stationName": "이촌", "stationID": 430 },
+                { "stationName": "신용산", "stationID": 429 },
+                { "stationName": "삼각지", "stationID": 428 },
+                { "stationName": "숙대입구", "stationID": 427 },
+                { "stationName": "서울역", "stationID": 426 },
+                { "stationName": "회현", "stationID": 425 },
+                { "stationName": "명동", "stationID": 424 },
+                { "stationName": "충무로", "stationID": 423 }
+              ]
+            },
+            "way": "당고개",
+            "startName": "사당",
+            "endName": "충무로"
+          },
+          {
+            "trafficType": 3,
+            "distance": 120,
+            "sectionTime": 3,
+            "startName": "충무로",
+            "endName": "충무로"
+          },
+          {
+            "trafficType": 1,
+            "distance": 900,
+            "sectionTime": 3,
+            "lane": [{ "name": "수도권 3호선", "subwayCode": 3 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "충무로", "stationID": 331 },
+                { "stationName": "을지로3가", "stationID": 330 },
+                { "stationName": "종로3가", "stationID": 329 }
+              ]
+            },
+            "way": "대화",
+            "startName": "충무로",
+            "endName": "종로3가"
+          }
+        ],
+        "info": {
+          "payment": 1450,
+          "subwayTransitCount": 1,
+          "subwayStationCount": 12,
+          "totalTime": 24,
+          "totalWalk": 120,
+          "totalWalkTime": 3,
+          "firstStartStation": "사당",
+          "lastEndStation": "종로3가"
+        }
+      },
+      {
+        "pathType": 1,
+        "subPath": [
+          {
+            "trafficType": 1,
+            "distance": 4200,
+            "sectionTime": 11,
+            "lane": [{ "name": "수도권 2호선", "subwayCode": 2 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "사당", "stationID": 226 },
+                { "stationName": "방배", "stationID": 225 },
+                { "stationName": "서초", "stationID": 224 },
+                { "stationName": "교대", "stationID": 223 }
+              ]
+            },
+            "way": "성수",
+            "startName": "사당",
+            "endName": "교대"
+          },
+          {
+            "trafficType": 3,
+            "distance": 150,
+            "sectionTime": 4,
+            "startName": "교대",
+            "endName": "교대"
+          },
+          {
+            "trafficType": 1,
+            "distance": 7800,
+            "sectionTime": 19,
+            "lane": [{ "name": "수도권 3호선", "subwayCode": 3 }],
+            "passStopList": {
+              "stations": [
+                { "stationName": "교대", "stationID": 340 },
+                { "stationName": "고속터미널", "stationID": 339 },
+                { "stationName": "신사", "stationID": 337 },
+                { "stationName": "압구정", "stationID": 336 },
+                { "stationName": "옥수", "stationID": 335 },
+                { "stationName": "금호", "stationID": 334 },
+                { "stationName": "약수", "stationID": 333 },
+                { "stationName": "동대입구", "stationID": 332 },
+                { "stationName": "충무로", "stationID": 331 },
+                { "stationName": "을지로3가", "stationID": 330 },
+                { "stationName": "종로3가", "stationID": 329 }
+              ]
+            },
+            "way": "대화",
+            "startName": "교대",
+            "endName": "종로3가"
+          }
+        ],
+        "info": {
+          "payment": 1450,
+          "subwayTransitCount": 1,
+          "subwayStationCount": 14,
+          "totalTime": 34,
+          "totalWalk": 150,
+          "totalWalkTime": 4,
+          "firstStartStation": "사당",
+          "lastEndStation": "종로3가"
+        }
+      }
+    ]
+  }
+}

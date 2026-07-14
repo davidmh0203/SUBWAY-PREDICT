@@ -6,6 +6,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { officialColorForSvgHex } from "../src/lib/station-line-colors.js";
+import { STATION_POSITION_OVERRIDES } from "../src/lib/station-position-overrides.js";
+import { applyStationMerges, migrateRenamedLabelPositions } from "../src/lib/station-merges.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -16,6 +18,14 @@ function parseTranslate(transform) {
   const m = transform.match(/translate\(([\d.]+)\s+([\d.]+)\)/);
   if (!m) return null;
   return { x: parseFloat(m[1]), y: parseFloat(m[2]) };
+}
+
+function parseTextTransform(transform) {
+  const pos = parseTranslate(transform);
+  if (!pos) return null;
+  const rotateMatch = transform.match(/rotate\((-?[\d.]+)/);
+  const rotate = rotateMatch ? parseFloat(rotateMatch[1]) : -45;
+  return { ...pos, rotate, anchor: "start" };
 }
 
 function slugify(name) {
@@ -29,13 +39,36 @@ function slugify(name) {
 // Station name labels (cls-40)
 const textRegex = /<text class="cls-40" transform="([^"]+)"><tspan[^>]*>([^<]+)<\/tspan>/g;
 const labels = [];
+const labelPositions = {};
 let match;
 while ((match = textRegex.exec(svg)) !== null) {
-  const pos = parseTranslate(match[1]);
+  const parsed = parseTextTransform(match[1]);
   const name = match[2].trim();
-  if (!pos || !name || name.length < 2) continue;
+  if (!parsed || !name || name.length < 2) continue;
   if (/^\d/.test(name)) continue;
-  labels.push({ name, x: pos.x, y: pos.y });
+  labels.push({ name, x: parsed.x, y: parsed.y });
+  const id = slugify(name);
+  const parsedLabel = {
+    x: Math.round(parsed.x * 100) / 100,
+    y: Math.round(parsed.y * 100) / 100,
+    rotate: parsed.rotate,
+    anchor: parsed.anchor,
+  };
+  const prev = labelPositions[id];
+  if (!prev) {
+    labelPositions[id] = parsedLabel;
+    continue;
+  }
+  if (id === "서울대" && parsed.y < prev.y) {
+    labelPositions[id] = parsedLabel;
+    continue;
+  }
+  if (id === "디지털단지") {
+    const newScore = Math.hypot(parsed.x - 605.67, parsed.y - 627.62);
+    const prevScore = Math.hypot(prev.x - 605.67, prev.y - 627.62);
+    if (newScore < prevScore) labelPositions[id] = parsedLabel;
+    continue;
+  }
 }
 
 // All station circles
@@ -49,12 +82,12 @@ while ((match = circleRegex.exec(svg)) !== null) {
   });
 }
 
-function nearestCircle(tx, ty) {
+function nearestCircle(tx, ty, maxDist = 35) {
   let best = null;
   let bestDist = Infinity;
   for (const c of circles) {
     const d = Math.hypot(c.x - tx, c.y - ty);
-    if (d < bestDist && d < 35) {
+    if (d < bestDist && d < maxDist) {
       bestDist = d;
       best = c;
     }
@@ -67,19 +100,42 @@ for (const label of labels) {
   const circle = nearestCircle(label.x, label.y);
   if (!circle) continue;
   const key = label.name;
-  if (!stationMap.has(key)) {
-    stationMap.set(key, {
-      id: slugify(label.name),
-      name: label.name,
-      x: Math.round(circle.x * 100) / 100,
-      y: Math.round(circle.y * 100) / 100,
-    });
+  const id = slugify(label.name);
+  const entry = {
+    id,
+    name: label.name,
+    x: Math.round(circle.x * 100) / 100,
+    y: Math.round(circle.y * 100) / 100,
+  };
+
+  const existing = stationMap.get(key);
+  if (!existing) {
+    stationMap.set(key, entry);
+    continue;
+  }
+  const existingDist = Math.hypot(existing.x - label.x, existing.y - label.y);
+  const newDist = Math.hypot(entry.x - label.x, entry.y - label.y);
+  if (newDist < existingDist) {
+    stationMap.set(key, entry);
   }
 }
 
-const stations = Array.from(stationMap.values()).sort((a, b) =>
-  a.name.localeCompare(b.name, "ko"),
+const stations = applyStationMerges(
+  Array.from(stationMap.values()).map((station) => {
+    const override = STATION_POSITION_OVERRIDES[station.id];
+    return override ? { ...station, ...override } : station;
+  }),
 );
+
+delete labelPositions.가산;
+delete labelPositions.디지털단지;
+labelPositions.가산디지털단지 = {
+  x: 582,
+  y: 641,
+  rotate: -45,
+  anchor: "start",
+};
+migrateRenamedLabelPositions(labelPositions);
 
 // Line segments from <line> elements
 const lineClassColors = {};
@@ -145,6 +201,10 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(outDir, "metro-viewbox.json"),
   JSON.stringify({ width: 1150.36, height: 1074.59 }),
+);
+fs.writeFileSync(
+  path.join(outDir, "metro-label-positions.json"),
+  JSON.stringify(labelPositions, null, 0),
 );
 
 // Save lines-only inner content for embedding

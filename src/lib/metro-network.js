@@ -7,21 +7,51 @@ import {
   lineKeyForSvgHex,
   officialColorForSvgHex,
 } from "./station-line-colors";
+import { STATION_POSITION_OVERRIDES } from "./station-position-overrides";
+import { applyStationMerges, resolveStationAlias } from "./station-merges";
+import {
+  applyStationSpread,
+  computeTransferFlags,
+} from "./station-spread-layout";
+import {
+  computeAllStationMeta,
+  initMetroMapLayout,
+} from "./metro-label-layout";
 
-const METRO_STATIONS = stationsJson;
 const METRO_LINE_SEGMENTS = segmentsJson;
 const MAP_VIEWBOX = viewboxJson;
-const stationById = new Map(METRO_STATIONS.map((s) => [s.id, s]));
-const stationByName = new Map(METRO_STATIONS.map((s) => [s.name, s]));
-
 /** SVG 원본 + 공식 상징색 HEX → 호선 키 (seoulOnly 필터용) */
 const LINE_COLOR_LABELS = { ...HEX_TO_LINE_KEY };
 
+const BASE_STATIONS = applyStationMerges(
+  stationsJson.map((station) => {
+    const override = STATION_POSITION_OVERRIDES[station.id];
+    if (!override) return station;
+    return { ...station, ...override };
+  }),
+);
+
+const STATION_META = computeAllStationMeta(BASE_STATIONS);
+const transferFlags = computeTransferFlags(
+  BASE_STATIONS,
+  METRO_LINE_SEGMENTS,
+  LINE_COLOR_LABELS,
+);
+const METRO_STATIONS = applyStationSpread(BASE_STATIONS, transferFlags);
+
+queueMicrotask(() => {
+  initMetroMapLayout(STATION_META, METRO_STATIONS);
+});
+
+const stationById = new Map(METRO_STATIONS.map((s) => [s.id, s]));
+const stationByName = new Map(METRO_STATIONS.map((s) => [s.name, s]));
+
 function getStation(id) {
-  return stationById.get(id) ?? stationByName.get(id.replace(/역$/, ""));
+  const clean = resolveStationAlias(String(id).replace(/역.*$/, "").trim());
+  return stationById.get(clean) ?? stationByName.get(clean);
 }
 function getStationByName(name) {
-  const clean = name.replace(/역.*$/, "").trim();
+  const clean = resolveStationAlias(name.replace(/역.*$/, "").trim());
   return stationByName.get(clean);
 }
 

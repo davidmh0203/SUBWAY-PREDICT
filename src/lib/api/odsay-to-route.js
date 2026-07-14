@@ -159,7 +159,7 @@ export function parseOdsayPathItem(pathItem, options) {
 }
 
 /**
- * ODsay result 객체 → primary + optional alternative
+ * ODsay result 객체 → primary + alternatives[]
  * @param {object} result - data.result
  * @param {{ start: string, end: string, departureTime: Date }} options
  */
@@ -169,11 +169,22 @@ export function parseOdsayResult(result, options) {
     throw new Error("ODsay 경로 결과가 없습니다.");
   }
 
-  const primary = parseOdsayPathItem(paths[0], options);
-  const alternative =
-    paths.length > 1 ? parseOdsayPathItem(paths[1], options) : undefined;
+  const parsed = [];
+  const seen = new Set();
+  for (const pathItem of paths) {
+    const body = parseOdsayPathItem(pathItem, options);
+    const key = (body.stations ?? []).map((s) => s.name).join("|");
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    parsed.push(body);
+  }
 
-  return { primary, alternative };
+  if (!parsed.length) {
+    throw new Error("유효한 ODsay 경로가 없습니다.");
+  }
+
+  const [primary, ...alternatives] = parsed;
+  return { primary, alternatives };
 }
 
 /** 목업 혼잡도 → UI rate */

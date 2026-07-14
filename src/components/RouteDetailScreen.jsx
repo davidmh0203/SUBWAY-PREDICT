@@ -7,6 +7,10 @@ import { TrainCongestionList } from "@/components/TrainCongestionList";
 import { RouteSchematic } from "@/components/RouteSchematic";
 import { RouteMiniMap } from "@/components/RouteMiniMap";
 import { InteractiveMetroMap } from "@/components/InteractiveMetroMap";
+import {
+  RouteTimelineBar,
+  buildTimelineLegs,
+} from "@/components/RouteTimelineBar";
 import { getTrainCongestionRows } from "@/lib/crowd-data";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
@@ -27,6 +31,7 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
     () => getTrainCongestionRows(timeOffset, stationNames),
     [timeOffset, stationNames],
   );
+  const timelineLegs = useMemo(() => buildTimelineLegs(route), [route]);
 
   const { expandedGroups, toggleGroup } = useRouteCollapse(route.segments);
   const highlightedLineKeys = useMemo(
@@ -68,7 +73,9 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
         {route.segments?.length > 0 && (
           <Card>
             <CardContent className="p-4 pt-5">
-              <p className="mb-4 text-xs font-semibold text-slate-500">경로 다이어그램</p>
+              <p className="mb-3 text-xs font-semibold text-slate-500">소요 시간</p>
+              <RouteTimelineBar legs={timelineLegs} totalTime={route.totalTime} />
+              <p className="mb-4 mt-5 text-xs font-semibold text-slate-500">경로 다이어그램</p>
               <RouteSchematic
                 segments={route.segments}
                 expandedGroups={expandedGroups}

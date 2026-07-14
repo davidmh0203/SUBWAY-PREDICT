@@ -1,7 +1,20 @@
 import { getStatusFromRate } from "./congestion";
 import { findRouteVariants } from "./route-finder";
 import { adaptApiRouteResponse } from "./api/route-adapter";
+import { parseOdsayResult } from "./api/odsay-to-route";
 import { estimateLocalRouteMinutes, estimateSubwayPayment } from "./route-timing";
+import { findDemoRoutePair } from "./demo-route-pairs";
+import cityhallDongdaemunFixture from "./fixtures/odsay-cityhall-dongdaemun.json";
+import sadangJongno3Fixture from "./fixtures/odsay-sadang-jongno3.json";
+import seoulWangsimniFixture from "./fixtures/odsay-seoul-wangsimni.json";
+import hapjeongJamsilFixture from "./fixtures/odsay-hapjeong-jamsil.json";
+
+const DEMO_ROUTE_FIXTURES = {
+  "cityhall-dongdaemun": cityhallDongdaemunFixture,
+  "sadang-jongno3": sadangJongno3Fixture,
+  "seoul-wangsimni": seoulWangsimniFixture,
+  "hapjeong-jamsil": hapjeongJamsilFixture,
+};
 const BASE_PREDICTIONS = [
   { stationId: 234, stationName: "신도림", baseRate: 55 },
   { stationId: 230, stationName: "신림", baseRate: 85 },
@@ -209,20 +222,48 @@ function fallbackRouteResponse(targetTime, departure, destination) {
   };
 }
 
-function buildRoutes(targetTime, departure = "연신내", destination = "봉은사") {
+function buildRoutesFromFixture(fixture, departure, destination, targetTime) {
+  const { primary, alternatives } = parseOdsayResult(fixture.result, {
+    start: departure.replace(/역.*$/, "").trim(),
+    end: destination.replace(/역.*$/, "").trim(),
+    departureTime: targetTime,
+  });
+  const sorted = [primary, ...alternatives].sort(
+    (a, b) =>
+      (a.summary?.total_time_min ?? 999) - (b.summary?.total_time_min ?? 999),
+  );
+  const [first, ...rest] = sorted;
+  return adaptApiRouteResponse(
+    { ...first, alternatives: rest, source: "fixture" },
+    targetTime,
+  );
+}
+
+function buildRoutes(targetTime, departure = "시청", destination = "동대문") {
+  const demo = findDemoRoutePair(departure, destination);
+  const fixture = demo ? DEMO_ROUTE_FIXTURES[demo.id] : null;
+  if (fixture) {
+    return buildRoutesFromFixture(fixture, departure, destination, targetTime);
+  }
+
   const { fast, alt } = findRouteVariants(departure, destination, targetTime);
 
   if (fast) {
     const primary = finderToRouteResponse(fast, departure, destination);
-    const alternative = alt ? finderToRouteResponse(alt, departure, destination) : undefined;
+    const alternatives = alt
+      ? [finderToRouteResponse(alt, departure, destination)]
+      : [];
     return adaptApiRouteResponse(
-      { ...primary, alternative, source: "mock" },
+      { ...primary, alternatives, source: "mock" },
       targetTime,
     );
   }
 
   const fallback = fallbackRouteResponse(targetTime, departure, destination);
-  return adaptApiRouteResponse({ ...fallback, source: "mock" }, targetTime);
+  return adaptApiRouteResponse(
+    { ...fallback, alternatives: [], source: "mock" },
+    targetTime,
+  );
 }
 const SLIDER_MARKS = ["17:30", "18:00", "18:30", "19:00", "19:30"];
 

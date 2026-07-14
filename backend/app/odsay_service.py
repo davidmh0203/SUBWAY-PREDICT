@@ -205,17 +205,27 @@ def _route_from_odsay_path(
     }
 
 
+# ODsay path[] 중 UI 카드로 노출할 최대 개수
+MAX_ROUTE_PATHS = 5
+
+
+def _station_names_key(stations: list[dict[str, Any]]) -> str:
+    return "|".join(s.get("name", "") for s in stations)
+
+
 async def predict_route_with_odsay(
     start: str,
     end: str,
     departure_time: datetime,
 ) -> dict[str, Any]:
     if not is_configured():
-        return build_mock_route(start, end, departure_time.hour)
+        body = build_mock_route(start, end, departure_time.hour)
+        body.setdefault("alternatives", [])
+        return body
 
     start_key = normalize_station_name(start)
     end_key = normalize_station_name(end)
-    cache_key = f"{start_key}|{end_key}|{departure_time.hour}"
+    cache_key = f"v2|{start_key}|{end_key}|{departure_time.hour}"
     cached = cache_get("route", cache_key)
     if cached is not None:
         return cached
@@ -227,8 +237,31 @@ async def predict_route_with_odsay(
         paths = data.get("result", {}).get("path") or []
         if not paths:
             raise OdsayError("경로 결과가 없습니다.")
-        route_body = _route_from_odsay_path(start, end, departure_time, paths[0])
+
+        parsed: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for path_item in paths[:MAX_ROUTE_PATHS]:
+            try:
+                body = _route_from_odsay_path(start, end, departure_time, path_item)
+            except OdsayError:
+                continue
+            key = _station_names_key(body.get("stations") or [])
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            parsed.append(body)
+
+        if not parsed:
+            raise OdsayError("유효한 지하철 경로가 없습니다.")
+
+        primary = parsed[0]
+        route_body = {
+            **primary,
+            "alternatives": parsed[1:],
+        }
         cache_set("route", cache_key, route_body)
         return route_body
     except OdsayError:
-        return build_mock_route(start, end, departure_time.hour)
+        body = build_mock_route(start, end, departure_time.hour)
+        body.setdefault("alternatives", [])
+        return body

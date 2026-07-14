@@ -5,11 +5,14 @@ import { colorForLineKey } from "@/lib/station-line-colors";
 import { isSelectableLineKey } from "@/lib/seoul-metro-stations";
 import { sameStation, stationIdWithLine } from "@/lib/station-id";
 
+import { resolveStationAlias } from "@/lib/station-merges";
+
 function scoreMatch(name, query) {
   if (!query) return 0;
-  if (name === query) return 100;
-  if (name.startsWith(query)) return 80;
-  if (name.includes(query)) return 60;
+  const resolvedQuery = resolveStationAlias(query);
+  if (name === query || name === resolvedQuery) return 100;
+  if (name.startsWith(query) || name.startsWith(resolvedQuery)) return 80;
+  if (name.includes(query) || name.includes(resolvedQuery)) return 60;
   return 0;
 }
 

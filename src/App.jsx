@@ -30,10 +30,10 @@ export default function App() {
   const [view, setView] = useState(() => readHashView() ?? "home");
   // 해시 받아왔을때 그게 참이면 그 값으로 , 유효하지않은 null/false이면 ?? 뒤에 있는 문자열로 사용
   const [form, setForm] = useState({
-    departure: "강남역",
-    destination: "잠실역",
-    departureStationId: "강남|2호선",
-    destinationStationId: "잠실|2호선",
+    departure: "시청역",
+    destination: "동대문역",
+    departureStationId: "시청|1호선",
+    destinationStationId: "동대문|1호선",
     targetTime: createDefaultTime(),
   });
   const [selectedRoute, setSelectedRoute] = useState(null);

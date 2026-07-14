@@ -157,43 +157,57 @@ function isSamePath(a, b) {
   return stationNamesKey(a?.stations) === stationNamesKey(b?.stations);
 }
 
+function routeBodiesFromApiResponse(apiResponse) {
+  const primary = {
+    summary: apiResponse.summary,
+    segments: apiResponse.segments ?? [],
+    stations: apiResponse.stations ?? [],
+    walk_transfers: apiResponse.walk_transfers ?? [],
+    source: apiResponse.source,
+  };
+
+  const fromList = Array.isArray(apiResponse.alternatives)
+    ? apiResponse.alternatives
+    : [];
+  // 레거시: alternative 단수 필드 호환
+  const legacy = apiResponse.alternative ? [apiResponse.alternative] : [];
+
+  const bodies = [primary, ...fromList, ...legacy];
+  const unique = [];
+  for (const body of bodies) {
+    if (!body?.stations?.length && !body?.summary) continue;
+    if (unique.some((u) => isSamePath(u, body))) continue;
+    unique.push(body);
+  }
+  return unique;
+}
+
+function labelForRouteIndex(index, _total, body) {
+  const minutes = body?.summary?.total_time_min;
+  if (typeof minutes === "number") return `${minutes}분`;
+  return index === 0 ? "최적" : "대안";
+}
+
 /**
- * RouteResponse (+ optional alternative) → 추천 2카드
+ * RouteResponse (+ alternatives[]) → 추천 카드 N장
+ * 실제 ODsay/목업 경로만 카드로 쓰고, 가짜 쾌적 복제는 하지 않습니다.
  * @param {object} apiResponse
  * @param {Date} departureTime
  */
 export function adaptApiRouteResponse(apiResponse, departureTime) {
-  const levelBadge =
-    API_LEVEL_BADGE[apiResponse.summary?.overall_level] ?? "시간 우선";
+  const bodies = routeBodiesFromApiResponse(apiResponse);
+  if (!bodies.length) return [];
 
-  const fast = buildRouteFromResponse(apiResponse, departureTime, {
-    id: "fast",
-    label: "최단 시간 경로",
-    badge: levelBadge,
-    recommended: false,
-  });
-
-  const altBody = apiResponse.alternative;
-  if (altBody && !isSamePath(apiResponse, altBody)) {
-    const alt = buildRouteFromResponse(altBody, departureTime, {
-      id: "alt",
-      label: "대안 경로",
-      badge: API_LEVEL_BADGE[altBody.summary?.overall_level] ?? "환승·경로 대안",
-      recommended: true,
+  return bodies.map((body, index) => {
+    const levelBadge =
+      API_LEVEL_BADGE[body.summary?.overall_level] ?? body.summary?.overall_level ?? "경로";
+    return buildRouteFromResponse(body, departureTime, {
+      id: `route-${index}`,
+      label: labelForRouteIndex(index, bodies.length, body),
+      badge: levelBadge,
+      recommended: index === 0,
     });
-    return [fast, alt];
-  }
-
-  const comfort = buildRouteFromResponse(apiResponse, departureTime, {
-    id: "comfort",
-    label: "추천 쾌적 경로",
-    badge: "쾌적 우선",
-    recommended: true,
-    comfortFactor: 0.55,
-    timeExtra: 0,
   });
-
-  return [fast, comfort];
 }
 
 /**

@@ -2,7 +2,7 @@ import React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Maximize2, Minus, Plus } from "lucide-react";
 import { CROWD_COLORS, CROWD_LABELS } from "@/lib/congestion";
-import { LINE_END_BADGES } from "@/lib/metro-line-badges";
+import { getLineEndBadges } from "@/lib/metro-line-badges";
 import {
   MAP_VIEWBOX,
   METRO_LINE_SEGMENTS,
@@ -354,7 +354,7 @@ function InteractiveMetroMap({
             {
               className: "pointer-events-none transition-opacity duration-300",
             },
-            LINE_END_BADGES.filter(
+            getLineEndBadges().filter(
               (badge) => !seoulOnly || SEOUL_LINE_PATTERN.test(badge.lineKey),
             ).map((badge) => {
               const focused = isLineFocused(badge.lineKey);
@@ -433,6 +433,7 @@ function InteractiveMetroMap({
                     if (onStationClick) onStationClick(station, pickRole);
                   },
                 },
+                /* @__PURE__ */ React.createElement("title", null, `${station.name}역`),
                 isDep &&
                   /* @__PURE__ */ React.createElement("circle", {
                     cx: station.x,

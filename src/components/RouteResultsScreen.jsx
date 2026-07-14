@@ -1,11 +1,10 @@
-import { ArrowLeft, Clock, Coins, RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { HourlyCongestionChart } from "@/components/HourlyCongestionChart";
-import { CROWD_LABELS, rateToCrowdLevel } from "@/lib/congestion";
+import { RouteOptionCard } from "@/components/RouteOptionCard";
 import { getHourlyCongestionData } from "@/lib/crowd-data";
 import {
   SLIDER_MARKS,
@@ -67,12 +66,16 @@ export function RouteResultsScreen({
           ...localRoutes.map((r) => r.stations?.length ?? 0),
           0,
         );
-        if (localStops > apiStops) {
+        // 로컬 픽스처/그래프가 더 많은 실경로를 주면 우선 (예: 시청→동대문 2경로)
+        if (localRoutes.length > apiRoutes.length) {
           setRoutes(localRoutes);
           setRouteSource("mock-graph");
-        } else {
+        } else if (apiRoutes.length >= 2 || apiStops >= localStops) {
           setRoutes(apiRoutes);
           setRouteSource("api");
+        } else {
+          setRoutes(localRoutes);
+          setRouteSource("mock-graph");
         }
       } catch {
         if (cancelled) return;
@@ -180,62 +183,25 @@ export function RouteResultsScreen({
               경로를 불러오는 중...
             </CardContent>
           </Card>
+        ) : routes.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center text-sm text-slate-500">
+              검색된 경로가 없습니다.
+            </CardContent>
+          </Card>
         ) : (
-          routes.map((route, idx) => {
-            const crowdLevel = rateToCrowdLevel(route.maxCongestion);
+          routes.map((route) => {
             const baseTime = routes[0]?.totalTime ?? route.totalTime;
             const timeDiff = route.totalTime - baseTime;
             return (
-              <Card
+              <RouteOptionCard
                 key={route.id}
-                className={`cursor-pointer transition-shadow duration-300 hover:shadow-[0_2px_6px_rgba(15,23,42,0.06),0_8px_24px_rgba(15,23,42,0.07)] ${route.recommended ? "shadow-[0_2px_8px_rgba(15,23,42,0.08)]" : ""}`}
+                route={route}
+                departureTime={debouncedTime}
+                isRecommended={Boolean(route.recommended)}
+                timeDiff={timeDiff}
                 onClick={() => onSelectRoute(route)}
-              >
-                <CardContent className="p-4">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className="font-semibold text-slate-800">
-                      {route.label ?? (idx === 0 ? "최단 시간" : "대안 경로")}
-                    </span>
-                    <Badge variant="primary">{route.badge}</Badge>
-                    {route.recommended && (
-                      <Badge variant="smooth" className="ml-auto">
-                        추천
-                      </Badge>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      {route.totalTime}분
-                      {timeDiff > 0 && (
-                        <span className="text-slate-400">(+{timeDiff}분)</span>
-                      )}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Coins className="h-3.5 w-3.5" />
-                      {route.payment.toLocaleString()}원
-                    </span>
-                    <span>
-                      {route.lineName} · 환승 {route.transfers}회
-                    </span>
-                  </div>
-
-                  {route.description && (
-                    <p className="mt-1 truncate text-xs text-slate-400">
-                      {route.description}
-                    </p>
-                  )}
-
-                  <p className="mt-2 text-sm text-slate-500">
-                    혼잡도{" "}
-                    <strong className="text-slate-700">
-                      {CROWD_LABELS[crowdLevel]}
-                    </strong>{" "}
-                    (최대 {route.maxCongestion}%)
-                  </p>
-                </CardContent>
-              </Card>
+              />
             );
           })
         )}

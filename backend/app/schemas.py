@@ -63,6 +63,14 @@ class RouteSummary(BaseModel):
     overall_level: str
 
 
+class RouteOption(BaseModel):
+    """ODsay path[] 항목 하나 (primary와 동일 구조, 메타 제외)."""
+
+    summary: RouteSummary
+    segments: list[Segment]
+    stations: list[RouteStation]
+
+
 class RouteResponse(BaseModel):
     start: str
     end: str
@@ -70,6 +78,7 @@ class RouteResponse(BaseModel):
     summary: RouteSummary
     segments: list[Segment]
     stations: list[RouteStation]
+    alternatives: list[RouteOption] = []
 
 
 # ---------- /congestion/station/{id} ----------

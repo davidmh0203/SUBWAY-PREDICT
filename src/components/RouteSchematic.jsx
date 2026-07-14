@@ -1,12 +1,14 @@
-import { Footprints } from "lucide-react";
+import { Footprints, Train } from "lucide-react";
 import { CONGESTION_STYLES } from "@/lib/congestion";
 import { buildRidingLegs } from "@/lib/route-station-groups";
 import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
+import { MOCK_WALK_TRANSFER_MINUTES } from "@/lib/route-timing";
 
 function WalkConnector({ prevColor, nextColor, minutes }) {
-  const label = minutes ? `도보 환승 ${minutes}분` : "도보 환승";
+  const walkMin =
+    minutes != null && minutes > 0 ? minutes : MOCK_WALK_TRANSFER_MINUTES;
   return (
-    <div className="relative -mt-2 mb-1 flex items-center gap-2 py-1 pl-[11px]">
+    <div className="relative -mt-2 mb-1 flex items-center gap-2 py-1.5 pl-[11px]">
       <div
         className="absolute left-[11px] top-0 h-full w-[4px]"
         style={{
@@ -14,9 +16,13 @@ function WalkConnector({ prevColor, nextColor, minutes }) {
           opacity: 0.45,
         }}
       />
-      <div className="ml-8 flex items-center gap-1.5 text-xs text-slate-500">
-        <Footprints className="h-3.5 w-3.5" />
-        <span>{label}</span>
+      <div className="ml-8 flex items-center gap-2 rounded-md border border-slate-100 bg-slate-50 px-2 py-1 text-xs text-slate-600">
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-slate-500">
+          <Footprints className="h-3 w-3 text-white" strokeWidth={2.5} />
+        </span>
+        <span>
+          환승 도보 <strong className="tabular-nums text-slate-800">{walkMin}분</strong>
+        </span>
       </div>
       <div
         className="absolute bottom-0 left-[11px] h-1/2 w-[4px]"
@@ -36,9 +42,11 @@ function BoardingRow({ leg }) {
     <div className="relative" style={{ minHeight: 72 }}>
       <div className="relative flex items-start gap-3">
         <div
-          className="relative z-10 mt-[2px] h-6 w-6 shrink-0 rounded-full border-[3px] border-white shadow-md"
+          className="relative z-10 mt-[2px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-[3px] border-white shadow-md"
           style={{ backgroundColor: lineColor }}
-        />
+        >
+          <Train className="h-3 w-3 text-white" strokeWidth={2.5} />
+        </div>
         <div className="flex-1 pb-3">
           <p className="text-sm font-bold text-slate-800">
             <span style={{ color: lineColor }}>{lineName}</span> {boarding.name}역 승차
@@ -172,7 +180,9 @@ export function RouteSchematic({ segments, expandedGroups, onToggleGroup }) {
             <WalkConnector
               prevColor={legs[i - 1].lineColor}
               nextColor={leg.lineColor}
-              minutes={segments[i - 1]?.walkAfter?.minutes}
+              minutes={
+                segments[i - 1]?.walkAfter?.minutes ?? MOCK_WALK_TRANSFER_MINUTES
+              }
             />
           )}
           <RidingLegBlock

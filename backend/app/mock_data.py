@@ -81,6 +81,7 @@ def build_mock_route(start: str, end: str, hour: int) -> dict:
         },
         "segments": segments,
         "stations": stations,
+        "alternatives": [],
     }
 
 

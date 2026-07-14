@@ -1,0 +1,19 @@
+{
+  "parsed_at": "2026-07-13T05:41:37.997Z",
+  "input": "data/spatic/raw/assem.jsonl",
+  "posts": 848,
+  "event_rows": 4391,
+  "by_type": {
+    "assembly": 4061,
+    "pre_march": 199,
+    "event": 131
+  },
+  "parse_ok": 4381,
+  "parse_fail": 10,
+  "empty_crowd_focus_points": 27,
+  "ok_rate": 0.9977,
+  "outputs": {
+    "events": "data/spatic/assem-events.csv",
+    "posts": "data/spatic/assem-posts.csv"
+  }
+}

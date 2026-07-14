@@ -1,12 +1,14 @@
-# subway-react-explainer
+# videos/
 
-이 프로젝트는 HyperFrames 영상 제작 워크스페이스로 이전되었습니다.
+HyperFrames 학습 영상은 `~/Videos/study-shorts/`에서 관리합니다. 이 폴더에는 심볼릭 링크만 둡니다.
 
-**실제 위치:** [`~/Videos/study-shorts/subway-react-explainer`](../../../Videos/study-shorts/subway-react-explainer)
+| 링크 | 실제 위치 |
+|------|-----------|
+| `subway-react-explainer` → | `~/Videos/study-shorts/subway-react-explainer` |
 
-공용 TTS·렌더 스크립트: `~/Videos/study-shorts/scripts/`
+공용 TTS·렌더: `~/Videos/study-shorts/scripts/` · venv: `~/Videos/study-shorts/.venv`
 
 ```bash
-cd ~/Videos/study-shorts/subway-react-explainer
+cd videos/subway-react-explainer   # 또는 ~/Videos/study-shorts/subway-react-explainer
 npm run render:ep ep1
 ```
