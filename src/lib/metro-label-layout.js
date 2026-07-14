@@ -1,7 +1,7 @@
 import {
-  LINE_COLOR_LABELS,
   METRO_LINE_SEGMENTS,
   METRO_STATIONS,
+  getLineKeyForColor,
   getNearestSegmentColor,
   normalizeLineColor,
 } from "./metro-network";
@@ -23,7 +23,7 @@ const LABEL_OVERRIDES = {
   방화: { x: 438, y: 432, anchor: "start", rotate: -38 }
 };
 function colorToLineKey(color) {
-  return LINE_COLOR_LABELS[color.toLowerCase()] ?? color.toLowerCase();
+  return getLineKeyForColor(color);
 }
 function getStationMarkerRadius(meta) {
   return meta.isTransfer ? TRANSFER_STATION_R : BASE_STATION_R;
