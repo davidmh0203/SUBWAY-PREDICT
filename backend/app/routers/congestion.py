@@ -102,7 +102,7 @@ def get_station_congestion(
 def _hourly_cached(station: str, day: str) -> tuple[str, tuple]:
     points = []
     predictor = get_predictor()
-    for hour in range(6, 24):
+    for hour in range(5, 24):
         dt = datetime.fromisoformat(f"{day}T{hour:02d}:30:00")
         if predictor is not None:
             pred = predict_station(station, dt, station_type_for(station))

@@ -7,7 +7,7 @@ const ICON_COUNTS = [1, 2, 3, 4, 5];
 export function CongestionLegend({ className = "", compact = false, showPercentRanges = false }) {
   return (
     <div className={`flex flex-col items-end gap-1.5 ${className}`}>
-      <div className="flex h-2.5 w-56 overflow-hidden rounded-full">
+      <div className="flex h-2.5 w-40 max-w-[45vw] overflow-hidden rounded-full sm:w-48">
         {LEVELS.map((level) => (
           <div key={level} className="flex-1" style={{ backgroundColor: CROWD_COLORS[level] }} />
         ))}

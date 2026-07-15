@@ -1,5 +1,6 @@
 import { METRO_STATIONS, METRO_LINE_SEGMENTS, getLineKeyForColor, normalizeLineColor } from "./metro-network";
 import { getStatusFromRate } from "./congestion";
+import { pruneNoRideSegments } from "./route-station-groups";
 import {
   MOCK_MINUTES_PER_STOP,
   MOCK_WALK_TRANSFER_MINUTES,
@@ -156,11 +157,25 @@ function pathToSegments(path, targetTime) {
     };
 
     if (!currentSeg || currentSeg.lineColor !== lineColor) {
-      currentSeg = {
-        lineName: getLineKeyForColor(rawLineColor),
-        lineColor,
-        stations: [],
-      };
+      // 환승: 이전 노선 종착(옥수 등)을 새 노선 승차역으로도 넣어
+      // 도착만 남은 1역 구간(응봉→응봉)이 생기지 않게 함
+      if (currentSeg && currentSeg.stations.length) {
+        const transferBoard = {
+          ...currentSeg.stations[currentSeg.stations.length - 1],
+          type: "transfer",
+        };
+        currentSeg = {
+          lineName: getLineKeyForColor(rawLineColor),
+          lineColor,
+          stations: [transferBoard],
+        };
+      } else {
+        currentSeg = {
+          lineName: getLineKeyForColor(rawLineColor),
+          lineColor,
+          stations: [],
+        };
+      }
       segments.push(currentSeg);
     }
     currentSeg.stations.push(station);
@@ -180,7 +195,7 @@ function pathToSegments(path, targetTime) {
     }
   }
 
-  return { segments, walkTransfers };
+  return { segments: pruneNoRideSegments(segments), walkTransfers };
 }
 
 function resolveId(name) {

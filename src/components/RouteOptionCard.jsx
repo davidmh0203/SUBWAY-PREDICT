@@ -5,7 +5,13 @@ import {
   RouteTimelineBar,
   buildTimelineLegs,
 } from "@/components/RouteTimelineBar";
-import { CROWD_LABELS, rateToCrowdLevel } from "@/lib/congestion";
+import { RouteCongestionStrip } from "@/components/RouteCongestionStrip";
+import {
+  CROWD_COLORS,
+  CROWD_LABELS,
+  rateToCrowdLevel,
+} from "@/lib/congestion";
+import { getCardCongestionRate } from "@/lib/route-congestion-summary";
 import {
   formatArrivalTime,
   MOCK_WALK_TRANSFER_MINUTES,
@@ -33,11 +39,13 @@ function TransferOutline({ route }) {
         const board = seg.stations[0]?.name;
         const alight = seg.stations[seg.stations.length - 1]?.name;
         const hasNext = i < segs.length - 1;
-        const walkMin = hasNext
-          ? seg.walkAfter?.minutes != null && seg.walkAfter.minutes > 0
-            ? seg.walkAfter.minutes
-            : MOCK_WALK_TRANSFER_MINUTES
-          : null;
+        const finalWalk = !hasNext && seg.walkAfter?.destination;
+        const walkMin =
+          hasNext || finalWalk
+            ? seg.walkAfter?.minutes != null && seg.walkAfter.minutes > 0
+              ? seg.walkAfter.minutes
+              : MOCK_WALK_TRANSFER_MINUTES
+            : null;
 
         return (
           <div key={`${seg.lineName}-${i}`} className="flex items-start gap-2">
@@ -53,8 +61,11 @@ function TransferOutline({ route }) {
                   <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-slate-400">
                     <Footprints className="h-2.5 w-2.5 text-white" strokeWidth={2.5} />
                   </span>
-                  환승 도보 {walkMin}분
-                  {segs[i + 1] ? ` · ${segs[i + 1].lineName}` : ""}
+                  {finalWalk
+                    ? `도보 ${walkMin}분 · ${seg.walkAfter.destination.name}`
+                    : `환승 도보 ${walkMin}분${
+                        segs[i + 1] ? ` · ${segs[i + 1].lineName}` : ""
+                      }`}
                 </p>
               )}
             </div>
@@ -65,13 +76,24 @@ function TransferOutline({ route }) {
   );
 }
 
+const BADGE_STYLE = {
+  shortest: "bg-blue-50 text-blue-700",
+  comfortable: "bg-emerald-50 text-emerald-700",
+};
+
+const BADGE_LABEL = {
+  shortest: "최단",
+  comfortable: "쾌적",
+};
+
 /**
- * 네이버 지도 스타일 경로 카드 — 예상 시간 중심 + 호선 색 타임라인
+ * 네이버 지도 스타일 경로 카드 — 예상 시간 중심 + 호선/혼잡 타임라인
  */
 export function RouteOptionCard({
   route,
   departureTime,
-  isRecommended,
+  badges = [],
+  scheduleTag = null,
   timeDiff,
   onClick,
   isFavorited = false,
@@ -81,7 +103,10 @@ export function RouteOptionCard({
   const legs = buildTimelineLegs(route);
   const arriveAt = formatArrivalTime(departureTime, route.totalTime);
   const departAt = formatClock(departureTime);
-  const crowdLevel = rateToCrowdLevel(route.maxCongestion);
+  const cardCongestion = getCardCongestionRate(route);
+  const crowdLevel = rateToCrowdLevel(cardCongestion);
+  const crowdColor = CROWD_COLORS[crowdLevel];
+  const isFeatured = badges.length > 0;
 
   return (
     <div
@@ -95,7 +120,7 @@ export function RouteOptionCard({
         }
       }}
       className={`w-full cursor-pointer rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] transition hover:shadow-[0_2px_8px_rgba(15,23,42,0.08)] ${
-        isRecommended ? "ring-1 ring-blue-100" : ""
+        isFeatured ? "ring-1 ring-slate-200" : ""
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -104,9 +129,17 @@ export function RouteOptionCard({
             <span className="text-2xl font-bold tracking-tight text-slate-900">
               {route.totalTime}분
             </span>
-            {isRecommended && (
-              <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-600">
-                최적
+            {badges.map((b) => (
+              <span
+                key={b}
+                className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${BADGE_STYLE[b] ?? "bg-slate-100 text-slate-600"}`}
+              >
+                {BADGE_LABEL[b] ?? b}
+              </span>
+            ))}
+            {scheduleTag && (
+              <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                {scheduleTag}
               </span>
             )}
             {timeDiff > 0 && (
@@ -125,9 +158,23 @@ export function RouteOptionCard({
               환승{" "}
               <strong className="text-slate-800">{route.transfers}</strong>회
             </p>
-            <p className="mt-0.5 text-[10px] text-slate-400">
-              {CROWD_LABELS[crowdLevel]} · 최대 {route.maxCongestion}%
-            </p>
+            <div
+              className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-1"
+              style={{ backgroundColor: `${crowdColor}22` }}
+            >
+              <span
+                className="h-3.5 w-3.5 shrink-0 rounded-full"
+                style={{ backgroundColor: crowdColor }}
+                aria-hidden
+              />
+              <span className="text-sm font-bold tabular-nums text-slate-800">
+                {cardCongestion}%
+              </span>
+              <span className="text-[11px] font-semibold" style={{ color: crowdColor }}>
+                {CROWD_LABELS[crowdLevel]}
+              </span>
+            </div>
+            <p className="mt-0.5 text-[9px] text-slate-400">출발</p>
           </div>
           {onToggleFavorite && (
             <button
@@ -158,6 +205,8 @@ export function RouteOptionCard({
       <div className="mt-3">
         <RouteTimelineBar legs={legs} totalTime={route.totalTime} />
       </div>
+
+      <RouteCongestionStrip route={route} className="mt-2.5" />
 
       <div className="mt-3">
         <TransferOutline route={route} />

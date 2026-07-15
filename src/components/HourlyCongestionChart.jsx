@@ -8,6 +8,7 @@ import {
 } from "recharts";
 import { CROWD_COLORS } from "@/lib/congestion";
 import { CongestionLegend } from "@/components/CongestionLegend";
+import { formatStationLabel } from "@/lib/station-name";
 
 export function HourlyCongestionChart({
   data,
@@ -35,7 +36,7 @@ export function HourlyCongestionChart({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-bold leading-snug text-slate-900">
-            [{lineName} {stationName}역] 시간대별 혼잡도
+            [{lineName} {formatStationLabel(stationName)}] 시간대별 혼잡도
           </h2>
           <p className="mt-1 text-xs text-slate-500">
             {dateRange}

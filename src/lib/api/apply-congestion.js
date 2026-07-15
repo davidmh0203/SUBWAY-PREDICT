@@ -1,4 +1,8 @@
 import { getStatusFromApiLevel, getStatusFromRate } from "@/lib/congestion";
+import {
+  getArrivalCongestion,
+  getDepartureCongestion,
+} from "@/lib/route-congestion-summary";
 
 /**
  * 경로 UI 객체에 역별 혼잡 맵을 덮어쓴다 (ODsay 경로 유지).
@@ -47,7 +51,7 @@ export function applyCongestionMapToRoutes(routes, byName) {
       null,
     );
 
-    return {
+    const patched = {
       ...route,
       stationPredictions: predictions,
       segments,
@@ -57,6 +61,12 @@ export function applyCongestionMapToRoutes(routes, byName) {
         ? getStatusFromApiLevel(top.level)
         : getStatusFromRate(maxCongestion),
       modelSource: "model",
+    };
+
+    return {
+      ...patched,
+      departureCongestion: getDepartureCongestion(patched),
+      arrivalCongestion: getArrivalCongestion(patched),
     };
   });
 }

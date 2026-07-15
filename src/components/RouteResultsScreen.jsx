@@ -1,12 +1,16 @@
 import { ArrowLeft, RefreshCw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { HourlyCongestionChart } from "@/components/HourlyCongestionChart";
 import { RouteOptionCard } from "@/components/RouteOptionCard";
 import { getHourlyCongestionData } from "@/lib/crowd-data";
-import { buildRoutes } from "@/lib/mock-data";
+import { buildRoutes, dateToSliderIndex, sliderIndexToDate } from "@/lib/mock-data";
+import {
+  buildSliderMarksAround,
+  resolveEffectiveDeparture,
+} from "@/lib/departure-time";
 import {
   fetchBatchCongestion,
   fetchHourlyCongestion,
@@ -16,32 +20,9 @@ import {
   applyCongestionMapToRoutes,
   collectStationNamesFromRoutes,
 } from "@/lib/api/apply-congestion";
+import { rankRoutes } from "@/lib/route-rank";
+import { CongestionLegend } from "@/components/CongestionLegend";
 import { formatHHMM } from "@/lib/route-timing";
-
-const SOURCE_LABEL = {
-  "api-model": "API·모델",
-  api: "API",
-  "mock-graph": "로컬 픽스처",
-  mock: "목업",
-};
-
-// 혼잡도 미리보기 슬라이더: 실제 검색 시각을 중심으로 -1시간~+1시간을 보여준다.
-// (예전엔 17:30~19:30로 고정돼 있어서 08:00처럼 그 범위 밖 시각으로 검색해도
-// 슬라이더가 가장 가까운 저녁 시간대로 스냅해버리는 문제가 있었다)
-const SLIDER_OFFSETS_MIN = [-60, -30, 0, 30, 60];
-const DEFAULT_SLIDER_INDEX = 2; // offset 0 = 실제 검색 시각
-
-function buildSliderMarks(baseDate) {
-  return SLIDER_OFFSETS_MIN.map((offset) => {
-    const d = new Date(baseDate.getTime() + offset * 60_000);
-    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  });
-}
-
-function sliderIndexToOffsetDate(index, baseDate) {
-  const offset = SLIDER_OFFSETS_MIN[index] ?? 0;
-  return new Date(baseDate.getTime() + offset * 60_000);
-}
 
 export function RouteResultsScreen({
   form,
@@ -52,20 +33,26 @@ export function RouteResultsScreen({
   favorites = [],
   onToggleFavorite,
 }) {
-  // 경로(ODsay)는 화면 진입 시 1회만 — 검색에 실제로 쓰인 시각을 기억해 둔다.
-  const searchTimeRef = useRef(form.targetTime);
+  const resolved = useMemo(
+    () => resolveEffectiveDeparture(form.targetTime),
+    [form.targetTime],
+  );
+  const sliderMarks = useMemo(
+    () => buildSliderMarksAround(resolved.effective),
+    [resolved.effective],
+  );
 
-  const [sliderMarks] = useState(() => buildSliderMarks(searchTimeRef.current));
-  const [sliderIndex, setSliderIndex] = useState(DEFAULT_SLIDER_INDEX);
-  const [debouncedTime, setDebouncedTime] = useState(form.targetTime);
+  const [sliderIndex, setSliderIndex] = useState(() =>
+    dateToSliderIndex(resolved.effective, sliderMarks),
+  );
+  const [debouncedTime, setDebouncedTime] = useState(resolved.effective);
   const [sliderLoading, setSliderLoading] = useState(false);
   const [baseRoutes, setBaseRoutes] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(true);
-  const [routeSource, setRouteSource] = useState(null);
   const [congestionLoading, setCongestionLoading] = useState(false);
   const [hourlyData, setHourlyData] = useState(() =>
-    getHourlyCongestionData(form.targetTime.getHours()),
+    getHourlyCongestionData(resolved.effective.getHours()),
   );
   const [hourlySource, setHourlySource] = useState("mock");
 
@@ -73,16 +60,31 @@ export function RouteResultsScreen({
   const destName = form.destination.replace(/역.*$/, "");
   const [direction, setDirection] = useState(`${destName} 방면`);
 
+  // 경로(ODsay)는 화면 진입 시·OD 변경 시 1회 — 유효 출발(첫차 폴백 포함)
+  const searchTimeRef = useRef(resolved.effective);
+
+  useEffect(() => {
+    searchTimeRef.current = resolved.effective;
+    const marks = buildSliderMarksAround(resolved.effective);
+    const idx = dateToSliderIndex(resolved.effective, marks);
+    setSliderIndex(idx);
+    setDebouncedTime(resolved.effective);
+  }, [resolved.effective, resolved.mode]);
+
   useEffect(() => {
     setSliderLoading(true);
     const timer = setTimeout(() => {
-      const next = sliderIndexToOffsetDate(sliderIndex, searchTimeRef.current);
+      const next = sliderIndexToDate(
+        sliderIndex,
+        searchTimeRef.current,
+        sliderMarks,
+      );
       setDebouncedTime(next);
       onTimeChange(next);
       setSliderLoading(false);
     }, 280);
     return () => clearTimeout(timer);
-  }, [sliderIndex, onTimeChange]);
+  }, [sliderIndex, sliderMarks, onTimeChange]);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,23 +98,16 @@ export function RouteResultsScreen({
         if (apiRoutes.length > 0) {
           setBaseRoutes(apiRoutes);
           setRoutes(apiRoutes);
-          setRouteSource(
-            apiRoutes.some((r) => r.modelSource === "model")
-              ? "api-model"
-              : "api",
-          );
         } else {
           const localRoutes = buildRoutes(fetchTime, depName, destName);
           setBaseRoutes(localRoutes);
           setRoutes(localRoutes);
-          setRouteSource(localRoutes.length ? "mock-graph" : null);
         }
       } catch {
         if (cancelled) return;
         const localRoutes = buildRoutes(fetchTime, depName, destName);
         setBaseRoutes(localRoutes);
         setRoutes(localRoutes);
-        setRouteSource("mock");
       } finally {
         if (!cancelled) setRoutesLoading(false);
       }
@@ -121,9 +116,9 @@ export function RouteResultsScreen({
     return () => {
       cancelled = true;
     };
-  }, [depName, destName]);
+  }, [depName, destName, resolved.effective.getTime()]);
 
-  // 시간대 차트: ODsay 없이 모델만
+  // 시간대 차트: ODsay 없이 모델만 — 선택(유효) 날짜 기준
   useEffect(() => {
     let cancelled = false;
     const day = searchTimeRef.current;
@@ -142,7 +137,7 @@ export function RouteResultsScreen({
     return () => {
       cancelled = true;
     };
-  }, [depName]);
+  }, [depName, resolved.effective.getTime()]);
 
   // 슬라이더 시각 → 경로 카드 혼잡만 모델로 재계산 (ODsay 없음)
   useEffect(() => {
@@ -154,17 +149,12 @@ export function RouteResultsScreen({
     setCongestionLoading(true);
     (async () => {
       try {
-        const { byName, source } = await fetchBatchCongestion(
+        const { byName } = await fetchBatchCongestion(
           names,
           debouncedTime,
         );
         if (cancelled) return;
         setRoutes(applyCongestionMapToRoutes(baseRoutes, byName));
-        if (source === "model") {
-          setRouteSource((prev) =>
-            prev === "api" || prev === "api-model" ? "api-model" : prev,
-          );
-        }
       } catch {
         // 실패 시 기존 경로 혼잡 유지
       } finally {
@@ -183,6 +173,8 @@ export function RouteResultsScreen({
 
   const loading = sliderLoading || congestionLoading;
   const activeHour = debouncedTime.getHours();
+  const isFirstTrain = resolved.mode === "first-train";
+  const rankedRoutes = useMemo(() => rankRoutes(routes), [routes]);
 
   // 즐겨찾기 식별자는 (출발, 도착, route_key, 출발 시각)까지 봐야 한다 —
   // 같은 경로라도 시각이 다르면(출근/퇴근) 별개의 즐겨찾기이기 때문.
@@ -220,7 +212,15 @@ export function RouteResultsScreen({
 
       <Card>
         <CardContent className="space-y-4 p-4 pt-5">
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-between gap-2">
+            {isFirstTrain ? (
+              <p className="text-xs text-amber-700">
+                선택 시각은 운행 종료 구간이라{" "}
+                <strong>첫차(약 05:30)</strong> 기준으로 안내합니다.
+              </p>
+            ) : (
+              <span />
+            )}
             {loading && (
               <RefreshCw className="h-4 w-4 shrink-0 animate-spin text-slate-400" />
             )}
@@ -263,13 +263,9 @@ export function RouteResultsScreen({
       </Card>
 
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold text-slate-600">추천 경로</h2>
-          {routeSource && (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
-              {SOURCE_LABEL[routeSource] ?? routeSource}
-            </span>
-          )}
+          <CongestionLegend compact />
         </div>
         {routesLoading && routes.length === 0 ? (
           <Card>
@@ -278,22 +274,23 @@ export function RouteResultsScreen({
               경로를 불러오는 중...
             </CardContent>
           </Card>
-        ) : routes.length === 0 ? (
+        ) : rankedRoutes.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center text-sm text-slate-500">
               검색된 경로가 없습니다.
             </CardContent>
           </Card>
         ) : (
-          routes.map((route) => {
-            const baseTime = routes[0]?.totalTime ?? route.totalTime;
+          rankedRoutes.map(({ route, badges }) => {
+            const baseTime = rankedRoutes[0]?.route.totalTime ?? route.totalTime;
             const timeDiff = route.totalTime - baseTime;
             return (
               <RouteOptionCard
                 key={route.id}
                 route={route}
                 departureTime={debouncedTime}
-                isRecommended={Boolean(route.recommended)}
+                badges={badges}
+                scheduleTag={isFirstTrain ? "첫차" : null}
                 timeDiff={timeDiff}
                 onClick={() => onSelectRoute(route)}
                 isFavorited={isRouteFavorited(route)}

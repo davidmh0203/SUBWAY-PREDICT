@@ -313,18 +313,18 @@ const TODAY_EVENTS = [
   },
 ];
 
-function sliderIndexToDate(index, baseDate) {
-  const time = SLIDER_MARKS[index] ?? "18:30";
+function sliderIndexToDate(index, baseDate, marks = SLIDER_MARKS) {
+  const time = marks[index] ?? marks[Math.floor(marks.length / 2)] ?? "18:30";
   const [h, m] = time.split(":").map(Number);
   const d = new Date(baseDate);
   d.setHours(h, m, 0, 0);
   return d;
 }
-function dateToSliderIndex(date) {
+function dateToSliderIndex(date, marks = SLIDER_MARKS) {
   const minutes = date.getHours() * 60 + date.getMinutes();
-  let best = 2;
+  let best = Math.floor(marks.length / 2);
   let bestDiff = Infinity;
-  SLIDER_MARKS.forEach((t, i) => {
+  marks.forEach((t, i) => {
     const [h, m] = t.split(":").map(Number);
     const diff = Math.abs(h * 60 + m - minutes);
     if (diff < bestDiff) {

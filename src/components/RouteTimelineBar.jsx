@@ -36,7 +36,8 @@ export function buildTimelineLegs(route) {
     });
 
     const hasNext = i < segs.length - 1;
-    if (!hasNext) continue;
+    const finalWalkDest = !hasNext && seg.walkAfter?.destination;
+    if (!hasNext && !finalWalkDest) continue;
 
     const walkMin =
       seg.walkAfter?.minutes != null && seg.walkAfter.minutes > 0
@@ -46,7 +47,7 @@ export function buildTimelineLegs(route) {
     legs.push({
       type: "walk",
       minutes: walkMin,
-      label: "환승 도보",
+      label: finalWalkDest ? "도보" : "환승 도보",
     });
   }
 

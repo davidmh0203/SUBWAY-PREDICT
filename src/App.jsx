@@ -6,19 +6,30 @@ import { RouteDetailScreen } from "@/components/RouteDetailScreen";
 import { MacroViewScreen } from "@/components/MacroViewScreen";
 import { FavoritesScreen } from "@/components/FavoritesScreen";
 import { AuthScreen } from "@/components/AuthScreen";
+import { CongestionVizCompareScreen } from "@/components/CongestionVizCompareScreen";
 import { buildRoutes } from "@/lib/mock-data";
 import { getNearbyStationCongestion } from "@/lib/crowd-data";
+import { fetchNearbyStations } from "@/lib/api/nearby-stations-client";
+import { fetchBatchCongestion } from "@/lib/api/client";
+import { rateToCrowdLevel } from "@/lib/congestion";
 import { cn } from "@/lib/utils";
 import { getToken, logout as apiLogout, me } from "@/lib/api/auth";
 import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites";
 import { fetchRoutesFromApi } from "@/lib/api/client";
 import { formatHHMM } from "@/lib/route-timing";
 
-const VIEWS = ["home", "results", "detail", "favorites", "macro", "login"];
+const VIEWS = ["home", "results", "detail", "favorites", "macro", "login", "cong-viz"];
 
 function createDefaultTime() {
   const d = new Date();
-  d.setHours(18, 30, 0, 0);
+  const rounded = Math.round(d.getMinutes() / 5) * 5;
+  d.setSeconds(0, 0);
+  if (rounded === 60) {
+    d.setHours(d.getHours() + 1);
+    d.setMinutes(0);
+  } else {
+    d.setMinutes(rounded);
+  }
   return d;
 }
 
@@ -45,6 +56,7 @@ export default function App() {
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [locationState, setLocationState] = useState("idle");
   const [geoLocation, setGeoLocation] = useState(null);
+  const [nearbyCongestion, setNearbyCongestion] = useState([]);
 
   // 로그인 사용자 + 즐겨찾기 상태. 별표 채움 여부는 이 목록과 (start, end, route_key)
   // 대조로만 판단한다 — 클라이언트가 자체적으로 즐겨찾기 여부를 추정하지 않는다.
@@ -55,10 +67,63 @@ export default function App() {
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [routeNotice, setRouteNotice] = useState(null);
 
-  const nearbyCongestion = useMemo(
-    () => getNearbyStationCongestion(form.targetTime, geoLocation, 4),
-    [form.targetTime, geoLocation],
-  );
+  useEffect(() => {
+    if (!geoLocation) {
+      setNearbyCongestion([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { stations } = await fetchNearbyStations({
+          lat: geoLocation.lat,
+          lng: geoLocation.lng,
+          limit: 4,
+        });
+        if (cancelled) return;
+        if (!stations.length) {
+          setNearbyCongestion(
+            getNearbyStationCongestion(form.targetTime, geoLocation, 4),
+          );
+          return;
+        }
+        const names = stations.map((s) => s.name);
+        let byName = {};
+        try {
+          const batch = await fetchBatchCongestion(names, form.targetTime);
+          byName = batch.byName ?? {};
+        } catch {
+          byName = {};
+        }
+        if (cancelled) return;
+        setNearbyCongestion(
+          stations.map((s) => {
+            const hit = byName[s.name];
+            const stationRate = hit?.rate ?? 50;
+            const trainRate = Math.min(stationRate + 8, 160);
+            return {
+              stationId: s.id || s.name,
+              stationName: s.name,
+              distanceM: s.distanceM,
+              stationRate,
+              stationLevel: rateToCrowdLevel(stationRate),
+              trainRate,
+              trainLevel: rateToCrowdLevel(trainRate),
+              source: hit?.source ?? "fallback",
+            };
+          }),
+        );
+      } catch {
+        if (cancelled) return;
+        setNearbyCongestion(
+          getNearbyStationCongestion(form.targetTime, geoLocation, 4),
+        );
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [geoLocation, form.targetTime]);
   // 페이지를 어디로 보내주는 함수
   //useCallback : 컴포넌트 리렌더링될때 함수 새로 생성하지않고 재사용(메모이제이션)하게 해주는 훅
   // 불피요한 함수 재생성 막기- > 자식컴포넌트 렌더링 최적화
@@ -328,10 +393,12 @@ export default function App() {
             onFormChange={setForm}
             onSearch={handleSearch}
             nearbyCongestion={nearbyCongestion}
+            geoLocation={geoLocation}
             locationState={locationState}
             onRequestLocation={requestLocation}
             user={authChecked ? user : null}
             onAuthEntry={handleAuthEntry}
+            onOpenCongViz={() => navigateTo("cong-viz")}
           />
         )}
         {view === "results" && (
@@ -382,6 +449,9 @@ export default function App() {
             onRequestLocation={requestLocation}
           />
         )}
+        {view === "cong-viz" && (
+          <CongestionVizCompareScreen onBack={() => navigateTo("home")} />
+        )}
         {view === "login" && (
           <AuthScreen
             onBack={() => navigateTo(authReturnView || "home")}
@@ -390,7 +460,7 @@ export default function App() {
         )}
       </div>
 
-      {view !== "login" && (
+      {view !== "login" && view !== "cong-viz" && (
         <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-around px-2 py-2">
             {bottomNav.map(({ id, label, icon: Icon }) => {

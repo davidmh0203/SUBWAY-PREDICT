@@ -4,6 +4,7 @@ import { LineBadge } from "@/components/LineBadge";
 import { searchLocalStations } from "@/lib/local-station-search";
 import { normalizeStationSearchQuery } from "@/lib/odsay-station";
 import { colorForLineKey } from "@/lib/station-line-colors";
+import { formatStationLabel } from "@/lib/station-name";
 
 export function StationSearchField({
   label,
@@ -31,7 +32,7 @@ export function StationSearchField({
   }, [stationId]);
 
   const handleSelect = (station) => {
-    onChange({ text: `${station.name}역`, stationId: station.id });
+    onChange({ text: formatStationLabel(station.name), stationId: station.id });
     setFocused(false);
   };
 
@@ -96,7 +97,9 @@ export function StationSearchField({
                 onClick={() => handleSelect(station)}
                 className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-slate-50"
               >
-                <span className="text-sm font-medium text-slate-800">{station.name}역</span>
+                <span className="text-sm font-medium text-slate-800">
+                  {formatStationLabel(station.name)}
+                </span>
                 <span className="flex shrink-0 flex-wrap justify-end gap-1">
                   {station.lineKeys.map((lineKey, i) => (
                     <LineBadge

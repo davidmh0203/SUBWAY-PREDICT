@@ -23,6 +23,7 @@ import {
   splitLabeledEventFields,
   toCsv,
 } from "./lib/spatic-assem.mjs";
+import { parsePersonnelCount } from "./lib/smpa-assem.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -52,6 +53,7 @@ const EVENT_COLUMNS = [
   "parent_seq_no",
   "event_name",
   "personnel_raw",
+  "personnel_count",
   "control_time_raw",
   "control_section_raw",
   "control_method_raw",
@@ -278,13 +280,37 @@ function buildAssemblyRow({
   is_pre_march,
   parent_seq_no,
 }) {
-  const { timePart, placePart } = splitTimePlace(cellText);
+  let { timePart, placePart } = splitTimePlace(cellText);
+  // Recover when place collapsed to "행진" and venue leaked into timePart
+  if (
+    !placePart ||
+    /^(행진|시위|집회)$/.test(normalizeSpace(placePart))
+  ) {
+    const recovered = guessTimePlace(normalizeSpace(cellText));
+    if (recovered.placePart && !/^(행진|시위|집회)$/.test(normalizeSpace(recovered.placePart))) {
+      timePart = recovered.timePart || timePart;
+      placePart = recovered.placePart;
+    } else {
+      const fromTime = guessTimePlace(normalizeSpace(timePart));
+      if (
+        fromTime.placePart &&
+        !/^(행진|시위|집회)$/.test(normalizeSpace(fromTime.placePart))
+      ) {
+        timePart = fromTime.timePart || timePart;
+        placePart = fromTime.placePart;
+      }
+    }
+  }
+
   const times = parseTimeCell(timePart);
   const marchInfo = extractMarchFromPlace(placePart);
-  const place_raw = normalizeSpace(placePart);
-  const place_primary = placePrimaryFrom(
-    marchInfo.place_without_march || place_raw,
+  const place_raw = normalizeSpace(
+    marchInfo.place_without_march || placePart,
   );
+  let place_primary = placePrimaryFrom(place_raw);
+  if (/^(행진|시위|집회)$/.test(place_primary)) {
+    place_primary = placePrimaryFrom(place_raw.replace(/^(행진|시위|집회)\s*/g, ""));
+  }
   const parse_ok = Boolean(place_primary || times.time_start);
 
   return {
@@ -294,7 +320,12 @@ function buildAssemblyRow({
     post_title,
     record_type,
     seq_no,
-    time_raw: times.time_raw || normalizeSpace(timePart),
+    time_raw: (() => {
+      const m = normalizeSpace(timePart).match(
+        /^((?:[①②③④⑤⑥⑦⑧⑨⑩]\s*)?\d{1,2}:\d{2}(?:\s*[∼~\-–—]\s*(?:\d{1,2}:\d{2})?)*)/,
+      );
+      return times.time_raw || (m ? m[1] : normalizeSpace(timePart));
+    })(),
     time_start: times.time_start,
     time_end: times.time_end,
     place_raw,
@@ -308,6 +339,7 @@ function buildAssemblyRow({
     parent_seq_no: parent_seq_no || "",
     event_name: "",
     personnel_raw: "",
+    personnel_count: "",
     control_time_raw: "",
     control_section_raw: "",
     control_method_raw: "",
@@ -431,6 +463,10 @@ function parseEventBlocks(body, baseMeta) {
       parent_seq_no: "",
       event_name,
       personnel_raw: personnel,
+      personnel_count: (() => {
+        const n = parsePersonnelCount(personnel);
+        return n === "" ? "" : String(n);
+      })(),
       control_time_raw: normalizeSpace(controlTime),
       control_section_raw: controlSection,
       control_method_raw: controlMethod,
@@ -487,6 +523,7 @@ function parsePost(record) {
       parent_seq_no: "",
       event_name: "",
       personnel_raw: "",
+      personnel_count: "",
       control_time_raw: "",
       control_section_raw: "",
       control_method_raw: "",

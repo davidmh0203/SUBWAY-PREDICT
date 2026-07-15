@@ -37,14 +37,32 @@ function laneNameFromSubPath(subPath) {
 
 function stopsFromSubPath(subPath) {
   const listed = subPath.passStopList?.stations;
-  if (listed?.length) return listed;
-  if (subPath.startName && subPath.endName) {
-    return [
-      { stationName: subPath.startName, stationID: subPath.startID ?? "" },
-      { stationName: subPath.endName, stationID: subPath.endID ?? "" },
-    ];
+  const startEnd =
+    subPath.startName && subPath.endName
+      ? [
+          { stationName: subPath.startName, stationID: subPath.startID ?? "" },
+          { stationName: subPath.endName, stationID: subPath.endID ?? "" },
+        ]
+      : null;
+
+  // passStopList가 1역만 오면 승차=하차 가짜 구간이 생김 → start/end로 보정
+  if (listed?.length >= 2) return listed;
+  if (startEnd && startEnd[0].stationName !== startEnd[1].stationName) {
+    return startEnd;
   }
-  return [];
+  if (listed?.length) return listed;
+  return startEnd ?? [];
+}
+
+function isNoOpSubwaySubPath(subPath) {
+  const start = subPath.startName?.trim();
+  const end = subPath.endName?.trim();
+  if (start && end && start === end) {
+    const listed = subPath.passStopList?.stations ?? [];
+    if (listed.length <= 1) return true;
+    if (listed.every((s) => s.stationName === start)) return true;
+  }
+  return false;
 }
 
 /**
@@ -81,8 +99,30 @@ export function parseOdsayPathItem(pathItem, options) {
 
     if (trafficType !== 1) return;
 
+    // 승차=하차 0정차 열차 — 도보로 취급
+    if (isNoOpSubwaySubPath(sp)) {
+      if (stations.length > 0 && sectionTime > 0) {
+        walkTransfers.push({
+          afterStationIndex: stations.length - 1,
+          minutes: sectionTime,
+        });
+      }
+      offsetMin += sectionTime;
+      return;
+    }
+
     const lineName = laneNameFromSubPath(sp);
     const stops = stopsFromSubPath(sp);
+    if (stops.length < 2) {
+      if (stations.length > 0 && sectionTime > 0) {
+        walkTransfers.push({
+          afterStationIndex: stations.length - 1,
+          minutes: Math.max(sectionTime, 1),
+        });
+      }
+      offsetMin += sectionTime;
+      return;
+    }
     const way = sp.way ? `${sp.way} 방면` : undefined;
     const stopOffsets = distributeStopOffsets(stops.length, sectionTime);
     const legStartOffset = offsetMin;

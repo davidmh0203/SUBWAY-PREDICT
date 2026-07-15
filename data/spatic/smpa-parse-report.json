@@ -1,0 +1,27 @@
+{
+  "finishedAt": "2026-07-14T09:23:17.242Z",
+  "before": "2024-03-18",
+  "smpa": {
+    "posts": 4709,
+    "postsWithAssemblies": 4187,
+    "assemblies": 42299,
+    "withPersonnel": 41656,
+    "bySource": {
+      "hwp": 538,
+      "pdf": 4162,
+      "none": 9
+    },
+    "empty": 522,
+    "skippedAfterCutoff": 0
+  },
+  "totals": {
+    "events": 46690,
+    "posts": 5557,
+    "smpaEvents": 42299,
+    "spaticEvents": 4391
+  },
+  "outputs": {
+    "events": "data/spatic/assem-events.csv",
+    "posts": "data/spatic/assem-posts.csv"
+  }
+}

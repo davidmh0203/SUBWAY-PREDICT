@@ -7,10 +7,11 @@
 |------|------|
 | 주 파일 | [`assem-events.csv`](./assem-events.csv) (UTF-8 BOM, Excel에서 한글 깨짐 적음) |
 | 보조 | [`assem-posts.csv`](./assem-posts.csv) 게시글 단위 요약 |
-| 기간 | **2024-03-18 ~** (사이트에 그 이전 실데이터 없음) |
-| 규모(최근 생성 기준) | 게시글 ~848건 → 이벤트 행 ~4,390건 |
+| 기간 | **2020-01-01 ~** (SMPA 2020–2024-03 gap + SPATIC 2024-03-18~) |
+| 규모(최근 생성 기준) | 게시글 ~2,376건 → 이벤트 행 ~12,605건 |
 | 인코딩 | UTF-8 (BOM) |
 | 갱신 | `npm run parse:spatic-assem` (원문 있으면) / 전체 `npm run spatic-assem` |
+| 앱 연동 | FastAPI `GET /forecast/cards`가 **DB 없이** 이 CSV를 메모리 로드. 갱신 후 커밋·백엔드 재배포. Postgres 등 불필요. |
 
 ---
 
@@ -115,7 +116,11 @@ SPATIC 웹 게시판
 | 컬럼 | 예 | 의미 |
 |------|-----|------|
 | `event_name` | `2026 서울시 쉬엄쉬엄 모닝` | `[…]` / `『…』` 행사명 |
-| `personnel_raw` | `총 10,000명(하프 3,000명, …)` | 인원 (규모 피처 후보) |
+| `personnel_raw` | `총 10,000명(하프 3,000명, …)` / `500명` | 인원 원문. SPATIC 행사 글·SMPA **신고인원** 공통 컬럼. SPATIC 일반 집회 HTML에는 거의 없어, 같은 날짜 SMPA 첨부와 시간·출발지·행진 경로로 매칭해 채움(`npm run fill:assem-personnel`). SMPA 원문 파싱 커버리지 ~98% |
+| `personnel_count` | `10000` / `500` | `personnel_raw`에서 뽑은 숫자(가능 시). 신고·예상 인원 피처용 |
+
+SMPA 보완 행은 `post_id`가 `smpa-{boardNo}` 형태이며 `source_url`이 smpa.go.kr 로 구분됩니다 (`event_date` < 2024-03-18).
+
 | `control_time_raw` | `05:00~10:00(5h)` | **교통통제 시간** (행사 진행 시간과 다를 수 있음) |
 | `control_section_raw` | `공원1문~마포대교 북단` | 통제 구간 |
 | `control_method_raw` | `양방향 전면통제` | 통제 방식 |
@@ -131,7 +136,8 @@ SPATIC 웹 게시판
 | 날짜별 집회 목록 | `event_date` + `record_type` + `place_primary` |
 | 시작·끝에서 역 혼잡 가설 | `crowd_focus_points` 또는 `march_start` / `march_end` / `place_primary` |
 | 시간대 피처 | `time_start`, `time_end` (+ 필요 시 `control_time_raw`) |
-| 대규모 행사만 | `record_type=event` + `personnel_raw` |
+| 대규모 행사만 | `record_type=event` + `personnel_raw` / `personnel_count` |
+| 신고·예상 인원 (SMPA 집회 포함) | `personnel_raw` (원문) + `personnel_count` (숫자) |
 | 원문 확인 | `source_url` |
 | 품질 필터 | `parse_ok=true` |
 

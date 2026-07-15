@@ -6,6 +6,7 @@ import { SLIDER_MARKS } from "@/lib/mock-data";
 import { formatTime } from "@/lib/congestion";
 import { getNearestStationsByGeo } from "@/lib/metro-network";
 import { sameStation } from "@/lib/station-id";
+import { formatStationLabel } from "@/lib/station-name";
 
 export function MacroViewScreen({
   form,
@@ -20,7 +21,7 @@ export function MacroViewScreen({
   const [focusStationId, setFocusStationId] = useState(null);
 
   const handleStationClick = (station, role) => {
-    const label = `${station.name}역`;
+    const label = formatStationLabel(station.name);
     if (role === "departure") {
       onFormChange({
         ...form,

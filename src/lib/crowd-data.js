@@ -12,9 +12,10 @@ const ROUTE_STATIONS = [
 ];
 const CAR_OFFSETS = [0, 4, 8, -3, 2, 10, 18, 14];
 function getHourlyCongestionData(activeHour) {
-  return Array.from({ length: 18 }, (_, i) => {
-    const hour = i + 6;
+  return Array.from({ length: 19 }, (_, i) => {
+    const hour = i + 5;
     let rate = 28 + Math.sin((hour - 6) / 4) * 12;
+    if (hour === 5) rate = 22;
     if (hour >= 7 && hour <= 9) rate = 52 + (hour === 8 ? 28 : 12);
     if (hour >= 11 && hour <= 14) rate = 38 + (hour === 12 ? 8 : 0);
     if (hour >= 17 && hour <= 20) {

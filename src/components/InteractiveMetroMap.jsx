@@ -15,6 +15,7 @@ import {
   normalizeLineColor,
 } from "@/lib/metro-network";
 import { sameStation } from "@/lib/station-id";
+import { formatStationLabel } from "@/lib/station-name";
 import { TransferStationMarker } from "@/components/TransferStationMarker";
 import { isSeoulMetroStation, SEOUL_LINE_PATTERN } from "@/lib/seoul-metro-stations";
 import {
@@ -433,7 +434,7 @@ function InteractiveMetroMap({
                     if (onStationClick) onStationClick(station, pickRole);
                   },
                 },
-                /* @__PURE__ */ React.createElement("title", null, `${station.name}역`),
+                /* @__PURE__ */ React.createElement("title", null, formatStationLabel(station.name)),
                 isDep &&
                   /* @__PURE__ */ React.createElement("circle", {
                     cx: station.x,

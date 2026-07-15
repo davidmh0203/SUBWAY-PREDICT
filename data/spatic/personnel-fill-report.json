@@ -1,0 +1,220 @@
+{
+  "finishedAt": "2026-07-15T01:55:19.151Z",
+  "minScore": 40,
+  "donors": 11859,
+  "donorDates": 1826,
+  "spaticBodyPosts": 19,
+  "rowsBefore": 12605,
+  "rowsAfter": 14189,
+  "filled": 0,
+  "filledFromSpaticBody": 0,
+  "filledFromSmpaMatch": 0,
+  "insertedSmpaOnly": 1584,
+  "noDonorDate": 858,
+  "noMatch": 1429,
+  "stillEmpty": 2287,
+  "withPersonnel": 11902,
+  "coveragePct": 83.9,
+  "samples": [
+    {
+      "post_id": "smpa-00303663",
+      "event_date": "2024-03-18",
+      "time_raw": "07:00~19:00",
+      "place": "포스코센터 앞 <대치동>",
+      "personnel_raw": "1,000명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303663",
+      "event_date": "2024-03-18",
+      "time_raw": "11:00~15:00",
+      "place": "노원구청 앞 <상계동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303663",
+      "event_date": "2024-03-18",
+      "time_raw": "11:00~19:00",
+      "place": "동대입구역 5出 <장충동1가>",
+      "personnel_raw": "1,000명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303663",
+      "event_date": "2024-03-18",
+      "time_raw": "13:00~17:00",
+      "place": "동대문구청 좌측 인도 <용두동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303715",
+      "event_date": "2024-03-19",
+      "time_raw": "14:00~16:00",
+      "place": "예장공원 앞 <주자동>",
+      "personnel_raw": "50명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303715",
+      "event_date": "2024-03-19",
+      "time_raw": "14:00~16:00",
+      "place": "서울지방보훈청 정문 앞 좌·우 인도 <용산동>",
+      "personnel_raw": "100명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303715",
+      "event_date": "2024-03-19",
+      "time_raw": "15:00~20:00",
+      "place": "노원구청 앞 <상계동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303740",
+      "event_date": "2024-03-20",
+      "time_raw": "11:00~13:00",
+      "place": "舊서울극장 앞 인도 <관수동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303740",
+      "event_date": "2024-03-20",
+      "time_raw": "12:00~13:00",
+      "place": "테라로사 건너편 앞 1개 차로 <중학동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303740",
+      "event_date": "2024-03-20",
+      "time_raw": "16:00~18:00",
+      "place": "전쟁기념관 앞 인도 <용산동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303740",
+      "event_date": "2024-03-20",
+      "time_raw": "19:00~20:00",
+      "place": "KBS본관 앞 <여의도동>",
+      "personnel_raw": "500명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303740",
+      "event_date": "2024-03-20",
+      "time_raw": "19:00~20:00",
+      "place": "동화면세점 앞 인도 <세종대로>",
+      "personnel_raw": "450명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303773",
+      "event_date": "2024-03-21",
+      "time_raw": "08:00~16:00",
+      "place": "화성산업 앞 집회 및 행진 (⇄가래여울전통마을 입구 굴다리) <강일동>",
+      "personnel_raw": "690명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303773",
+      "event_date": "2024-03-21",
+      "time_raw": "08:00~16:00",
+      "place": "금감원 앞 <여의도동>",
+      "personnel_raw": "49명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303773",
+      "event_date": "2024-03-21",
+      "time_raw": "09:30~13:00",
+      "place": "서울도시가스 본사 앞 <염창동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303803",
+      "event_date": "2024-03-22",
+      "time_raw": "08:00~12:30",
+      "place": "아모레퍼시픽 앞 <한강로2가>",
+      "personnel_raw": "200명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303803",
+      "event_date": "2024-03-22",
+      "time_raw": "08:00~18:00",
+      "place": "동착구청 앞 인도 <노량진동>",
+      "personnel_raw": "150명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303803",
+      "event_date": "2024-03-22",
+      "time_raw": "11:30~14:30",
+      "place": "영풍빌딩 앞 <서린동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303849",
+      "event_date": "2024-03-23",
+      "time_raw": "17:30~19:00",
+      "place": "신촌역 4出 앞 (신촌역 → 홍대입구역 → 홍대클럽거리 → 서교동사거리",
+      "personnel_raw": "3,000명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303850",
+      "event_date": "2024-03-24",
+      "time_raw": "09:00~17:00",
+      "place": "서울웨딩타워 앞 <가락동>",
+      "personnel_raw": "200명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303850",
+      "event_date": "2024-03-24",
+      "time_raw": "15:00~18:00",
+      "place": "교보빌딩 앞 인도 및 1개 차로 <세종대로>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303851",
+      "event_date": "2024-03-25",
+      "time_raw": "08:00~09:00",
+      "place": "강북구청 앞 <수유동>",
+      "personnel_raw": "200명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303851",
+      "event_date": "2024-03-25",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 정문 앞 이면도로 <오류동>",
+      "personnel_raw": "500명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303851",
+      "event_date": "2024-03-25",
+      "time_raw": "11:30~14:30",
+      "place": "영풍빌딩 앞 <서린동>",
+      "personnel_raw": "300명",
+      "via": "smpa_insert"
+    },
+    {
+      "post_id": "smpa-00303897",
+      "event_date": "2024-03-26",
+      "time_raw": "09:00~16:00",
+      "place": "수협중앙회 앞 (수협 → 교통회관 → 잠실역 → 쿠팡본사 → 수협) <신천동>",
+      "personnel_raw": "600명",
+      "via": "smpa_insert"
+    }
+  ]
+}

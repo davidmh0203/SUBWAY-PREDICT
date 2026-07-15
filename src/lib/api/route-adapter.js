@@ -1,6 +1,7 @@
 import { getStatusFromApiLevel, getStatusFromRate } from "@/lib/congestion";
 import { apiCongestionToRate } from "@/lib/api/odsay-to-route";
 import { colorForLineKey } from "@/lib/station-line-colors";
+import { pruneNoRideSegments } from "@/lib/route-station-groups";
 import { distributeStopOffsets, formatArrivalTime } from "@/lib/route-timing";
 
 const API_LEVEL_BADGE = {
@@ -92,7 +93,7 @@ export function buildSegmentsFromRouteStations(apiStations, departureTime, walkT
     }
   }
 
-  return segments;
+  return pruneNoRideSegments(segments);
 }
 
 function scaleSegments(segments, factor) {
@@ -168,6 +169,9 @@ function buildRouteFromResponse(apiResponse, departureTime, options) {
     comfortFactor,
   );
   const maxCongestion = Math.max(...predictions.map((p) => p.congestionRate), 0);
+  const departureCongestion = predictions[0]?.congestionRate ?? 0;
+  const arrivalCongestion =
+    predictions[predictions.length - 1]?.congestionRate ?? departureCongestion;
 
   const trainSegments = (apiResponse.segments ?? []).map((seg) => ({
     line: seg.line,
@@ -186,6 +190,8 @@ function buildRouteFromResponse(apiResponse, departureTime, options) {
     transfers: summary.transfer_count,
     lineName: segments[0]?.lineName ?? "2호선",
     maxCongestion,
+    departureCongestion,
+    arrivalCongestion,
     overallStatus:
       summary.overall_level != null
         ? getStatusFromApiLevel(summary.overall_level)

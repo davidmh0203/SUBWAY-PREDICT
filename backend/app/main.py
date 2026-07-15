@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import station_registry
 from app.db import init_db
-from app.routers import auth, calendar, congestion, favorites, odsay, stations
+from app.routers import auth, calendar, congestion, favorites, forecast, odsay, stations
 
 
 @asynccontextmanager
@@ -38,6 +38,7 @@ app.include_router(odsay.router)
 app.include_router(calendar.router)
 app.include_router(auth.router)
 app.include_router(favorites.router)
+app.include_router(forecast.router)
 
 
 @app.get("/health", tags=["기본"])

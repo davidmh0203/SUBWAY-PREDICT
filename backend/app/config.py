@@ -30,3 +30,18 @@ SPCDE_API_BASE = os.getenv(
 JWT_SECRET = os.getenv("JWT_SECRET", "dev-insecure-secret-change-me").strip()
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256").strip()
 JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "10080"))  # 기본 7일
+
+# 서울교통공사 지하철알림(ntce) — Decoding 우선 (변수명 DECOIND 맞춤)
+TRAIN_ALERT_API_DECOIND_KEY = os.getenv("TRAIN_ALERT_API_DECOIND_KEY", "").strip()
+TRAIN_ALERT_API_KEY = os.getenv("TRAIN_ALERT_API_KEY", "").strip()
+NTCE_API_BASE = os.getenv(
+    "NTCE_API_BASE",
+    "https://apis.data.go.kr/B553766/ntce/getNtceList",
+).rstrip("/")
+
+# 카카오 로컬 (주변 지하철역) — REST API 키. 프론트에 노출 금지
+KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY", "").strip()
+
+# 레포 루트 (backend/app → …/subway-predict-dashboard)
+REPO_ROOT = _root
+DATA_DIR = REPO_ROOT / "data"

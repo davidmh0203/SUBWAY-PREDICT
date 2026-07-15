@@ -12,6 +12,8 @@
 
 혼잡·이벤트 분석에는 **`ntce-crowd-events.csv`** 를 쓰는 것을 권장합니다.
 
+앱 홈「오늘의 정체 예보」는 당일 돌발을 **ntce 라이브 API**로 우선 조회하고, 실패 시 이 CSV의당일 행을 폴백합니다 (`GET /forecast/cards`). DB 적재 없이 레포 `data/` + FastAPI 메모리 로드입니다.
+
 ## 재생성
 
 `.env`에 `TRAIN_ALERT_API_DECOIND_KEY`(우선) 또는 `TRAIN_ALERT_API_KEY` 필요.

@@ -38,6 +38,20 @@ class StationsResponse(BaseModel):
     stations: list[Station]
 
 
+class NearbyStation(BaseModel):
+    id: str
+    name: str
+    placeName: str
+    distanceM: int
+    lat: float
+    lng: float
+
+
+class NearbyStationsResponse(BaseModel):
+    source: str
+    stations: list[NearbyStation]
+
+
 # ---------- /predict/route ----------
 class RouteRequest(BaseModel):
     start: str
