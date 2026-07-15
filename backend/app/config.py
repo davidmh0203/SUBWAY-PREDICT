@@ -25,3 +25,8 @@ SPCDE_API_BASE = os.getenv(
     "SPCDE_API_BASE",
     "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService",
 ).rstrip("/")
+
+# 회원가입/로그인 JWT — 운영 배포 전에는 반드시 .env에서 실제 값으로 교체할 것
+JWT_SECRET = os.getenv("JWT_SECRET", "dev-insecure-secret-change-me").strip()
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256").strip()
+JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "10080"))  # 기본 7일

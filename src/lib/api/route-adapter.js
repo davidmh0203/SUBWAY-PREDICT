@@ -199,6 +199,8 @@ function buildRouteFromResponse(apiResponse, departureTime, options) {
     trainSegments,
     recommended,
     source: apiResponse.source ?? "api",
+    routeKey: apiResponse.route_key ?? null,
+    routeLabel: apiResponse.route_label ?? null,
   };
 }
 
@@ -213,6 +215,8 @@ function routeBodiesFromApiResponse(apiResponse) {
     stations: apiResponse.stations ?? [],
     walk_transfers: apiResponse.walk_transfers ?? [],
     source: apiResponse.source,
+    route_key: apiResponse.route_key ?? null,
+    route_label: apiResponse.route_label ?? null,
   };
 
   const fromList = Array.isArray(apiResponse.alternatives)

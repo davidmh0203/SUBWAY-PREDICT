@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Home, Map, Route, Train } from "lucide-react";
+import { Home, Map, Route, Star } from "lucide-react";
 import { HomeScreen } from "@/components/HomeScreen";
 import { RouteResultsScreen } from "@/components/RouteResultsScreen";
 import { RouteDetailScreen } from "@/components/RouteDetailScreen";
 import { MacroViewScreen } from "@/components/MacroViewScreen";
+import { FavoritesScreen } from "@/components/FavoritesScreen";
+import { AuthScreen } from "@/components/AuthScreen";
 import { buildRoutes } from "@/lib/mock-data";
 import { getNearbyStationCongestion } from "@/lib/crowd-data";
 import { cn } from "@/lib/utils";
+import { getToken, logout as apiLogout, me } from "@/lib/api/auth";
+import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites";
+import { fetchRoutesFromApi } from "@/lib/api/client";
+import { formatHHMM } from "@/lib/route-timing";
 
-const VIEWS = ["home", "results", "detail", "macro"];
+const VIEWS = ["home", "results", "detail", "favorites", "macro", "login"];
 
 function createDefaultTime() {
   const d = new Date();
@@ -39,6 +45,15 @@ export default function App() {
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [locationState, setLocationState] = useState("idle");
   const [geoLocation, setGeoLocation] = useState(null);
+
+  // 로그인 사용자 + 즐겨찾기 상태. 별표 채움 여부는 이 목록과 (start, end, route_key)
+  // 대조로만 판단한다 — 클라이언트가 자체적으로 즐겨찾기 여부를 추정하지 않는다.
+  const [user, setUser] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [authReturnView, setAuthReturnView] = useState("home");
+  const [favorites, setFavorites] = useState([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [routeNotice, setRouteNotice] = useState(null);
 
   const nearbyCongestion = useMemo(
     () => getNearbyStationCongestion(form.targetTime, geoLocation, 4),
@@ -100,6 +115,155 @@ export default function App() {
     return () => window.removeEventListener("hashchange", applyHash);
   }, []);
 
+  // 부팅 시 토큰이 있으면 /auth/me로 로그인 상태 복원 (만료/무효면 me()가 토큰을 지움)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!getToken()) {
+        setAuthChecked(true);
+        return;
+      }
+      try {
+        const restored = await me();
+        if (!cancelled) setUser(restored);
+      } catch {
+        // 토큰 만료/무효 — me()가 이미 localStorage를 정리함
+      } finally {
+        if (!cancelled) setAuthChecked(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const refreshFavorites = useCallback(async () => {
+    setFavoritesLoading(true);
+    try {
+      const list = await listFavorites();
+      setFavorites(list);
+    } catch {
+      // 실패 시 기존 목록 유지
+    } finally {
+      setFavoritesLoading(false);
+    }
+  }, []);
+
+  // 로그인 시 1회 로드, 로그아웃 시 비움
+  useEffect(() => {
+    if (user) {
+      refreshFavorites();
+    } else {
+      setFavorites([]);
+    }
+  }, [user, refreshFavorites]);
+
+  const goToLogin = useCallback(() => {
+    setAuthReturnView(view);
+    navigateTo("login");
+  }, [view, navigateTo]);
+
+  const handleAuthSuccess = useCallback(
+    (nextUser) => {
+      setUser(nextUser);
+      navigateTo(authReturnView || "home");
+    },
+    [authReturnView, navigateTo],
+  );
+
+  const handleAuthEntry = useCallback(() => {
+    if (user) {
+      apiLogout();
+      setUser(null);
+    } else {
+      goToLogin();
+    }
+  }, [user, goToLogin]);
+
+  // 즐겨찾기 추가/삭제는 서버가 정답 — 응답으로 받은 값으로만 목록을 갱신한다.
+  // departure_time(시:분)도 식별자에 포함 — 같은 경로를 출근/퇴근처럼 다른
+  // 시각으로 여러 개 즐겨찾기할 수 있게 하기 위함. 시각은 호출부(RouteResultsScreen)가
+  // 넘겨주는 실제 검색 시각을 그대로 쓴다 — form.targetTime은 결과 화면의 혼잡도
+  // 슬라이더가 되돌아 써버릴 수 있어 신뢰할 수 없다.
+  const handleToggleFavorite = useCallback(
+    async (route, { startName, endName, departureTime: departureDate }) => {
+      if (!user) {
+        goToLogin();
+        return;
+      }
+      const departureTime = formatHHMM(departureDate);
+      const existing = favorites.find(
+        (f) =>
+          f.start_name === startName &&
+          f.end_name === endName &&
+          f.route_key === route.routeKey &&
+          f.departure_time === departureTime,
+      );
+      try {
+        if (existing) {
+          await removeFavorite(existing.id);
+          setFavorites((prev) => prev.filter((f) => f.id !== existing.id));
+        } else {
+          if (favorites.length >= 5) return;
+          const created = await addFavorite({
+            startName,
+            endName,
+            routeKey: route.routeKey,
+            routeLabel: route.routeLabel,
+            departureTime,
+          });
+          setFavorites((prev) => [created, ...prev]);
+        }
+      } catch {
+        // 실패 시 다음 목록 갱신에서 정합성 회복
+      }
+    },
+    [user, favorites, goToLogin],
+  );
+
+  const handleRemoveFavorite = useCallback(async (id) => {
+    await removeFavorite(id);
+    setFavorites((prev) => prev.filter((f) => f.id !== id));
+  }, []);
+
+  // 즐겨찾기는 결과가 아니라 (start, end, route_key, departure_time)만 저장하므로,
+  // 열 때마다 /predict/route를 다시 불러 현재 혼잡도로 채운다. 시각은 저장된
+  // "HH:MM"을 오늘 날짜에 적용해 재구성한다 (특정 날짜가 아니라 매일 반복되는
+  // 출퇴근 시각을 즐겨찾기하는 개념). route_key가 일치하는 경로가 없으면
+  // (운행 변경 등) 첫 번째 경로로 fallback하고 안내한다.
+  const handleOpenFavorite = useCallback(
+    async (favorite) => {
+      const [hh, mm] = favorite.departure_time.split(":").map(Number);
+      const target = new Date();
+      target.setHours(hh, mm, 0, 0);
+      try {
+        const routes = await fetchRoutesFromApi(favorite.start_name, favorite.end_name, target);
+        const matched = routes.find((r) => r.routeKey === favorite.route_key);
+        const chosen = matched ?? routes[0];
+        if (!chosen) {
+          setRouteNotice("경로 정보를 찾을 수 없습니다.");
+          return;
+        }
+        setForm((prev) => ({
+          ...prev,
+          departure: `${favorite.start_name}역`,
+          destination: `${favorite.end_name}역`,
+          departureStationId: null,
+          destinationStationId: null,
+          targetTime: target,
+        }));
+        setSelectedRoute(chosen);
+        setRouteNotice(
+          matched ? null : "저장된 경로를 찾을 수 없어 첫 번째 경로로 안내합니다.",
+        );
+        navigateTo("detail");
+      } catch {
+        setRouteNotice("경로를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      }
+    },
+    [navigateTo],
+  );
+
   const handleSearch = useCallback(() => {
     navigateTo("results");
   }, [navigateTo]);
@@ -120,14 +284,13 @@ export default function App() {
     () => [
       { id: "home", label: "홈", icon: Home },
       { id: "results", label: "경로", icon: Route },
-      { id: "detail", label: "상세", icon: Train, disabled: !selectedRoute },
+      { id: "favorites", label: "즐겨찾기", icon: Star },
       { id: "macro", label: "노선도", icon: Map },
     ],
-    [selectedRoute],
+    [],
   );
 
   const navigate = (id) => {
-    if (id === "detail" && !selectedRoute) return;
     navigateTo(id);
   };
 
@@ -167,6 +330,8 @@ export default function App() {
             nearbyCongestion={nearbyCongestion}
             locationState={locationState}
             onRequestLocation={requestLocation}
+            user={authChecked ? user : null}
+            onAuthEntry={handleAuthEntry}
           />
         )}
         {view === "results" && (
@@ -175,13 +340,36 @@ export default function App() {
             onBack={() => navigateTo("home")}
             onSelectRoute={handleSelectRoute}
             onTimeChange={handleTimeChange}
+            user={user}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
           />
         )}
         {view === "detail" && selectedRoute && (
-          <RouteDetailScreen
-            route={selectedRoute}
-            departureTime={form.targetTime}
-            onBack={() => navigateTo("results")}
+          <>
+            {routeNotice && (
+              <div className="mb-3 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                {routeNotice}
+              </div>
+            )}
+            <RouteDetailScreen
+              route={selectedRoute}
+              departureTime={form.targetTime}
+              onBack={() => {
+                setRouteNotice(null);
+                navigateTo("results");
+              }}
+            />
+          </>
+        )}
+        {view === "favorites" && (
+          <FavoritesScreen
+            user={user}
+            favorites={favorites}
+            favoritesLoading={favoritesLoading}
+            onRemoveFavorite={handleRemoveFavorite}
+            onOpenFavorite={handleOpenFavorite}
+            onGoLogin={goToLogin}
           />
         )}
         {view === "macro" && (
@@ -194,33 +382,39 @@ export default function App() {
             onRequestLocation={requestLocation}
           />
         )}
+        {view === "login" && (
+          <AuthScreen
+            onBack={() => navigateTo(authReturnView || "home")}
+            onAuthSuccess={handleAuthSuccess}
+          />
+        )}
       </div>
 
-      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
-        <div className="flex items-center justify-around px-2 py-2">
-          {bottomNav.map(({ id, label, icon: Icon, disabled }) => {
-            const active = view === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                disabled={disabled}
-                onClick={() => navigate(id)}
-                className={cn(
-                  "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-xs transition-all",
-                  active
-                    ? "text-slate-800 font-medium"
-                    : "text-slate-400 hover:text-slate-600",
-                  disabled && "opacity-30 pointer-events-none",
-                )}
-              >
-                <Icon className={cn("h-5 w-5", active && "scale-105")} />
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      {view !== "login" && (
+        <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
+          <div className="flex items-center justify-around px-2 py-2">
+            {bottomNav.map(({ id, label, icon: Icon }) => {
+              const active = view === id || (view === "detail" && id === "results");
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => navigate(id)}
+                  className={cn(
+                    "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-xs transition-all",
+                    active
+                      ? "text-slate-800 font-medium"
+                      : "text-slate-400 hover:text-slate-600",
+                  )}
+                >
+                  <Icon className={cn("h-5 w-5", active && "scale-105")} />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { Footprints } from "lucide-react";
+import { Footprints, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { LineBadge } from "@/components/LineBadge";
 import {
   RouteTimelineBar,
@@ -73,6 +74,9 @@ export function RouteOptionCard({
   isRecommended,
   timeDiff,
   onClick,
+  isFavorited = false,
+  favoriteDisabled = false,
+  onToggleFavorite,
 }) {
   const legs = buildTimelineLegs(route);
   const arriveAt = formatArrivalTime(departureTime, route.totalTime);
@@ -80,10 +84,17 @@ export function RouteOptionCard({
   const crowdLevel = rateToCrowdLevel(route.maxCongestion);
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className={`w-full rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] transition hover:shadow-[0_2px_8px_rgba(15,23,42,0.08)] ${
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      className={`w-full cursor-pointer rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] transition hover:shadow-[0_2px_8px_rgba(15,23,42,0.08)] ${
         isRecommended ? "ring-1 ring-blue-100" : ""
       }`}
     >
@@ -108,14 +119,39 @@ export function RouteOptionCard({
             {route.payment?.toLocaleString()}원
           </p>
         </div>
-        <div className="shrink-0 text-right">
-          <p className="text-xs text-slate-500">
-            환승{" "}
-            <strong className="text-slate-800">{route.transfers}</strong>회
-          </p>
-          <p className="mt-0.5 text-[10px] text-slate-400">
-            {CROWD_LABELS[crowdLevel]} · 최대 {route.maxCongestion}%
-          </p>
+        <div className="flex shrink-0 items-start gap-1.5">
+          <div className="text-right">
+            <p className="text-xs text-slate-500">
+              환승{" "}
+              <strong className="text-slate-800">{route.transfers}</strong>회
+            </p>
+            <p className="mt-0.5 text-[10px] text-slate-400">
+              {CROWD_LABELS[crowdLevel]} · 최대 {route.maxCongestion}%
+            </p>
+          </div>
+          {onToggleFavorite && (
+            <button
+              type="button"
+              aria-label={isFavorited ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+              title={favoriteDisabled ? "즐겨찾기는 5개까지 저장할 수 있습니다" : undefined}
+              disabled={favoriteDisabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite();
+              }}
+              className={cn(
+                "-mr-1 -mt-1 rounded-lg p-1.5 transition hover:bg-slate-50",
+                favoriteDisabled && "cursor-not-allowed opacity-40 hover:bg-transparent",
+              )}
+            >
+              <Star
+                className={cn(
+                  "h-4 w-4",
+                  isFavorited ? "fill-amber-400 text-amber-400" : "text-slate-300",
+                )}
+              />
+            </button>
+          )}
         </div>
       </div>
 
@@ -126,6 +162,6 @@ export function RouteOptionCard({
       <div className="mt-3">
         <TransferOutline route={route} />
       </div>
-    </button>
+    </div>
   );
 }

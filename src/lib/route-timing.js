@@ -8,6 +8,11 @@ export function formatArrivalTime(departureTime, offsetMinutes) {
   });
 }
 
+/** Date → "HH:MM" (즐겨찾기에 출발 시각만 저장할 때 사용) */
+export function formatHHMM(date) {
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
 /** 역 수·환승 수로 목업 요금 추정 (ODsay payment 대체) */
 export function estimateSubwayPayment(stationCount, transferCount) {
   const base = 1400;

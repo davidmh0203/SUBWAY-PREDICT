@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Query
 from app.congestion_model import get_predictor, predict_station
 from app.mock_data import STATIONS, _base_congestion
 from app.odsay_service import predict_route_with_odsay
+from app.route_key import build_route_key, build_route_label
 from app.schemas import (
     BatchCongestionRequest,
     BatchCongestionResponse,
@@ -30,11 +31,24 @@ async def predict_route(req: RouteRequest):
     모델·ODsay 미가용 시 mock으로 fallback.
     """
     result = await predict_route_with_odsay(req.start, req.end, req.departure_time)
+    # 배열 인덱스로 경로를 식별하면 ODsay 응답 순서가 바뀔 때 즐겨찾기가 깨지므로
+    # (호선, 환승역) 시퀀스 기반 route_key를 각 경로에 실어 보낸다.
+    alternatives = [
+        {
+            **alt,
+            "route_key": build_route_key(alt.get("segments") or []),
+            "route_label": build_route_label(alt.get("segments") or []),
+        }
+        for alt in result.get("alternatives") or []
+    ]
     return {
         "start": req.start,
         "end": req.end,
         "departure_time": req.departure_time,
         **result,
+        "route_key": build_route_key(result.get("segments") or []),
+        "route_label": build_route_label(result.get("segments") or []),
+        "alternatives": alternatives,
     }
 
 

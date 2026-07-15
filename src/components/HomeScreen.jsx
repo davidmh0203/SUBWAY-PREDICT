@@ -1,4 +1,4 @@
-import { Settings, MapPin, Train, LocateFixed } from "lucide-react";
+import { Settings, MapPin, Train, LocateFixed, UserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +19,8 @@ export function HomeScreen({
   nearbyCongestion = [],
   locationState = "idle",
   onRequestLocation,
+  user = null,
+  onAuthEntry,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [dayContext, setDayContext] = useState(null);
@@ -50,7 +52,15 @@ export function HomeScreen({
           <Train className="h-5 w-5 text-slate-600" />
           <h1 className="text-lg font-bold tracking-tight text-slate-800">{APP_NAME}</h1>
         </div>
-        <div className="w-10" aria-hidden />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 gap-1.5 px-2 text-xs text-slate-600"
+          onClick={onAuthEntry}
+        >
+          <UserRound className="h-4 w-4" />
+          {user ? user.nickname : "로그인"}
+        </Button>
       </header>
 
       <TrafficForecastCarousel events={forecastEvents} />

@@ -35,3 +35,6 @@ backend/.env
 tmp/
 __pycache__/
 *.pyc
+
+# 회원가입/즐겨찾기 SQLite DB (로컬 데이터, 커밋 안 함)
+backend/app/data/*.db

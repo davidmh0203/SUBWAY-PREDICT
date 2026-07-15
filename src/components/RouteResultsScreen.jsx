@@ -6,12 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { HourlyCongestionChart } from "@/components/HourlyCongestionChart";
 import { RouteOptionCard } from "@/components/RouteOptionCard";
 import { getHourlyCongestionData } from "@/lib/crowd-data";
-import {
-  SLIDER_MARKS,
-  buildRoutes,
-  dateToSliderIndex,
-  sliderIndexToDate,
-} from "@/lib/mock-data";
+import { buildRoutes } from "@/lib/mock-data";
 import {
   fetchBatchCongestion,
   fetchHourlyCongestion,
@@ -21,6 +16,7 @@ import {
   applyCongestionMapToRoutes,
   collectStationNamesFromRoutes,
 } from "@/lib/api/apply-congestion";
+import { formatHHMM } from "@/lib/route-timing";
 
 const SOURCE_LABEL = {
   "api-model": "API·모델",
@@ -29,15 +25,38 @@ const SOURCE_LABEL = {
   mock: "목업",
 };
 
+// 혼잡도 미리보기 슬라이더: 실제 검색 시각을 중심으로 -1시간~+1시간을 보여준다.
+// (예전엔 17:30~19:30로 고정돼 있어서 08:00처럼 그 범위 밖 시각으로 검색해도
+// 슬라이더가 가장 가까운 저녁 시간대로 스냅해버리는 문제가 있었다)
+const SLIDER_OFFSETS_MIN = [-60, -30, 0, 30, 60];
+const DEFAULT_SLIDER_INDEX = 2; // offset 0 = 실제 검색 시각
+
+function buildSliderMarks(baseDate) {
+  return SLIDER_OFFSETS_MIN.map((offset) => {
+    const d = new Date(baseDate.getTime() + offset * 60_000);
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  });
+}
+
+function sliderIndexToOffsetDate(index, baseDate) {
+  const offset = SLIDER_OFFSETS_MIN[index] ?? 0;
+  return new Date(baseDate.getTime() + offset * 60_000);
+}
+
 export function RouteResultsScreen({
   form,
   onBack,
   onSelectRoute,
   onTimeChange,
+  user = null,
+  favorites = [],
+  onToggleFavorite,
 }) {
-  const [sliderIndex, setSliderIndex] = useState(() =>
-    dateToSliderIndex(form.targetTime),
-  );
+  // 경로(ODsay)는 화면 진입 시 1회만 — 검색에 실제로 쓰인 시각을 기억해 둔다.
+  const searchTimeRef = useRef(form.targetTime);
+
+  const [sliderMarks] = useState(() => buildSliderMarks(searchTimeRef.current));
+  const [sliderIndex, setSliderIndex] = useState(DEFAULT_SLIDER_INDEX);
   const [debouncedTime, setDebouncedTime] = useState(form.targetTime);
   const [sliderLoading, setSliderLoading] = useState(false);
   const [baseRoutes, setBaseRoutes] = useState([]);
@@ -54,13 +73,10 @@ export function RouteResultsScreen({
   const destName = form.destination.replace(/역.*$/, "");
   const [direction, setDirection] = useState(`${destName} 방면`);
 
-  // 경로(ODsay)는 화면 진입 시 1회만
-  const searchTimeRef = useRef(form.targetTime);
-
   useEffect(() => {
     setSliderLoading(true);
     const timer = setTimeout(() => {
-      const next = sliderIndexToDate(sliderIndex, searchTimeRef.current);
+      const next = sliderIndexToOffsetDate(sliderIndex, searchTimeRef.current);
       setDebouncedTime(next);
       onTimeChange(next);
       setSliderLoading(false);
@@ -168,6 +184,26 @@ export function RouteResultsScreen({
   const loading = sliderLoading || congestionLoading;
   const activeHour = debouncedTime.getHours();
 
+  // 즐겨찾기 식별자는 (출발, 도착, route_key, 출발 시각)까지 봐야 한다 —
+  // 같은 경로라도 시각이 다르면(출근/퇴근) 별개의 즐겨찾기이기 때문.
+  // form.targetTime이 아니라 searchTimeRef를 쓰는 이유: 위 슬라이더 useEffect가
+  // (17:30~19:30 중 가장 가까운 값으로 스냅한 뒤) onTimeChange로 form.targetTime을
+  // 되돌려 써버려서, 08:00처럼 슬라이더 범위 밖 시각으로 검색해도 실제 검색 시각과
+  // 다른 값으로 즐겨찾기되는 문제가 있었다. searchTimeRef는 화면 진입 시의 실제
+  // 검색 시각을 그대로 유지한다.
+  const searchDepTimeStr = formatHHMM(searchTimeRef.current);
+  const isRouteFavorited = (route) =>
+    Boolean(user) &&
+    favorites.some(
+      (f) =>
+        f.start_name === depName &&
+        f.end_name === destName &&
+        f.route_key === route.routeKey &&
+        f.departure_time === searchDepTimeStr,
+    );
+  const isFavoriteDisabled = (route) =>
+    Boolean(user) && !isRouteFavorited(route) && favorites.length >= 5;
+
   return (
     <div className="animate-fade-in space-y-5 pb-24">
       <header className="flex items-center gap-3">
@@ -191,9 +227,9 @@ export function RouteResultsScreen({
           </div>
 
           <div className="flex justify-between px-1 text-xs tabular-nums text-slate-400">
-            {SLIDER_MARKS.map((t, i) => (
+            {sliderMarks.map((t, i) => (
               <span
-                key={t}
+                key={`${t}-${i}`}
                 className={i === sliderIndex ? "font-bold text-slate-800" : ""}
               >
                 {t}
@@ -202,7 +238,7 @@ export function RouteResultsScreen({
           </div>
           <Slider
             min={0}
-            max={SLIDER_MARKS.length - 1}
+            max={sliderMarks.length - 1}
             step={1}
             value={[sliderIndex]}
             onValueChange={([v]) => setSliderIndex(v)}
@@ -260,6 +296,18 @@ export function RouteResultsScreen({
                 isRecommended={Boolean(route.recommended)}
                 timeDiff={timeDiff}
                 onClick={() => onSelectRoute(route)}
+                isFavorited={isRouteFavorited(route)}
+                favoriteDisabled={isFavoriteDisabled(route)}
+                onToggleFavorite={
+                  onToggleFavorite
+                    ? () =>
+                        onToggleFavorite(route, {
+                          startName: depName,
+                          endName: destName,
+                          departureTime: searchTimeRef.current,
+                        })
+                    : undefined
+                }
               />
             );
           })

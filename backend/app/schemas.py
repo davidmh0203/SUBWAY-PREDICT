@@ -84,6 +84,8 @@ class RouteOption(BaseModel):
     summary: RouteSummary
     segments: list[Segment]
     stations: list[RouteStation]
+    route_key: str | None = None  # 즐겨찾기 식별용 (호선·환승역 시퀀스)
+    route_label: str | None = None
 
 
 class RouteResponse(BaseModel):
@@ -94,6 +96,8 @@ class RouteResponse(BaseModel):
     segments: list[Segment]
     stations: list[RouteStation]
     alternatives: list[RouteOption] = []
+    route_key: str | None = None
+    route_label: str | None = None
 
 
 # ---------- /congestion/station/{id} ----------
