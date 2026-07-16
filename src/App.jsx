@@ -4,11 +4,12 @@ import { HomeScreen } from "@/components/HomeScreen";
 import { RouteResultsScreen } from "@/components/RouteResultsScreen";
 import { RouteDetailScreen } from "@/components/RouteDetailScreen";
 import { MacroViewScreen } from "@/components/MacroViewScreen";
+import { MapScreen } from "@/components/MapScreen";
 import { buildRoutes } from "@/lib/mock-data";
 import { getNearbyStationCongestion } from "@/lib/crowd-data";
 import { cn } from "@/lib/utils";
 
-const VIEWS = ["home", "results", "detail", "macro"];
+const VIEWS = ["home", "results", "detail", "macro", "map"];
 
 function createDefaultTime() {
   const d = new Date();
@@ -192,6 +193,21 @@ export default function App() {
             geoLocation={geoLocation}
             locationState={locationState}
             onRequestLocation={requestLocation}
+          />
+        )}
+        {view === "map" && (
+          <MapScreen
+            onBack={() => navigateTo("home")}
+            onConfirmRoute={(depName, depId, destName, destId) => {
+              setForm((prev) => ({
+                ...prev,
+                departure: depName,
+                departureStationId: depId,
+                destination: destName,
+                destinationStationId: destId,
+              }));
+              navigateTo("home");
+            }}
           />
         )}
       </div>
