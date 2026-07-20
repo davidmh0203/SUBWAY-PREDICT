@@ -174,7 +174,7 @@ export function RouteOptionCard({
                 {CROWD_LABELS[crowdLevel]}
               </span>
             </div>
-            <p className="mt-0.5 text-[9px] text-slate-400">출발</p>
+            <p className="mt-0.5 text-[9px] text-slate-400">출발가중</p>
           </div>
           {onToggleFavorite && (
             <button

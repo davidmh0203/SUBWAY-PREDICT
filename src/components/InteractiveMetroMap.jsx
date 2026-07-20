@@ -6,10 +6,10 @@ import { getLineEndBadges } from "@/lib/metro-line-badges";
 import {
   MAP_VIEWBOX,
   METRO_LINE_SEGMENTS,
-  METRO_STATIONS,
   getSegmentCrowdLevel,
   getLineKeyForColor,
   getUniqueLineLegend,
+  getStationsForMapStyle,
   segmentMatchesLine,
   washLineColor,
   normalizeLineColor,
@@ -20,13 +20,29 @@ import { TransferStationMarker } from "@/components/TransferStationMarker";
 import { isSeoulMetroStation, SEOUL_LINE_PATTERN } from "@/lib/seoul-metro-stations";
 import {
   BASE_STATION_R,
+  STATION_META,
   getLabelLayout,
-  getStationMarkerRadius,
+  getLabelLayoutsForStations,
   getStationMeta,
 } from "@/lib/metro-label-layout";
+import {
+  busyLevelColor,
+  getDemoBusyStationLevel,
+} from "@/lib/map-busy-stations";
+import { getMapStylePreset } from "@/lib/map-style-presets";
 const MIN_SCALE = 0.35;
 const MAX_SCALE = 4;
 const { width: VB_W, height: VB_H } = MAP_VIEWBOX;
+
+/**
+ * @param {object} props
+ * @param {'off'|'nodes'|'labelBg'|'rings'|'halo'|'busyLabels'} [props.busyHighlightMode]
+ *   보통 초과 역만 가볍게 강조 (시안 비교용). off면 기존 구간 오버레이만.
+ * @param {boolean} [props.showLineCongestion] 구간 혼잡 오버레이 (기본 true)
+ * @param {boolean} [props.forceShowLabels] 줌과 무관하게 역명 표시
+ * @param {string} [props.mapHeightClass] 지도 영역 높이 클래스
+ * @param {import('@/lib/map-style-presets').MapStyleId} [props.mapStyle] 노선도 표현 시안
+ */
 function InteractiveMetroMap({
   selectedTime = "18:30",
   departureStationId,
@@ -39,7 +55,13 @@ function InteractiveMetroMap({
   routeHighlightOnly = false,
   hideLegendChips = false,
   focusStationId = null,
+  busyHighlightMode = "off",
+  showLineCongestion = true,
+  forceShowLabels = false,
+  mapHeightClass = "h-[min(62vh,460px)]",
+  mapStyle = "baseline",
 }) {
+  const preset = getMapStylePreset(mapStyle);
   const containerRef = useRef(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
   const dragRef = useRef({
@@ -49,6 +71,37 @@ function InteractiveMetroMap({
     origX: 0,
     origY: 0,
   });
+  const styledStations = useMemo(
+    () => getStationsForMapStyle({ compactCenter: preset.compactCenter }),
+    [preset.compactCenter],
+  );
+  const labelLayouts = useMemo(() => {
+    if (preset.labelMode === "classic" && !preset.compactCenter) {
+      return null;
+    }
+    return getLabelLayoutsForStations(
+      STATION_META,
+      styledStations,
+      preset.labelMode,
+      `${preset.id}:${preset.labelMode}:${preset.compactCenter}`,
+    );
+  }, [preset, styledStations]);
+  const resolveLabel = useCallback(
+    (stationId) => {
+      if (labelLayouts) {
+        return (
+          labelLayouts.get(stationId) ?? {
+            x: 0,
+            y: 0,
+            anchor: "start",
+            rotate: 0,
+          }
+        );
+      }
+      return getLabelLayout(stationId);
+    },
+    [labelLayouts],
+  );
   const lineLegend = useMemo(() => {
     const all = getUniqueLineLegend();
     if (!seoulOnly) return all;
@@ -57,9 +110,9 @@ function InteractiveMetroMap({
   const visibleStations = useMemo(
     () =>
       seoulOnly
-        ? METRO_STATIONS.filter((s) => isSeoulMetroStation(s.name))
-        : METRO_STATIONS,
-    [seoulOnly],
+        ? styledStations.filter((s) => isSeoulMetroStation(s.name))
+        : styledStations,
+    [seoulOnly, styledStations],
   );
   const visibleLineSegments = useMemo(
     () =>
@@ -94,14 +147,26 @@ function InteractiveMetroMap({
   );
   const congestionSegments = useMemo(
     () =>
-      visibleLineSegments
-        .map((seg) => ({
-          ...seg,
-          level: getSegmentCrowdLevel(seg, selectedTime),
-        }))
-        .filter((s) => s.level),
-    [selectedTime, visibleLineSegments],
+      showLineCongestion
+        ? visibleLineSegments
+            .map((seg) => ({
+              ...seg,
+              level: getSegmentCrowdLevel(seg, selectedTime),
+            }))
+            .filter((s) => s.level)
+        : [],
+    [selectedTime, visibleLineSegments, showLineCongestion],
   );
+  const busyByStationId = useMemo(() => {
+    if (!busyHighlightMode || busyHighlightMode === "off") return null;
+    /** @type {Map<string, string>} */
+    const map = new Map();
+    for (const st of visibleStations) {
+      const level = getDemoBusyStationLevel(st);
+      if (level) map.set(st.id, level);
+    }
+    return map;
+  }, [busyHighlightMode, visibleStations]);
   const zoom = useCallback((factor, centerX, centerY) => {
     setTransform((prev) => {
       const el = containerRef.current;
@@ -183,7 +248,15 @@ function InteractiveMetroMap({
       y: h / 2 - target.y * prev.scale,
     }));
   }, [focusStationId, visibleStations]);
-  const showLabels = transform.scale >= 0.95;
+  const showLabels =
+    forceShowLabels ||
+    busyHighlightMode === "labelBg" ||
+    busyHighlightMode === "busyLabels" ||
+    transform.scale >= 0.95;
+  const transferOnlyLabels =
+    !forceShowLabels &&
+    preset.transferOnlyLabelsBelowScale != null &&
+    transform.scale < preset.transferOnlyLabelsBelowScale;
   return /* @__PURE__ */ React.createElement(
     "div",
     { className: "relative" },
@@ -237,8 +310,7 @@ function InteractiveMetroMap({
         "div",
         {
           ref: containerRef,
-          className:
-            "relative h-[min(62vh,460px)] w-full cursor-grab overflow-hidden rounded-2xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)] active:cursor-grabbing",
+          className: `${mapHeightClass} relative w-full cursor-grab overflow-hidden rounded-2xl bg-[#fafbfc] shadow-[inset_0_1px_4px_rgba(15,23,42,0.04)] active:cursor-grabbing`,
           onPointerDown,
           onPointerMove,
           onPointerUp,
@@ -269,6 +341,9 @@ function InteractiveMetroMap({
               const focused = routeHighlightOnly
                 ? highlightedLineKeys?.includes(getLineKeyForColor(seg.color))
                 : segmentMatchesLine(seg, focusedLineKey);
+              const baseW = preset.lineStrokeUniform
+                ? (preset.uniformStrokeWidth ?? 3.2)
+                : (seg.width ?? 3);
               return /* @__PURE__ */ React.createElement("line", {
                 key: seg.id,
                 x1: seg.x1,
@@ -279,9 +354,7 @@ function InteractiveMetroMap({
                   ? normalizeLineColor(seg.color)
                   : washLineColor(normalizeLineColor(seg.color)),
                 strokeWidth:
-                  focused && focusedLineKey
-                    ? (seg.width ?? 3) + 0.8
-                    : (seg.width ?? 3),
+                  focused && focusedLineKey ? baseW + 0.8 : baseW,
                 strokeLinecap: "round",
                 opacity: focused ? 1 : 0.2,
                 className: "transition-all duration-300",
@@ -327,26 +400,71 @@ function InteractiveMetroMap({
                   meta.lineKeys,
                   meta.lineColor,
                 );
-                const lbl = getLabelLayout(station.id);
+                if (transferOnlyLabels && !meta.isTransfer) return null;
+                const lbl = resolveLabel(station.id);
+                const busyLevel = busyByStationId?.get(station.id) ?? null;
+                const busyColor = busyLevelColor(busyLevel);
+                const onlyBusyLabels = busyHighlightMode === "busyLabels";
+                if (onlyBusyLabels && !busyLevel) return null;
+                const useLabelBg =
+                  busyColor &&
+                  (busyHighlightMode === "labelBg" ||
+                    busyHighlightMode === "busyLabels");
+                const name = station.name;
+                const approxW = Math.max(10, name.length * 3.1);
+                const approxH = 6.2;
+                const padX = 1.6;
+                const rectX =
+                  lbl.anchor === "end"
+                    ? lbl.x - approxW - padX
+                    : lbl.anchor === "middle"
+                      ? lbl.x - approxW / 2 - padX / 2
+                      : lbl.x - padX;
+                const rectY = lbl.y - approxH * 0.72;
                 return /* @__PURE__ */ React.createElement(
-                  "text",
+                  "g",
                   {
                     key: `lbl-${station.id}`,
-                    x: lbl.x,
-                    y: lbl.y,
-                    textAnchor: lbl.anchor,
                     transform: `rotate(${lbl.rotate} ${lbl.x} ${lbl.y})`,
-                    fill: focused ? "#334155" : "#94a3b8",
-                    stroke: "#ffffff",
-                    strokeWidth: 2.5,
-                    paintOrder: "stroke fill",
-                    opacity: focused ? 1 : 0.35,
-                    style: {
-                      fontSize: 4.8,
-                      fontFamily: "system-ui, sans-serif",
-                    },
+                    opacity: focused || busyLevel ? 1 : 0.35,
                   },
-                  station.name,
+                  useLabelBg &&
+                    /* @__PURE__ */ React.createElement("rect", {
+                      x: rectX,
+                      y: rectY,
+                      width: approxW + padX * 2,
+                      height: approxH,
+                      rx: 1.4,
+                      ry: 1.4,
+                      fill: busyColor,
+                      opacity: 0.92,
+                    }),
+                  /* @__PURE__ */ React.createElement(
+                    "text",
+                    {
+                      x: lbl.x,
+                      y: lbl.y,
+                      textAnchor: lbl.anchor,
+                      fill: useLabelBg
+                        ? "#ffffff"
+                        : focused
+                          ? "#334155"
+                          : "#94a3b8",
+                      stroke: useLabelBg ? "none" : "#ffffff",
+                      strokeWidth: useLabelBg ? 0 : 2.5,
+                      paintOrder: "stroke fill",
+                      style: {
+                        fontSize: onlyBusyLabels ? 5.2 : 4.8,
+                        fontWeight: useLabelBg
+                          ? 700
+                          : meta.isTransfer
+                            ? 600
+                            : 400,
+                        fontFamily: "system-ui, sans-serif",
+                      },
+                    },
+                    name,
+                  ),
                 );
               }),
             ),
@@ -409,7 +527,7 @@ function InteractiveMetroMap({
                 meta.lineColor,
               );
               const isTransfer = meta.isTransfer;
-              const markerR = getStationMarkerRadius(meta);
+              const markerR = isTransfer ? preset.transferR : preset.regularR;
               const isDep = sameStation(station.id, departureStationId);
               const isDest = sameStation(station.id, destinationStationId);
               const ringR = markerR + 5;
@@ -422,6 +540,15 @@ function InteractiveMetroMap({
                   ? 1
                   : 0.35
                 : 0.12;
+              const busyLevel = busyByStationId?.get(station.id) ?? null;
+              const busyColor = busyLevelColor(busyLevel);
+              const fillNode =
+                busyColor && busyHighlightMode === "nodes";
+              const showBusyRing =
+                busyColor && busyHighlightMode === "rings";
+              const showHalo =
+                busyColor && busyHighlightMode === "halo";
+              const cleanNodes = preset.nodeStyle === "clean";
               return /* @__PURE__ */ React.createElement(
                 "g",
                 {
@@ -434,7 +561,41 @@ function InteractiveMetroMap({
                     if (onStationClick) onStationClick(station, pickRole);
                   },
                 },
-                /* @__PURE__ */ React.createElement("title", null, formatStationLabel(station.name)),
+                /* @__PURE__ */ React.createElement(
+                  "title",
+                  null,
+                  busyLevel
+                    ? `${formatStationLabel(station.name)} · ${CROWD_LABELS[busyLevel]}`
+                    : formatStationLabel(station.name),
+                ),
+                showHalo &&
+                  /* @__PURE__ */ React.createElement(
+                    React.Fragment,
+                    null,
+                    /* @__PURE__ */ React.createElement("circle", {
+                      cx: station.x,
+                      cy: station.y,
+                      r: markerR + 9,
+                      fill: busyColor,
+                      opacity: 0.12,
+                    }),
+                    /* @__PURE__ */ React.createElement("circle", {
+                      cx: station.x,
+                      cy: station.y,
+                      r: markerR + 5.5,
+                      fill: busyColor,
+                      opacity: 0.22,
+                    }),
+                  ),
+                showBusyRing &&
+                  /* @__PURE__ */ React.createElement("circle", {
+                    cx: station.x,
+                    cy: station.y,
+                    r: markerR + 3.5,
+                    fill: "none",
+                    stroke: busyColor,
+                    strokeWidth: 2.4,
+                  }),
                 isDep &&
                   /* @__PURE__ */ React.createElement("circle", {
                     cx: station.x,
@@ -454,19 +615,39 @@ function InteractiveMetroMap({
                     strokeWidth: 2,
                   }),
                 isTransfer
-                  ? /* @__PURE__ */ React.createElement(TransferStationMarker, {
-                      x: station.x,
-                      y: station.y,
-                    })
+                  ? /* @__PURE__ */ React.createElement(
+                      React.Fragment,
+                      null,
+                      /* @__PURE__ */ React.createElement(TransferStationMarker, {
+                        x: station.x,
+                        y: station.y,
+                        r: preset.transferR,
+                        strokeWidth: preset.transferStroke,
+                      }),
+                      fillNode &&
+                        /* @__PURE__ */ React.createElement("circle", {
+                          cx: station.x,
+                          cy: station.y,
+                          r: Math.max(2.5, preset.regularR + 0.8),
+                          fill: busyColor,
+                          opacity: 0.85,
+                        }),
+                    )
                   : /* @__PURE__ */ React.createElement("circle", {
                       cx: station.x,
                       cy: station.y,
-                      r: BASE_STATION_R,
-                      fill: "#ffffff",
-                      stroke: focused
-                        ? normalizeLineColor(meta.lineColor)
-                        : washLineColor(normalizeLineColor(meta.lineColor)),
-                      strokeWidth: 2.2,
+                      r: cleanNodes ? preset.regularR : BASE_STATION_R,
+                      fill: fillNode ? busyColor : "#ffffff",
+                      stroke: fillNode
+                        ? "#ffffff"
+                        : focused
+                          ? normalizeLineColor(meta.lineColor)
+                          : washLineColor(normalizeLineColor(meta.lineColor)),
+                      strokeWidth: fillNode
+                        ? 1.4
+                        : cleanNodes
+                          ? 1.6
+                          : 2.2,
                     }),
               );
             }),
@@ -528,12 +709,17 @@ function InteractiveMetroMap({
       /* @__PURE__ */ React.createElement(
         "p",
         { className: "text-[10px] text-slate-400" },
-        "노선 색: 열차 구간 혼잡도 · 상단 호선 클릭 시 강조",
+        busyHighlightMode && busyHighlightMode !== "off"
+          ? "보통 초과 역만 강조 · 상단 호선 클릭 시 강조"
+          : "노선 색: 열차 구간 혼잡도 · 상단 호선 클릭 시 강조",
       ),
       /* @__PURE__ */ React.createElement(
         "div",
         { className: "flex gap-2" },
-        ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"].map((l) =>
+        (busyHighlightMode && busyHighlightMode !== "off"
+          ? ["BUSY", "VERY_BUSY", "EXTREME"]
+          : ["RELAXED", "NORMAL", "BUSY", "VERY_BUSY"]
+        ).map((l) =>
           /* @__PURE__ */ React.createElement(
             "span",
             {

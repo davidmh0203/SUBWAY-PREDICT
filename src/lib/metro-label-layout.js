@@ -173,6 +173,38 @@ const CANDIDATES = (() => {
   }
   return out;
 })();
+
+/** 8방위 직교 우선 — 노드 앵커, 짧은 leader */
+const ORTHOGONAL_CANDIDATES = (() => {
+  const out = [];
+  const dirs = [
+    { deg: 0, rotate: 0, weight: 0 },
+    { deg: 180, rotate: 0, weight: 0 },
+    { deg: 90, rotate: 0, weight: 0 },
+    { deg: 270, rotate: 0, weight: 0 },
+    { deg: 45, rotate: -45, weight: 8 },
+    { deg: 135, rotate: -45, weight: 8 },
+    { deg: 225, rotate: -45, weight: 8 },
+    { deg: 315, rotate: -45, weight: 8 },
+  ];
+  const dists = [9, 12, 15, 18, 22, 26];
+  for (const dir of dirs) {
+    const rad = (dir.deg * Math.PI) / 180;
+    for (const dist of dists) {
+      const ox = Math.cos(rad) * dist;
+      const oy = Math.sin(rad) * dist;
+      out.push({
+        ox,
+        oy,
+        anchor: ox > 3 ? "start" : ox < -3 ? "end" : "middle",
+        rotate: dir.rotate,
+        orthoPenalty: dir.weight,
+      });
+    }
+  }
+  return out;
+})();
+
 function countNearbyStations(station, allStations, radius = 18) {
   let count = 0;
   for (const other of allStations) {
@@ -181,12 +213,26 @@ function countNearbyStations(station, allStations, radius = 18) {
   }
   return count;
 }
-function buildLayoutCandidates(station, stationMeta) {
+
+function buildLayoutCandidates(station, stationMeta, layoutMode = "classic") {
+  const scale = 1 + (stationMeta.isTransfer ? 0.2 : 0);
+
+  if (layoutMode === "orthogonal") {
+    // SVG 텍스트 앵커 의존 축소 — 노드 기준으로만 후보 생성
+    return ORTHOGONAL_CANDIDATES.map((cand) => ({
+      lx: station.x + cand.ox * scale,
+      ly: station.y + cand.oy * scale,
+      anchor: cand.anchor,
+      rotate: cand.rotate,
+      fromSvg: false,
+      orthoPenalty: cand.orthoPenalty ?? 0,
+    }));
+  }
+
   const svg = getSvgLabelDefault(station);
   const out = [
-    { lx: svg.x, ly: svg.y, anchor: svg.anchor, rotate: svg.rotate, fromSvg: true },
+    { lx: svg.x, ly: svg.y, anchor: svg.anchor, rotate: svg.rotate, fromSvg: true, orthoPenalty: 0 },
   ];
-  const scale = 1 + (stationMeta.isTransfer ? 0.2 : 0);
   for (const cand of CANDIDATES) {
     out.push({
       lx: station.x + cand.ox * scale,
@@ -194,6 +240,7 @@ function buildLayoutCandidates(station, stationMeta) {
       anchor: cand.anchor,
       rotate: cand.rotate,
       fromSvg: false,
+      orthoPenalty: 0,
     });
   }
   return out;
@@ -208,12 +255,14 @@ function scoreLabelCandidate(
   placedBoxes,
   fromSvg,
   allStations,
+  orthoPenalty = 0,
 ) {
   const box = labelBox(lx, ly, station.name, rotate, anchor);
   if (!isLabelOwnedByStation(station, lx, ly, allStations)) {
     return { blocked: true, score: Infinity };
   }
   let score = fromSvg ? -40 : 0;
+  score += orthoPenalty;
   let hardBlock = false;
   if (markerOverlap(station.x, station.y, stationMeta, box, 2)) {
     score += 80;
@@ -252,16 +301,30 @@ function scoreLabelCandidate(
   score += Math.hypot(lx - station.x, ly - station.y) * 0.2;
   return { blocked: hardBlock, score };
 }
-function computeLabelLayouts(meta, stations) {
+
+/**
+ * @param {Map<string, object>} meta
+ * @param {Array<{ id: string, name: string, x: number, y: number }>} stations
+ * @param {'classic' | 'orthogonal'} [layoutMode]
+ */
+function computeLabelLayouts(meta, stations, layoutMode = "classic") {
   const layouts = /* @__PURE__ */ new Map();
   const placedBoxes = [];
   const sorted = [...stations].sort((a, b) => {
-    const da = countNearbyStations(a, stations);
-    const db = countNearbyStations(b, stations);
-    if (db !== da) return db - da;
+    // orthogonal: 환승·종착 우선 → 밀집도
     const ta = meta.get(a.id)?.isTransfer ? 1 : 0;
     const tb = meta.get(b.id)?.isTransfer ? 1 : 0;
-    if (tb !== ta) return tb - ta;
+    if (layoutMode === "orthogonal") {
+      if (tb !== ta) return tb - ta;
+      const da = countNearbyStations(a, stations);
+      const db = countNearbyStations(b, stations);
+      if (db !== da) return db - da;
+    } else {
+      const da = countNearbyStations(a, stations);
+      const db = countNearbyStations(b, stations);
+      if (db !== da) return db - da;
+      if (tb !== ta) return tb - ta;
+    }
     if (a.name.length !== b.name.length) return b.name.length - a.name.length;
     return a.name.localeCompare(b.name, "ko");
   });
@@ -274,7 +337,7 @@ function computeLabelLayouts(meta, stations) {
     };
     let best = null;
     let bestScore = Infinity;
-    for (const cand of buildLayoutCandidates(station, stationMeta)) {
+    for (const cand of buildLayoutCandidates(station, stationMeta, layoutMode)) {
       const { blocked, score } = scoreLabelCandidate(
         station,
         stationMeta,
@@ -285,6 +348,7 @@ function computeLabelLayouts(meta, stations) {
         placedBoxes,
         cand.fromSvg,
         stations,
+        cand.orthoPenalty ?? 0,
       );
       if (!blocked && score < bestScore) {
         bestScore = score;
@@ -297,17 +361,50 @@ function computeLabelLayouts(meta, stations) {
       }
     }
     if (!best) {
-      const svg = getSvgLabelDefault(station);
-      best = {
-        x: svg.x,
-        y: svg.y,
-        anchor: svg.anchor,
-        rotate: svg.rotate,
-      };
+      if (layoutMode === "orthogonal") {
+        best = {
+          x: station.x + 11,
+          y: station.y - 2,
+          anchor: "start",
+          rotate: 0,
+        };
+      } else {
+        const svg = getSvgLabelDefault(station);
+        best = {
+          x: svg.x,
+          y: svg.y,
+          anchor: svg.anchor,
+          rotate: svg.rotate,
+        };
+      }
     }
     layouts.set(station.id, best);
     placedBoxes.push(labelBox(best.x, best.y, station.name, best.rotate, best.anchor));
   }
+  return layouts;
+}
+
+const LABEL_LAYOUT_CACHE = /* @__PURE__ */ new Map();
+
+/**
+ * 시안별 라벨 맵 (노드 좌표가 바뀌면 stations 기준으로 재계산)
+ * @param {Map<string, object>} meta
+ * @param {Array<{ id: string, name: string, x: number, y: number }>} stations
+ * @param {'classic' | 'orthogonal'} layoutMode
+ * @param {string} [cacheKey]
+ */
+export function getLabelLayoutsForStations(
+  meta,
+  stations,
+  layoutMode = "classic",
+  cacheKey = "",
+) {
+  const key =
+    cacheKey ||
+    `${layoutMode}:${stations.length}:${stations[0]?.x ?? 0}:${stations[0]?.y ?? 0}:${stations[stations.length - 1]?.x ?? 0}`;
+  if (LABEL_LAYOUT_CACHE.has(key)) return LABEL_LAYOUT_CACHE.get(key);
+  const layouts = computeLabelLayouts(meta, stations, layoutMode);
+  LABEL_LAYOUT_CACHE.set(key, layouts);
   return layouts;
 }
 let STATION_META = /* @__PURE__ */ new Map();

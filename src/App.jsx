@@ -7,6 +7,8 @@ import { MacroViewScreen } from "@/components/MacroViewScreen";
 import { FavoritesScreen } from "@/components/FavoritesScreen";
 import { AuthScreen } from "@/components/AuthScreen";
 import { CongestionVizCompareScreen } from "@/components/CongestionVizCompareScreen";
+import { MapCongestionVizCompareScreen } from "@/components/MapCongestionVizCompareScreen";
+import { MapStyleVizCompareScreen } from "@/components/MapStyleVizCompareScreen";
 import { buildRoutes } from "@/lib/mock-data";
 import { getNearbyStationCongestion } from "@/lib/crowd-data";
 import { fetchNearbyStations } from "@/lib/api/nearby-stations-client";
@@ -18,7 +20,7 @@ import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites"
 import { fetchRoutesFromApi } from "@/lib/api/client";
 import { formatHHMM } from "@/lib/route-timing";
 
-const VIEWS = ["home", "results", "detail", "favorites", "macro", "login", "cong-viz"];
+const VIEWS = ["home", "results", "detail", "favorites", "macro", "map", "login", "cong-viz", "map-cong-viz", "map-style-viz"];
 
 function createDefaultTime() {
   const d = new Date();
@@ -385,7 +387,7 @@ export default function App() {
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-white">
       <div
-        className={`min-h-screen bg-white ${view === "macro" ? "px-2 pt-4" : "px-4 pt-6"}`}
+        className={`min-h-screen bg-white ${view === "macro" || view === "map" ? "px-2 pt-4" : "px-4 pt-6"}`}
       >
         {view === "home" && (
           <HomeScreen
@@ -449,8 +451,38 @@ export default function App() {
             onRequestLocation={requestLocation}
           />
         )}
+        {/* KAKAOMAP 브랜치 호환: #map → 노선도 탭의 실제 지도 모드 */}
+        {view === "map" && (
+          <MacroViewScreen
+            form={form}
+            onFormChange={setForm}
+            onSearch={handleSearch}
+            geoLocation={geoLocation}
+            locationState={locationState}
+            onRequestLocation={requestLocation}
+            initialMapViewMode="geo"
+          />
+        )}
         {view === "cong-viz" && (
-          <CongestionVizCompareScreen onBack={() => navigateTo("home")} />
+          <CongestionVizCompareScreen
+            onBack={() => navigateTo("home")}
+            onOpenMapViz={() => navigateTo("map-cong-viz")}
+            onOpenStyleViz={() => navigateTo("map-style-viz")}
+          />
+        )}
+        {view === "map-cong-viz" && (
+          <MapCongestionVizCompareScreen
+            onBack={() => navigateTo("home")}
+            onOpenStripViz={() => navigateTo("cong-viz")}
+            onOpenStyleViz={() => navigateTo("map-style-viz")}
+          />
+        )}
+        {view === "map-style-viz" && (
+          <MapStyleVizCompareScreen
+            onBack={() => navigateTo("home")}
+            onOpenCongMapViz={() => navigateTo("map-cong-viz")}
+            onOpenStripViz={() => navigateTo("cong-viz")}
+          />
         )}
         {view === "login" && (
           <AuthScreen
@@ -460,11 +492,17 @@ export default function App() {
         )}
       </div>
 
-      {view !== "login" && view !== "cong-viz" && (
+      {view !== "login" &&
+        view !== "cong-viz" &&
+        view !== "map-cong-viz" &&
+        view !== "map-style-viz" && (
         <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-around px-2 py-2">
             {bottomNav.map(({ id, label, icon: Icon }) => {
-              const active = view === id || (view === "detail" && id === "results");
+              const active =
+                view === id ||
+                (view === "detail" && id === "results") ||
+                (view === "map" && id === "macro");
               return (
                 <button
                   key={id}

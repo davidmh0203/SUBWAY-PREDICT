@@ -39,6 +39,13 @@ const transferFlags = computeTransferFlags(
 );
 const METRO_STATIONS = applyStationSpread(BASE_STATIONS, transferFlags);
 
+/** 시안용: compactCenter 등 옵션으로 좌표 재계산 */
+function getStationsForMapStyle({ compactCenter = false } = {}) {
+  if (!compactCenter) return METRO_STATIONS;
+  return applyStationSpread(BASE_STATIONS, transferFlags, { compactCenter: true });
+}
+
+// 동기 init은 metro-line-badges 순환 참조로 TDZ 크래시 → microtask로 미룸
 queueMicrotask(() => {
   initMetroMapLayout(STATION_META, METRO_STATIONS);
 });
@@ -166,6 +173,7 @@ export {
   getStationByName,
   getStationLineColor,
   getNearestStationsByGeo,
+  getStationsForMapStyle,
   normalizeLineColor,
   getUniqueLineLegend,
   pointToSegmentDistance,

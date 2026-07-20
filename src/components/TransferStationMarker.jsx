@@ -1,18 +1,12 @@
 import React from "react";
-import { TRANSFER_STATION_R } from "@/lib/metro-label-layout";
-function TransferStationMarker({ x, y }) {
-  return /* @__PURE__ */ React.createElement(
-    "circle",
-    {
-      cx: x,
-      cy: y,
-      r: TRANSFER_STATION_R,
-      fill: "#ffffff",
-      stroke: "#1a1a1a",
-      strokeWidth: 2.2
-    }
-  );
+function TransferStationMarker({ x, y, r = 4.5, strokeWidth = 2.2 }) {
+  return /* @__PURE__ */ React.createElement("circle", {
+    cx: x,
+    cy: y,
+    r,
+    fill: "#ffffff",
+    stroke: "#1a1a1a",
+    strokeWidth,
+  });
 }
-export {
-  TransferStationMarker
-};
+export { TransferStationMarker };

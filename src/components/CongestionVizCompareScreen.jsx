@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   RouteTimelineBar,
@@ -11,7 +11,10 @@ import {
   rateToCrowdLevel,
 } from "@/lib/congestion";
 import { CongestionLegend } from "@/components/CongestionLegend";
-import { getRouteCongestionStats } from "@/lib/route-congestion-summary";
+import {
+  DEPARTURE_CONGESTION_WEIGHT,
+  getRouteCongestionStats,
+} from "@/lib/route-congestion-summary";
 
 /** 시청→동대문 — 중간(종각)이 피크인 샘플 */
 const SAMPLE_ROUTE = {
@@ -65,11 +68,20 @@ function CongestionChip({ rate, hint }) {
   );
 }
 
-function CompareCard({ title, badgeRate, badgeHint, children }) {
+function CompareCard({ title, badgeRate, badgeHint, selected = false, children }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+    <div
+      className={`rounded-2xl border bg-white p-4 shadow-[0_1px_3px_rgba(15,23,42,0.04)] ${
+        selected ? "border-slate-800 ring-1 ring-slate-800" : "border-slate-100"
+      }`}
+    >
       <div className="mb-3 flex items-start justify-between gap-2">
-        <p className="text-sm font-semibold text-slate-800">{title}</p>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-slate-800">{title}</p>
+          {selected && (
+            <p className="mt-0.5 text-[10px] font-medium text-emerald-700">적용</p>
+          )}
+        </div>
         <CongestionChip rate={badgeRate} hint={badgeHint} />
       </div>
       <div className="mb-1 flex flex-wrap items-baseline gap-2">
@@ -88,17 +100,18 @@ function CompareCard({ title, badgeRate, badgeHint, children }) {
   );
 }
 
-function badgeStats(route) {
-  return getRouteCongestionStats(route);
-}
-
 /**
- * 혼잡 스트립 변형 + 카드 뱃지 기준 비교 (#cong-viz)
+ * 혼잡 UI 비교 (#cong-viz) — 결정안 확인용
+ * 스트립: ② 구분선 / 뱃지: 출발 가중 평균
  */
-export function CongestionVizCompareScreen({ onBack }) {
+export function CongestionVizCompareScreen({
+  onBack,
+  onOpenMapViz,
+  onOpenStyleViz,
+}) {
   const legs = buildTimelineLegs(SAMPLE_ROUTE);
-  const { max, avg, peakName, departure, departureName } =
-    badgeStats(SAMPLE_ROUTE);
+  const { max, avg, peakName, departure, departureName, departureWeighted } =
+    getRouteCongestionStats(SAMPLE_ROUTE);
 
   return (
     <div className="animate-fade-in space-y-5 pb-8">
@@ -109,21 +122,45 @@ export function CongestionVizCompareScreen({ onBack }) {
         <div className="min-w-0 flex-1">
           <h1 className="font-semibold text-slate-800">혼잡 UI 비교</h1>
           <p className="text-xs text-slate-500">
-            별도 역별 스트립 · 역 구분 / 뱃지 기준
+            스트립 ② 구분선 · 쾌적 = 출발 가중 평균 (×{DEPARTURE_CONGESTION_WEIGHT})
           </p>
         </div>
         <CongestionLegend compact />
       </header>
 
+      {onOpenMapViz && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full gap-2 text-xs"
+          onClick={onOpenMapViz}
+        >
+          <Map className="h-3.5 w-3.5" />
+          노선도 혼잡 시안 보기
+        </Button>
+      )}
+      {onOpenStyleViz && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full gap-2 text-xs"
+          onClick={onOpenStyleViz}
+        >
+          노선도 표현 시안 보기
+        </Button>
+      )}
+
       <section className="space-y-2">
         <h2 className="text-xs font-semibold text-slate-500">
-          1. 역별 스트립 — 구간 구분
+          1. 역별 스트립 (탭/호버로 역명·%)
         </h2>
 
         <CompareCard
-          title="① 색만 (현재)"
-          badgeRate={departure}
-          badgeHint={`출발 · ${departureName}`}
+          title="① 색만"
+          badgeRate={departureWeighted}
+          badgeHint="출발가중"
         >
           <div className="mt-3">
             <RouteTimelineBar legs={legs} totalTime={SAMPLE_ROUTE.totalTime} />
@@ -137,8 +174,9 @@ export function CongestionVizCompareScreen({ onBack }) {
 
         <CompareCard
           title="② 역 사이 구분선"
-          badgeRate={departure}
-          badgeHint={`출발 · ${departureName}`}
+          badgeRate={departureWeighted}
+          badgeHint="출발가중"
+          selected
         >
           <div className="mt-3">
             <RouteTimelineBar legs={legs} totalTime={SAMPLE_ROUTE.totalTime} />
@@ -152,8 +190,8 @@ export function CongestionVizCompareScreen({ onBack }) {
 
         <CompareCard
           title="③ 구분선 + 노선도 노드"
-          badgeRate={departure}
-          badgeHint={`출발 · ${departureName}`}
+          badgeRate={departureWeighted}
+          badgeHint="출발가중"
         >
           <div className="mt-3">
             <RouteTimelineBar legs={legs} totalTime={SAMPLE_ROUTE.totalTime} />
@@ -168,7 +206,7 @@ export function CongestionVizCompareScreen({ onBack }) {
 
       <section className="space-y-2">
         <h2 className="text-xs font-semibold text-slate-500">
-          2. 카드 우측 뱃지 기준 (같은 스트립, 숫자만 다름)
+          2. 카드·쾌적 뱃지 기준 (같은 스트립 ②)
         </h2>
 
         <CompareCard
@@ -189,7 +227,7 @@ export function CongestionVizCompareScreen({ onBack }) {
         <CompareCard
           title="B. 경로 평균"
           badgeRate={avg}
-          badgeHint="stations 평균"
+          badgeHint="단순 평균"
         >
           <div className="mt-3">
             <RouteTimelineBar legs={legs} totalTime={SAMPLE_ROUTE.totalTime} />
@@ -202,9 +240,25 @@ export function CongestionVizCompareScreen({ onBack }) {
         </CompareCard>
 
         <CompareCard
-          title="C. 출발 역 (적용)"
+          title={`C. 출발만 (${departureName})`}
           badgeRate={departure}
           badgeHint={`출발 · ${departureName}`}
+        >
+          <div className="mt-3">
+            <RouteTimelineBar legs={legs} totalTime={SAMPLE_ROUTE.totalTime} />
+          </div>
+          <RouteCongestionStrip
+            route={SAMPLE_ROUTE}
+            variant="dividers"
+            className="mt-2.5"
+          />
+        </CompareCard>
+
+        <CompareCard
+          title={`D. 출발 가중 평균 (×${DEPARTURE_CONGESTION_WEIGHT})`}
+          badgeRate={departureWeighted}
+          badgeHint="쾌적·카드 %"
+          selected
         >
           <div className="mt-3">
             <RouteTimelineBar legs={legs} totalTime={SAMPLE_ROUTE.totalTime} />

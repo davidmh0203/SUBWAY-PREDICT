@@ -11,6 +11,9 @@ const TRANSFER_PAIR_PAD = 1;
 const MAX_SHIFT = 14;
 const ENDPOINT_TOL = 8;
 
+/** 수도권 도심(시청·강남·사당 일대) — stationCompact 이완 영역 */
+const DEFAULT_CENTER_BOUNDS = { x0: 620, y0: 480, x1: 900, y1: 680 };
+
 function colorToLineKey(color, lineColorLabels) {
   return lineColorLabels[color.toLowerCase()] ?? color.toLowerCase();
 }
@@ -54,18 +57,49 @@ function markerRadius(isTransfer) {
   return isTransfer ? TRANSFER_R : BASE_R;
 }
 
-function clampToOrigin(orig, x, y) {
+function clampToOrigin(orig, x, y, maxShift) {
   const dx = x - orig.x;
   const dy = y - orig.y;
   const d = Math.hypot(dx, dy);
-  if (d <= MAX_SHIFT) return { x, y };
-  const s = MAX_SHIFT / d;
+  if (d <= maxShift) return { x, y };
+  const s = maxShift / d;
   return { x: orig.x + dx * s, y: orig.y + dy * s };
 }
 
-export function applyStationSpread(stations, transferFlags) {
+function inBounds(x, y, bounds) {
+  return x >= bounds.x0 && x <= bounds.x1 && y >= bounds.y0 && y <= bounds.y1;
+}
+
+/**
+ * @param {Array<{ id: string, x: number, y: number }>} stations
+ * @param {Map<string, boolean>} transferFlags
+ * @param {{
+ *   compactCenter?: boolean,
+ *   centerBounds?: { x0: number, y0: number, x1: number, y1: number },
+ *   maxShift?: number,
+ *   centerMaxShift?: number,
+ *   centerPadExtra?: number,
+ *   iterations?: number,
+ * }} [options]
+ */
+export function applyStationSpread(stations, transferFlags, options = {}) {
+  const {
+    compactCenter = false,
+    centerBounds = DEFAULT_CENTER_BOUNDS,
+    maxShift = MAX_SHIFT,
+    centerMaxShift = 22,
+    centerPadExtra = 2.2,
+    iterations = 30,
+  } = options;
+
   const origins = new Map(stations.map((s) => [s.id, { x: s.x, y: s.y }]));
   const pos = new Map(stations.map((s) => [s.id, { x: s.x, y: s.y }]));
+  const inCenter = new Map(
+    stations.map((s) => [
+      s.id,
+      compactCenter && inBounds(s.x, s.y, centerBounds),
+    ]),
+  );
 
   const sorted = [...stations].sort((a, b) => {
     const ta = transferFlags.get(a.id) ? 1 : 0;
@@ -73,7 +107,9 @@ export function applyStationSpread(stations, transferFlags) {
     return tb - ta;
   });
 
-  for (let iter = 0; iter < 30; iter++) {
+  const iters = compactCenter ? iterations + 12 : iterations;
+
+  for (let iter = 0; iter < iters; iter++) {
     for (let i = 0; i < sorted.length; i++) {
       for (let j = i + 1; j < sorted.length; j++) {
         const a = sorted[i];
@@ -83,7 +119,9 @@ export function applyStationSpread(stations, transferFlags) {
         const ra = markerRadius(transferFlags.get(a.id));
         const rb = markerRadius(transferFlags.get(b.id));
         const bothTransfer = transferFlags.get(a.id) && transferFlags.get(b.id);
-        const minD = ra + rb + PAD + (bothTransfer ? TRANSFER_PAIR_PAD : 0);
+        const centerPair = inCenter.get(a.id) || inCenter.get(b.id);
+        const padExtra = centerPair ? centerPadExtra : 0;
+        const minD = ra + rb + PAD + padExtra + (bothTransfer ? TRANSFER_PAIR_PAD : 0);
         let dx = pb.x - pa.x;
         let dy = pb.y - pa.y;
         let dist = Math.hypot(dx, dy);
@@ -96,13 +134,15 @@ export function applyStationSpread(stations, transferFlags) {
         const push = (minD - dist) / 2 + 0.35;
         const ux = dx / dist;
         const uy = dy / dist;
+        const shiftA = inCenter.get(a.id) ? centerMaxShift : maxShift;
+        const shiftB = inCenter.get(b.id) ? centerMaxShift : maxShift;
         pos.set(
           a.id,
-          clampToOrigin(origins.get(a.id), pa.x - ux * push, pa.y - uy * push),
+          clampToOrigin(origins.get(a.id), pa.x - ux * push, pa.y - uy * push, shiftA),
         );
         pos.set(
           b.id,
-          clampToOrigin(origins.get(b.id), pb.x + ux * push, pb.y + uy * push),
+          clampToOrigin(origins.get(b.id), pb.x + ux * push, pb.y + uy * push, shiftB),
         );
       }
     }
