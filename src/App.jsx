@@ -4,6 +4,7 @@ import { HomeScreen } from "@/components/HomeScreen";
 import { RouteResultsScreen } from "@/components/RouteResultsScreen";
 import { RouteDetailScreen } from "@/components/RouteDetailScreen";
 import { MacroViewScreen } from "@/components/MacroViewScreen";
+import { MapScreen } from "@/components/MapScreen";
 import { FavoritesScreen } from "@/components/FavoritesScreen";
 import { AuthScreen } from "@/components/AuthScreen";
 import { CongestionVizCompareScreen } from "@/components/CongestionVizCompareScreen";
@@ -18,7 +19,9 @@ import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites"
 import { fetchRoutesFromApi } from "@/lib/api/client";
 import { formatHHMM } from "@/lib/route-timing";
 
-const VIEWS = ["home", "results", "detail", "favorites", "macro", "login", "cong-viz"];
+// "map"은 하단 탭에 노출하지 않지만, 경로 입력 등에서 navigateTo("map")으로
+// 진입할 수 있도록 라우팅 대상에는 포함시킨다.
+const VIEWS = ["home", "results", "detail", "favorites", "macro", "map", "login", "cong-viz"];
 
 function createDefaultTime() {
   const d = new Date();
@@ -345,6 +348,21 @@ export default function App() {
     [navigateTo],
   );
 
+  // 지도(map)에서 역을 선택해 확정하면 폼에 반영하고 홈으로 돌아간다.
+  const handleConfirmRouteFromMap = useCallback(
+    (depName, depId, destName, destId) => {
+      setForm((prev) => ({
+        ...prev,
+        departure: depName,
+        departureStationId: depId,
+        destination: destName,
+        destinationStationId: destId,
+      }));
+      navigateTo("home");
+    },
+    [navigateTo],
+  );
+
   const bottomNav = useMemo(
     () => [
       { id: "home", label: "홈", icon: Home },
@@ -449,6 +467,12 @@ export default function App() {
             onRequestLocation={requestLocation}
           />
         )}
+        {view === "map" && (
+          <MapScreen
+            onBack={() => navigateTo("home")}
+            onConfirmRoute={handleConfirmRouteFromMap}
+          />
+        )}
         {view === "cong-viz" && (
           <CongestionVizCompareScreen onBack={() => navigateTo("home")} />
         )}
@@ -460,7 +484,7 @@ export default function App() {
         )}
       </div>
 
-      {view !== "login" && view !== "cong-viz" && (
+      {view !== "login" && view !== "cong-viz" && view !== "map" && (
         <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-around px-2 py-2">
             {bottomNav.map(({ id, label, icon: Icon }) => {
