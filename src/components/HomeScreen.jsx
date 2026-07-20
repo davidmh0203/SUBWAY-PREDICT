@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TimeBottomSheet, TimePickerButton } from "@/components/TimeBottomSheet";
 import { TrafficForecastCarousel } from "@/components/TrafficForecastCarousel";
 import { StationSearchField } from "@/components/StationSearchField";
-import { DEMO_ROUTE_PAIRS } from "@/lib/demo-route-pairs";
 import { CROWD_LABELS } from "@/lib/congestion";
 import { APP_NAME } from "@/lib/app-brand";
 import { fetchForecastCards } from "@/lib/api/forecast-client";
@@ -42,14 +41,6 @@ export function HomeScreen({
   useEffect(() => {
     let cancelled = false;
 
-    // 위치 대기: 최초 1회만 스켈레톤. 이후·위치 재요청은 기존 카드 유지
-    if (locationState === "idle" || locationState === "loading") {
-      if (!forecastLoadedRef.current) setForecastLoading(true);
-      return () => {
-        cancelled = true;
-      };
-    }
-
     (async () => {
       if (!forecastLoadedRef.current) setForecastLoading(true);
       const data = await fetchForecastCards({
@@ -67,7 +58,7 @@ export function HomeScreen({
     return () => {
       cancelled = true;
     };
-  }, [locationState, geoLocation?.lat, geoLocation?.lng, stationKey, atKey]);
+  }, [geoLocation?.lat, geoLocation?.lng, stationKey, atKey]);
 
   return (
     <div className="animate-fade-in space-y-5 pb-24">
@@ -128,49 +119,6 @@ export function HomeScreen({
                 })
               }
             />
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-medium text-slate-500">
-                다중 경로 확인용 샘플
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {DEMO_ROUTE_PAIRS.map((pair) => {
-                  const active =
-                    form.departureStationId?.startsWith(
-                      pair.departure.replace(/역.*$/, "").trim(),
-                    ) &&
-                    form.destinationStationId?.startsWith(
-                      pair.destination.replace(/역.*$/, "").trim(),
-                    );
-                  return (
-                    <button
-                      key={pair.id}
-                      type="button"
-                      title={pair.hint}
-                      onClick={() =>
-                        onFormChange({
-                          ...form,
-                          departure: pair.departure,
-                          destination: pair.destination,
-                          departureStationId: pair.departureStationId,
-                          destinationStationId: pair.destinationStationId,
-                        })
-                      }
-                      className={`rounded-full px-2.5 py-1 text-[11px] transition ${
-                        active
-                          ? "bg-slate-800 text-white"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
-                    >
-                      {pair.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-[10px] leading-relaxed text-slate-400">
-                ODsay 키 없이도 샘플 OD로 테스트됩니다 (백엔드 목업+모델). 시청→동대문 ·
-                사당→종로3가 · 서울역→왕십리 · 합정→잠실을 눌러 비교해 보세요.
-              </p>
-            </div>
             <TimePickerButton value={form.targetTime} onClick={() => setSheetOpen(true)} />
             <Button size="lg" className="w-full" onClick={onSearch} disabled={!canSearch}>
               경로 예측 검색

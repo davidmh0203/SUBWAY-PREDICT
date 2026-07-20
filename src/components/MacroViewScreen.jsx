@@ -67,7 +67,7 @@ export function MacroViewScreen({
 
   const headerSub =
     mapViewMode === "geo"
-      ? "실제 지도 위 역별 혼잡 · 마커에서 출발·도착 지정"
+      ? "카카오 지도 위 역별 혼잡 · 마커에서 출발·도착 지정"
       : "역을 클릭해 출발·도착을 지정하세요 · 혼잡 역은 부드러운 할로로 표시";
 
   return (

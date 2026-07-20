@@ -15,7 +15,8 @@ import { fetchNearbyStations } from "@/lib/api/nearby-stations-client";
 import { fetchBatchCongestion } from "@/lib/api/client";
 import { rateToCrowdLevel } from "@/lib/congestion";
 import { cn } from "@/lib/utils";
-import { getToken, logout as apiLogout, me } from "@/lib/api/auth";
+import { getToken, isUsingSupabaseAuth, logout as apiLogout, me } from "@/lib/api/auth";
+import { getSupabase } from "@/lib/supabase-client";
 import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites";
 import { fetchRoutesFromApi } from "@/lib/api/client";
 import { formatHHMM } from "@/lib/route-timing";
@@ -182,11 +183,12 @@ export default function App() {
     return () => window.removeEventListener("hashchange", applyHash);
   }, []);
 
-  // 부팅 시 토큰이 있으면 /auth/me로 로그인 상태 복원 (만료/무효면 me()가 토큰을 지움)
+  // 부팅 시 세션 복원 — FastAPI JWT(localStorage) 또는 Supabase 세션
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      if (!getToken()) {
+      const shouldRestore = isUsingSupabaseAuth() || getToken();
+      if (!shouldRestore) {
         setAuthChecked(true);
         return;
       }
@@ -194,7 +196,7 @@ export default function App() {
         const restored = await me();
         if (!cancelled) setUser(restored);
       } catch {
-        // 토큰 만료/무효 — me()가 이미 localStorage를 정리함
+        // 토큰/세션 만료 — me()가 정리함
       } finally {
         if (!cancelled) setAuthChecked(true);
       }
@@ -202,6 +204,29 @@ export default function App() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    if (!isUsingSupabaseAuth()) return undefined;
+    const supabase = getSupabase();
+    if (!supabase) return undefined;
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        try {
+          const restored = await me();
+          setUser(restored);
+        } catch {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const refreshFavorites = useCallback(async () => {
@@ -238,9 +263,9 @@ export default function App() {
     [authReturnView, navigateTo],
   );
 
-  const handleAuthEntry = useCallback(() => {
+  const handleAuthEntry = useCallback(async () => {
     if (user) {
-      apiLogout();
+      await apiLogout();
       setUser(null);
     } else {
       goToLogin();

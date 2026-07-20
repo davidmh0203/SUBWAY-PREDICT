@@ -9,3 +9,4 @@ sqlalchemy>=2.0
 bcrypt>=4.1
 pyjwt>=2.8
 email-validator
+xgboost

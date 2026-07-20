@@ -1,4 +1,10 @@
-"""혼잡도 모델(CongestionPredictor) 로드 및 경로/단건 예측."""
+"""혼잡도 모델(CongestionPredictor) 로드 및 경로/단건 예측.
+
+로드 우선순위:
+  1. AdvancedCongestionPredictor (앙상블 LGB+XGB, predict_advanced.py)
+  2. CongestionPredictor (기존 LGB 단독, predict.py)
+  3. None → mock fallback
+"""
 
 from __future__ import annotations
 
@@ -28,20 +34,41 @@ def hour_to_time_slot(dt: datetime) -> str:
 @lru_cache(maxsize=1)
 def get_predictor():
     """모델 아티팩트 로드. 실패 시 None (호출측에서 mock fallback)."""
-    try:
-        import sys
+    import sys
 
-        if str(MODELS_DIR) not in sys.path:
-            sys.path.insert(0, str(MODELS_DIR))
-        from predict import CongestionPredictor  # type: ignore
+    if str(MODELS_DIR) not in sys.path:
+        sys.path.insert(0, str(MODELS_DIR))
 
-        if not (MODELS_DIR / "encoders.pkl").exists():
-            logger.warning("혼잡 모델 아티팩트 없음: %s", MODELS_DIR)
-            return None
-        return CongestionPredictor(model_dir=str(MODELS_DIR), verbose=False)
-    except Exception:
-        logger.exception("혼잡 모델 로드 실패")
-        return None
+    # 1순위: 고도화 앙상블 모델
+    adv_artifact = MODELS_DIR / "encoders_adv.pkl"
+    adv_script = MODELS_DIR / "predict_advanced.py"
+    if adv_artifact.exists() and adv_script.exists():
+        try:
+            from predict_advanced import AdvancedCongestionPredictor  # type: ignore
+
+            predictor = AdvancedCongestionPredictor(
+                model_dir=str(MODELS_DIR), verbose=False
+            )
+            logger.info("고도화 앙상블 모델 로드 완료 (predict_advanced)")
+            return predictor
+        except Exception:
+            logger.exception("고도화 모델 로드 실패 — 기존 모델로 fallback")
+
+    # 2순위: 기존 LGB 단독 모델
+    old_artifact = MODELS_DIR / "encoders.pkl"
+    old_script = MODELS_DIR / "predict.py"
+    if old_artifact.exists() and old_script.exists():
+        try:
+            from predict import CongestionPredictor  # type: ignore
+
+            predictor = CongestionPredictor(model_dir=str(MODELS_DIR), verbose=False)
+            logger.info("기존 LGB 모델 로드 완료 (predict)")
+            return predictor
+        except Exception:
+            logger.exception("기존 모델 로드 실패")
+
+    logger.warning("혼잡 모델 아티팩트 없음: %s", MODELS_DIR)
+    return None
 
 
 def predict_station(
@@ -111,6 +138,14 @@ def apply_model_to_route_stations(
             "prob_increase": r.get("prob_increase"),
             "prob_normal": r.get("prob_normal"),
             "prob_decrease": r.get("prob_decrease"),
+            # 고도화 모델 추가 필드
+            "usual_pct": r.get("usual_pct"),
+            "usual_level": r.get("usual_level"),
+            "official_pct": r.get("official_pct"),
+            "official_level": r.get("official_level"),
+            "cause": r.get("cause"),
+            "cause_prob": r.get("cause_prob"),
+            "model_type": r.get("model_type", "unknown"),
             "source": "model",
         }
         out.append(merged)
@@ -145,7 +180,6 @@ def overall_from_stations(stations: list[dict[str, Any]]) -> tuple[int, str]:
         return 0, congestion_level(0)
     vals = [int(s.get("station_congestion", 0)) for s in stations]
     overall = max(vals)
-    # level: 모델이 채운 최고 혼잡 역의 level 우선
     top = max(stations, key=lambda s: int(s.get("station_congestion", 0)))
     level = top.get("level") or congestion_level(overall)
     return overall, level

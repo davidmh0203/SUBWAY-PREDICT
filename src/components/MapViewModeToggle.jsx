@@ -36,7 +36,7 @@ export function MapViewModeToggle({ value, onChange }) {
         }`}
       >
         <Map className="h-3.5 w-3.5" />
-        실제 지도
+        카카오 지도
       </button>
     </div>
   );

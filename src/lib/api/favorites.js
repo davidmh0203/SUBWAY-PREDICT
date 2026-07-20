@@ -1,4 +1,9 @@
-import { authHeaders, clearToken } from "@/lib/api/auth";
+import { authHeaders, clearToken, isUsingSupabaseAuth } from "@/lib/api/auth";
+import {
+  addFavoriteSupabase,
+  listFavoritesSupabase,
+  removeFavoriteSupabase,
+} from "@/lib/api/favorites-supabase";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
@@ -11,54 +16,74 @@ async function parseErrorDetail(res) {
   }
 }
 
-async function handleAuthedResponse(res) {
+async function listFavoritesApi() {
+  const res = await fetch(`${API_BASE}/favorites`, {
+    headers: { ...authHeaders() },
+  });
   if (res.status === 401) {
     clearToken();
+    throw new Error("인증이 만료되었습니다");
   }
   if (!res.ok) {
     throw new Error((await parseErrorDetail(res)) ?? `favorites ${res.status}`);
   }
-  return res;
-}
-
-/**
- * @returns {Promise<Array<{ id: number, start_name: string, end_name: string, route_key: string, route_label: string, departure_time: string, created_at: string }>>}
- */
-export async function listFavorites() {
-  const res = await fetch(`${API_BASE}/favorites`, {
-    headers: { ...authHeaders() },
-  });
-  await handleAuthedResponse(res);
   const data = await res.json();
   return data.favorites ?? [];
 }
 
-/**
- * @param {{ startName: string, endName: string, routeKey: string, routeLabel: string, departureTime: string }} params departureTime는 "HH:MM"
- */
-export async function addFavorite({ startName, endName, routeKey, routeLabel, departureTime }) {
+async function addFavoriteApi(body) {
   const res = await fetch(`${API_BASE}/favorites`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({
-      start_name: startName,
-      end_name: endName,
-      route_key: routeKey,
-      route_label: routeLabel,
-      departure_time: departureTime,
-    }),
+    body: JSON.stringify(body),
   });
-  await handleAuthedResponse(res);
+  if (!res.ok) {
+    throw new Error((await parseErrorDetail(res)) ?? `favorites ${res.status}`);
+  }
   return res.json();
 }
 
-/**
- * @param {number} id
- */
-export async function removeFavorite(id) {
+async function removeFavoriteApi(id) {
   const res = await fetch(`${API_BASE}/favorites/${id}`, {
     method: "DELETE",
     headers: { ...authHeaders() },
   });
-  await handleAuthedResponse(res);
+  if (!res.ok) {
+    throw new Error((await parseErrorDetail(res)) ?? `favorites ${res.status}`);
+  }
+}
+
+export async function listFavorites() {
+  if (isUsingSupabaseAuth()) return listFavoritesSupabase();
+  return listFavoritesApi();
+}
+
+export async function addFavorite({
+  startName,
+  endName,
+  routeKey,
+  routeLabel,
+  departureTime,
+}) {
+  if (isUsingSupabaseAuth()) {
+    return addFavoriteSupabase({
+      startName,
+      endName,
+      routeKey,
+      routeLabel,
+      departureTime,
+    });
+  }
+  return addFavoriteApi({
+    start_name: startName,
+    end_name: endName,
+    route_key: routeKey,
+    route_label: routeLabel,
+    departure_time: departureTime,
+  });
+}
+
+export async function removeFavorite(id) {
+  if (isUsingSupabaseAuth()) return removeFavoriteSupabase(id);
+  return removeFavoriteApi(id);
 }

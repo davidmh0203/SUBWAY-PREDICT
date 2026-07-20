@@ -1,3 +1,5 @@
+import { getSupabase, isSupabaseAuthEnabled } from "@/lib/supabase-client";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const TOKEN_KEY = "yeoyuro.token";
 
@@ -13,12 +15,13 @@ export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-/**
- * Authorization 헤더 주입 헬퍼. 토큰 없으면 빈 객체.
- */
 export function authHeaders() {
   const token = getToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export function isUsingSupabaseAuth() {
+  return isSupabaseAuthEnabled;
 }
 
 async function parseErrorDetail(res) {
@@ -30,10 +33,19 @@ async function parseErrorDetail(res) {
   }
 }
 
-/**
- * @param {{ email: string, password: string, nickname: string }} params
- */
-export async function signup({ email, password, nickname }) {
+function mapSupabaseUser(user, nickname) {
+  return {
+    id: user.id,
+    email: user.email ?? "",
+    nickname:
+      nickname ??
+      user.user_metadata?.nickname ??
+      user.email?.split("@")[0] ??
+      "사용자",
+  };
+}
+
+async function signupApi({ email, password, nickname }) {
   const res = await fetch(`${API_BASE}/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -47,10 +59,7 @@ export async function signup({ email, password, nickname }) {
   return data.user;
 }
 
-/**
- * @param {{ email: string, password: string }} params
- */
-export async function login({ email, password }) {
+async function loginApi({ email, password }) {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -64,10 +73,7 @@ export async function login({ email, password }) {
   return data.user;
 }
 
-/**
- * 부팅 시 토큰 복원용. 401이면 토큰을 지우고 던진다.
- */
-export async function me() {
+async function meApi() {
   const res = await fetch(`${API_BASE}/auth/me`, {
     headers: { ...authHeaders() },
   });
@@ -81,6 +87,67 @@ export async function me() {
   return res.json();
 }
 
-export function logout() {
+async function signupSupabase({ email, password, nickname }) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase가 설정되지 않았습니다");
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { nickname } },
+  });
+  if (error) throw new Error(error.message);
+  if (!data.user) throw new Error("회원가입에 실패했습니다");
+
+  if (!data.session) {
+    throw new Error("이메일 인증 후 로그인해 주세요");
+  }
+  return mapSupabaseUser(data.user, nickname);
+}
+
+async function loginSupabase({ email, password }) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase가 설정되지 않았습니다");
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error) throw new Error(error.message);
+  if (!data.user) throw new Error("로그인에 실패했습니다");
+  return mapSupabaseUser(data.user);
+}
+
+async function meSupabase() {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw new Error(error.message);
+  if (!data.session?.user) return null;
+  return mapSupabaseUser(data.session.user);
+}
+
+export async function signup(params) {
+  if (isSupabaseAuthEnabled) return signupSupabase(params);
+  return signupApi(params);
+}
+
+export async function login(params) {
+  if (isSupabaseAuthEnabled) return loginSupabase(params);
+  return loginApi(params);
+}
+
+export async function me() {
+  if (isSupabaseAuthEnabled) return meSupabase();
+  return meApi();
+}
+
+export async function logout() {
+  if (isSupabaseAuthEnabled) {
+    const supabase = getSupabase();
+    if (supabase) await supabase.auth.signOut();
+    return;
+  }
   clearToken();
 }

@@ -15,7 +15,6 @@ export async function fetchForecastCards({ lat, lng, stations, at } = {}) {
   if (lng != null && Number.isFinite(lng)) params.set("lng", String(lng));
   if (stations?.length) params.set("stations", stations.join(","));
   if (at instanceof Date && !Number.isNaN(at.getTime())) {
-    // 로컬 시각을 ISO로 (백엔드가 KST/오프셋 포함 파싱)
     params.set("at", at.toISOString());
   }
 

@@ -134,13 +134,6 @@ const getCongestionStyle = (level) => {
   }
 };
 
-/**
- * @param {object} props
- * @param {() => void} [props.onBack] 단독 `#map` 화면용 뒤로가기
- * @param {(depName: string, depId: string, destName: string, destId: string) => void} [props.onConfirmRoute]
- * @param {boolean} [props.embedded] `#macro` 안 「실제 지도」탭 — 헤더·풀스크린 레이아웃 생략
- * @param {string} [props.mapHeightClass] embedded일 때 지도 높이
- */
 export function MapScreen({
   onBack,
   onConfirmRoute,
@@ -463,186 +456,194 @@ export function MapScreen({
     return () => clearTimeout(timer);
   }, [selectedStation]);
 
-  const legend = (
-    <div className="flex items-center gap-3 flex-shrink-0 px-0.5">
-      {[
-        { c: LEVEL_COLOR.RELAXED, t: "여유" },
-        { c: LEVEL_COLOR.NORMAL, t: "보통" },
-        { c: LEVEL_COLOR.BUSY, t: "혼잡" },
-        { c: LEVEL_COLOR.VERY_BUSY, t: "매우 혼잡" },
-      ].map((item) => (
-        <div key={item.t} className="flex items-center gap-1.5">
-          <span
-            className="w-2.5 h-2.5 rounded-full"
-            style={{ backgroundColor: item.c }}
-          />
-          <span className="text-[11px] text-slate-500">{item.t}</span>
-        </div>
-      ))}
-    </div>
-  );
-
-  const mapPane = (
+  const mapCard = (
     <div
-      style={
-        embedded
-          ? undefined
-          : { height: selectedStation ? "calc(100% - 132px)" : "100%" }
-      }
-      className={`relative overflow-hidden rounded-xl border border-slate-100 bg-slate-100 shadow-inner transition-[height] duration-300 ease-in-out ${
-        embedded
-          ? `${mapHeightClass} ${selectedStation ? "mb-0" : ""}`
-          : "flex-grow"
-      }`}
+      className={`flex flex-col gap-3 overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 shadow-surface ${embedded ? "" : "flex-1"}`}
     >
-      {tempDeparture && (
-        <div className="absolute left-4 top-3 z-10 flex items-center gap-2 rounded-full border border-emerald-500 bg-emerald-600 px-3 py-1.5 text-[11px] font-semibold text-white shadow-md">
-          <span className="h-1.5 w-1.5 animate-ping rounded-full bg-white" />
-          출발역: {tempDeparture.name}
-        </div>
-      )}
-
-      {loading && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-slate-50/90 backdrop-blur-sm">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-800" />
-          <span className="text-sm font-medium text-slate-500">지하철 노선 로딩 중...</span>
-        </div>
-      )}
-
-      {!loading && !error && syncing && (
-        <div className="absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-slate-200 bg-white/95 px-3 py-1.5 shadow-sm backdrop-blur-sm">
-          <div className="h-3 w-3 animate-spin rounded-full border-2 border-slate-200 border-t-slate-800" />
-          <span className="text-[11px] font-medium text-slate-600">
-            이 지역 혼잡도 불러오는 중
-          </span>
-        </div>
-      )}
-
-      {error && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-red-50/95 p-6 text-center">
-          <p className="text-sm font-bold text-red-600">지도 로딩 실패</p>
-          <p className="text-xs leading-relaxed text-red-400">
-            프로젝트의 <code className="rounded border bg-white px-1">.env</code> 파일에
-            유효한{" "}
-            <code className="rounded border bg-white px-1">VITE_KAKAO_MAP_API_KEY</code>를
-            등록하고, 개발자 센터에 도메인 화이트리스트가 등록되어 있는지 확인해주세요.
-          </p>
-        </div>
-      )}
-
-      <div ref={mapContainerRef} className="h-full w-full rounded-xl" />
-    </div>
-  );
-
-  const stationDrawer = selectedStation ? (
-    <div className="flex h-[120px] flex-shrink-0 flex-col justify-center gap-2 border-t border-slate-100 pt-2 animate-slide-up">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="rounded-lg bg-slate-800 p-1.5 text-white">
-            <MapPin className="h-4 w-4" />
-          </div>
-          <h3 className="text-sm font-bold text-slate-800">
-            {selectedStation.name}역 혼잡도
-          </h3>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => {
-              setTempDeparture({
-                name: selectedStation.name + "역",
-                id: selectedStation.id,
-              });
-            }}
-            className="rounded-lg border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 transition-all hover:bg-emerald-100 active:scale-95"
-          >
-            출발
-          </button>
-          <button
-            type="button"
-            disabled={!tempDeparture}
-            onClick={() => {
-              if (!tempDeparture) return;
-              onConfirmRoute?.(
-                tempDeparture.name,
-                tempDeparture.id,
-                selectedStation.name + "역",
-                selectedStation.id,
-              );
-            }}
-            style={{
-              backgroundColor: tempDeparture ? "#4f46e5" : "#f1f5f9",
-              color: tempDeparture ? "#ffffff" : "#94a3b8",
-              cursor: tempDeparture ? "pointer" : "not-allowed",
-            }}
-            className="rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all"
-          >
-            도착
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedStation(null)}
-            className="rounded-lg px-2 py-1 text-[11px] text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
-          >
-            닫기
-          </button>
-        </div>
-      </div>
-
-      {congestionLoading ? (
-        <div className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-100/50 bg-slate-50 p-3">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-slate-800" />
-          <span className="text-xs font-medium text-slate-500">
-            FastAPI 예측 데이터 조회 중...
-          </span>
-        </div>
-      ) : congestion ? (
-        (() => {
-          const level = rateToCrowdLevel(congestion.rate);
-          const style = getCongestionStyle(level);
-          return (
-            <div className="flex flex-1 flex-col justify-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-500">실시간 예측 혼잡률</span>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${style.color}`}
-                  >
-                    {style.label}
-                  </span>
-                  <span className="text-sm font-bold text-slate-800">
-                    {congestion.rate}%
-                  </span>
-                </div>
+          <div className="flex flex-shrink-0 items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg border border-slate-100 bg-slate-50 p-2 text-slate-800">
+                <MapPin className="h-5 w-5" />
               </div>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${style.barColor}`}
-                  style={{ width: `${Math.min(congestion.rate, 100)}%` }}
-                />
+              <div>
+                <h2 className="text-sm font-semibold text-slate-800">수도권 지하철역 지도</h2>
+                <p className="text-[11px] text-slate-400">
+                  지도를 움직이면 그 지역의 혼잡도를 불러옵니다.
+                </p>
               </div>
             </div>
-          );
-        })()
-      ) : (
-        <div className="flex flex-1 items-center justify-center rounded-xl bg-slate-50 p-3">
-          <span className="text-xs text-slate-400">혼잡도 데이터를 표시할 수 없습니다.</span>
-        </div>
-      )}
+          </div>
+
+          <div className="flex flex-shrink-0 items-center gap-3 px-0.5">
+            {[
+              { c: LEVEL_COLOR.RELAXED, t: "여유" },
+              { c: LEVEL_COLOR.NORMAL, t: "보통" },
+              { c: LEVEL_COLOR.BUSY, t: "혼잡" },
+              { c: LEVEL_COLOR.VERY_BUSY, t: "매우 혼잡" },
+            ].map((item) => (
+              <div key={item.t} className="flex items-center gap-1.5">
+                <span
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: item.c }}
+                />
+                <span className="text-[11px] text-slate-500">{item.t}</span>
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={
+              embedded
+                ? undefined
+                : { height: selectedStation ? "calc(100% - 132px)" : "100%" }
+            }
+            className={`relative overflow-hidden rounded-xl border border-slate-100 bg-slate-100 shadow-inner transition-[height] duration-300 ease-in-out ${
+              embedded ? mapHeightClass : "flex-grow"
+            }`}
+          >
+            {/* 임시 선택된 출발역 표시 배너 */}
+            {tempDeparture && (
+              <div className="absolute top-3 left-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600 text-white shadow-md border border-emerald-500 text-[11px] font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                출발역: {tempDeparture.name}
+              </div>
+            )}
+
+            {loading && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-sm gap-3">
+                <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+                <span className="text-sm font-medium text-slate-500">지하철 노선 로딩 중...</span>
+              </div>
+            )}
+
+            {/* 현재 영역 혼잡도를 불러오는 동안만 표시 */}
+            {!loading && !error && syncing && (
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 border border-slate-200 shadow-sm backdrop-blur-sm">
+                <div className="w-3 h-3 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+                <span className="text-[11px] font-medium text-slate-600">
+                  이 지역 혼잡도 불러오는 중
+                </span>
+              </div>
+            )}
+
+            {error && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-red-50/95 p-6 text-center gap-2">
+                <p className="text-sm font-bold text-red-600">지도 로딩 실패</p>
+                <p className="text-xs text-red-400 leading-relaxed">
+                  프로젝트의 <code className="px-1 bg-white border rounded">.env</code> 파일에 유효한{" "}
+                  <code className="px-1 bg-white border rounded">VITE_KAKAO_MAP_API_KEY</code>를
+                  등록하고, 개발자 센터에 도메인 화이트리스트가 등록되어 있는지 확인해주세요.
+                </p>
+              </div>
+            )}
+
+            <div ref={mapContainerRef} className="h-full w-full rounded-xl" />
+          </div>
+
+          {selectedStation && (
+            <div className="h-[120px] flex flex-col gap-2 pt-2 border-t border-slate-100 animate-slide-up flex-shrink-0 justify-center">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 bg-slate-800 text-white rounded-lg">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-bold text-slate-800 text-sm">
+                    {selectedStation.name}역 혼잡도
+                  </h3>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTempDeparture({
+                        name: selectedStation.name + "역",
+                        id: selectedStation.id,
+                      });
+                    }}
+                    className="text-[11px] px-2.5 py-1 font-semibold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100 active:scale-95 transition-all"
+                  >
+                    출발
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!tempDeparture}
+                    onClick={() => {
+                      if (!tempDeparture) return;
+                      onConfirmRoute?.(
+                        tempDeparture.name,
+                        tempDeparture.id,
+                        selectedStation.name + "역",
+                        selectedStation.id,
+                      );
+                    }}
+                    style={{
+                      backgroundColor: tempDeparture ? "#4f46e5" : "#f1f5f9",
+                      color: tempDeparture ? "#ffffff" : "#94a3b8",
+                      cursor: tempDeparture ? "pointer" : "not-allowed",
+                    }}
+                    className="text-[11px] px-2.5 py-1 font-semibold rounded-lg transition-all"
+                  >
+                    도착
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedStation(null)}
+                    className="text-[11px] text-slate-400 hover:text-slate-600 px-2 py-1 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    닫기
+                  </button>
+                </div>
+              </div>
+
+              {congestionLoading ? (
+                <div className="flex-1 flex items-center justify-center gap-2 bg-slate-50 rounded-xl p-3 border border-slate-100/50">
+                  <div className="w-4 h-4 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+                  <span className="text-xs text-slate-500 font-medium">
+                    FastAPI 예측 데이터 조회 중...
+                  </span>
+                </div>
+              ) : congestion ? (
+                (() => {
+                  // 핀 / 원 / 배지가 모두 같은 함수로 레벨을 구한다.
+                  const level = rateToCrowdLevel(congestion.rate);
+                  const style = getCongestionStyle(level);
+                  return (
+                    <div className="flex-1 flex flex-col justify-center gap-2.5 bg-slate-50 rounded-xl p-3 border border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-500 font-medium">실시간 예측 혼잡률</span>
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${style.color}`}
+                          >
+                            {style.label}
+                          </span>
+                          <span className="text-sm font-bold text-slate-800">
+                            {congestion.rate}%
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${style.barColor}`}
+                          style={{ width: `${Math.min(congestion.rate, 100)}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="flex-1 flex items-center justify-center bg-slate-50 rounded-xl p-3">
+                  <span className="text-xs text-slate-400">혼잡도 데이터를 표시할 수 없습니다.</span>
+                </div>
+              )}
+            </div>
+          )}
     </div>
-  ) : null;
+  );
 
   if (embedded) {
-    return (
-      <div className="flex flex-col gap-2 overflow-hidden rounded-2xl border border-slate-100 bg-white p-3 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-        <p className="text-[11px] text-slate-500">
-          지도를 움직이면 그 지역의 혼잡도를 불러옵니다. 역을 눌러 출발·도착을 지정하세요.
-        </p>
-        {legend}
-        {mapPane}
-        {stationDrawer}
-      </div>
-    );
+    return mapCard;
   }
 
   return (
@@ -658,26 +659,8 @@ export function MapScreen({
         <h1 className="text-lg font-bold text-slate-800">지하철역 혼잡도 지도</h1>
         <div className="w-10" />
       </header>
-
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col overflow-hidden p-4">
-        <div className="flex flex-1 flex-col gap-3 overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 shadow-surface">
-          <div className="flex flex-shrink-0 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg border border-slate-100 bg-slate-50 p-2 text-slate-800">
-                <MapPin className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold text-slate-800">수도권 지하철역 지도</h2>
-                <p className="text-[11px] text-slate-400">
-                  지도를 움직이면 그 지역의 혼잡도를 불러옵니다.
-                </p>
-              </div>
-            </div>
-          </div>
-          {legend}
-          {mapPane}
-          {stationDrawer}
-        </div>
+        {mapCard}
       </div>
     </div>
   );
