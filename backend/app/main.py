@@ -60,6 +60,35 @@ def health():
     return {"status": "ok"}
 
 
+@app.get("/debug/egress-ip", tags=["기본"])
+async def egress_ip():
+    """ODsay LAB IP 화이트리스트용 — 이 서버의 출구(egress) IP.
+
+    Free 플랜은 Shell이 없어서, 브라우저로 이 URL을 열어 IP를 확인한다.
+    """
+    import httpx
+
+    urls = (
+        "https://api.ipify.org",
+        "https://ifconfig.me/ip",
+    )
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        for url in urls:
+            try:
+                r = await client.get(url)
+                r.raise_for_status()
+                ip = r.text.strip()
+                if ip:
+                    return {
+                        "ip": ip,
+                        "hint": "ODsay LAB → Server 키 → 허용 IP에 이 값을 등록하세요.",
+                        "source": url,
+                    }
+            except httpx.HTTPError:
+                continue
+    return {"ip": None, "hint": "출구 IP를 조회하지 못했습니다. 잠시 후 다시 시도하세요."}
+
+
 @app.get("/registry/stats", tags=["기본"])
 def registry_stats():
     return station_registry.stats()

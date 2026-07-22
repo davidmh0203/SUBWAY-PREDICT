@@ -77,8 +77,10 @@ docker run --rm -p 8000:8000 \
 1. [ODsay LAB](https://lab.odsay.com/) 로그인  
 2. 발급한 **Server API 키** 설정에서 **허용 IP**에 백엔드 출구 IP 추가  
 3. IP 확인 방법:
-   - Render: 서비스 로그/문서의 outbound IP, 또는 배포 서버에서 `curl ifconfig.me`  
-   - 고정 IP가 없는 Free 플랜이면 Shared egress IP를 쓰거나, 고정 IP 플랜/프록시를 검토  
+   - **권장 (Free/Shell 없음):** `https://<서비스>.onrender.com/debug/egress-ip` → JSON의 `ip`  
+   - Render Shell이 있으면: `curl -s ifconfig.me`  
+   - Free는 공유·가변 egress일 수 있음. 실패하면 IP를 다시 조회해 LAB에 갱신  
+
 4. **Web 키는 백엔드에서 거부**됩니다. 반드시 Server 키.
 
 미등록 IP로 호출하면 `ApiKeyAuthFailed` 등이 납니다. 키는 있어도 **플랫폼 IP 화이트리스트**가 막습니다.
