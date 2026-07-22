@@ -28,9 +28,17 @@ async def predict_route(req: RouteRequest):
     """출발역·도착역·출발시각으로 경로 혼잡도 예측.
 
     ODsay로 경로를 구하고, 혼잡도는 models/ CongestionPredictor로 채웁니다.
-    모델·ODsay 미가용 시 mock으로 fallback.
+    live 모드에서 ODsay 실패 시 502 (가짜 출발·도착만 경로로 대체하지 않음).
     """
-    result = await predict_route_with_odsay(req.start, req.end, req.departure_time)
+    from app.odsay_client import OdsayError
+
+    try:
+        result = await predict_route_with_odsay(req.start, req.end, req.departure_time)
+    except OdsayError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"경로 탐색에 실패했습니다: {exc}",
+        ) from exc
     # 배열 인덱스로 경로를 식별하면 ODsay 응답 순서가 바뀔 때 즐겨찾기가 깨지므로
     # (호선, 환승역) 시퀀스 기반 route_key를 각 경로에 실어 보낸다.
     alternatives = [

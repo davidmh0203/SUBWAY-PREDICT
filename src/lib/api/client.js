@@ -35,6 +35,12 @@ export async function predictRoute({ start, end, departureTime }) {
  */
 export async function fetchRoutesFromApi(start, end, departureTime) {
   const data = await predictRoute({ start, end, departureTime });
+  // 운영 빌드에서 백엔드가 mock 경로(출발·도착만 등)를 주면 카드로 쓰지 않음
+  if (import.meta.env.PROD && data?.source === "mock") {
+    throw new Error(
+      "경로 탐색(ODsay)에 실패해 실제 경로를 가져오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    );
+  }
   return adaptApiRouteResponse(data, departureTime);
 }
 

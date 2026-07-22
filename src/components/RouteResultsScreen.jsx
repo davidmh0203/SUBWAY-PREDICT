@@ -106,13 +106,20 @@ export function RouteResultsScreen({
         }
       } catch (err) {
         if (cancelled) return;
-        // 로컬 목업(2호선 등)으로 조용히 대체하지 않음 — 배포에서 ODsay 실패처럼 보임
+        // 로컬 목업(2호선·출발/도착만)으로 조용히 대체하지 않음
         const msg = err instanceof Error ? err.message : String(err);
-        setRoutesError(
-          /503|502|Failed to fetch|NetworkError|timeout/i.test(msg)
-            ? "서버가 응답하지 않습니다. Render Free 콜드스타트·과부하일 수 있어요. 잠시 후 다시 시도해 주세요."
-            : `경로를 불러오지 못했습니다. (${msg})`,
-        );
+        let friendly =
+          "경로를 불러오지 못했습니다. 경로 탐색(ODsay)에 문제가 있어요.";
+        if (/503|502|Bad Gateway|Service Unavailable/i.test(msg)) {
+          friendly =
+            "서버 또는 경로 탐색(ODsay)에 실패했습니다. Render가 잠들었거나 과부하일 수 있어요. 잠시 후 다시 시도해 주세요.";
+        } else if (/Failed to fetch|NetworkError|timeout|AbortError/i.test(msg)) {
+          friendly =
+            "서버에 연결하지 못했습니다. 네트워크를 확인하거나 잠시 후 다시 시도해 주세요.";
+        } else if (/ODsay|경로 탐색|불완전/i.test(msg)) {
+          friendly = msg.replace(/^predict\/route \d+:\s*/i, "").trim() || friendly;
+        }
+        setRoutesError(friendly);
       } finally {
         if (!cancelled) setRoutesLoading(false);
       }
@@ -222,6 +229,12 @@ export function RouteResultsScreen({
 
       <Card>
         <CardContent className="space-y-4 p-4 pt-5">
+          {routesError ? (
+            <p className="text-sm text-amber-800">
+              경로를 불러오지 못해 시간대 혼잡 차트는 표시하지 않습니다.
+            </p>
+          ) : (
+            <>
           <div className="flex items-center justify-between gap-2">
             {isFirstTrain ? (
               <p className="text-xs text-amber-700">
@@ -269,6 +282,8 @@ export function RouteResultsScreen({
               )
             }
           />
+            </>
+          )}
         </CardContent>
       </Card>
 

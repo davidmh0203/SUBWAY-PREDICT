@@ -285,6 +285,8 @@ async def predict_route_with_odsay(
     end: str,
     departure_time: datetime,
 ) -> dict[str, Any]:
+    # 로컬 MVP(ODSAY_FORCE_MOCK 또는 키 없음)만 목업. 운영(live)에서 실패 시
+    # 출발·도착만 있는 가짜 2호선 경로로 덮지 않는다.
     if not is_configured():
         return _mock_or_fixture_route(start, end, departure_time)
 
@@ -332,7 +334,7 @@ async def predict_route_with_odsay(
         cache_set("route", cache_key, route_body)
         return route_body
     except OdsayError:
-        return _mock_or_fixture_route(start, end, departure_time)
+        raise
 
 
 def _mock_or_fixture_route(
