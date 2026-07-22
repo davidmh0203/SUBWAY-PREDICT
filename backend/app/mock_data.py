@@ -124,12 +124,14 @@ def build_mock_route(start: str, end: str, hour: int) -> dict:
 
     overall = min(base + 6, 100)
     return {
+        "source": "mock",
         "summary": {
             "total_time_min": len(path) * 14,
             "transfer_count": sum(1 for s in stations if s["is_transfer"]),
             "payment": 1400 + sum(1 for s in stations if s["is_transfer"]) * 50,
             "overall_congestion": overall,
             "overall_level": congestion_level(overall),
+            "model_source": "mock",
         },
         "segments": segments,
         "stations": stations,
