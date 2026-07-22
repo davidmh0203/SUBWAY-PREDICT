@@ -14,19 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Pull Vercel env
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to production
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      # prebuilt(로컬 vercel build)는 Sensitive env가 [SENSITIVE]로 박히고
+      # Redeploy도 최신 env를 못 씀 → Vercel 원격 빌드로 배포
+      - name: Deploy to production (remote build)
+        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}

@@ -52,6 +52,9 @@ API 문서: http://localhost:8000/docs
 
 **배포(FE + 백엔드 + ODsay):** Vercel만으로는 ODsay가 동작하지 않습니다. FastAPI를 별도 호스트에 올리고 Vercel `VITE_API_BASE_URL`을 맞춥니다. 절차·역할 분담은 [`docs/deploy-backend-odsay.md`](docs/deploy-backend-odsay.md).
 
+> Vercel **Redeploy**가 빨간 경고(`Prebuilt deployments cannot be redeployed`)를 내면 Redeploy 말고 `main`에 푸시해 **새 배포**를 만드세요. (GitHub Actions가 Vercel 원격 빌드로 올립니다.)
+
+
 환경 변수 예시: [`.env.example`](.env.example) · [`backend/.env.example`](backend/.env.example)
 
 빌드 및 배포:
