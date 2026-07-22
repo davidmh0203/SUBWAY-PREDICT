@@ -22,8 +22,10 @@ from app.odsay_client import (
 )
 from app.odsay_cache import cache_get, cache_set
 from app.schemas import congestion_level
+from app.station_registry import SUPPORTED_LINES
 from app.station_registry import line_label as _line_label
 from app.station_registry import resolve as _resolve_station
+from app.timeutil import kst_naive
 
 
 def _score_match(station_name: str, normalized_query: str) -> int:
@@ -105,6 +107,22 @@ async def resolve_station_coords(name: str) -> tuple[dict[str, Any], float, floa
 
 def _extract_subway_paths(path_item: dict[str, Any]) -> list[dict[str, Any]]:
     return [sp for sp in path_item.get("subPath", []) if sp.get("trafficType") == 1]
+
+
+def _subway_line_of_subpath(sp: dict[str, Any]) -> str:
+    return _line_label((sp.get("lane") or [{}])[0].get("name"))
+
+
+def _path_uses_only_supported_lines(path_item: dict[str, Any]) -> bool:
+    """1~8호선만 허용. 9호선·신분당선 등 미지원 호선이 있으면 False."""
+    subpaths = _extract_subway_paths(path_item)
+    if not subpaths:
+        return False
+    for sp in subpaths:
+        line = _subway_line_of_subpath(sp)
+        if line not in SUPPORTED_LINES:
+            return False
+    return True
 
 
 def _stations_from_subpaths(subpaths: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -191,21 +209,22 @@ def _route_from_odsay_path(
 ) -> dict[str, Any]:
     info = path_item.get("info") or {}
     subpaths = _extract_subway_paths(path_item)
-    segments, stations = _build_segments_from_subpaths(subpaths, departure_time.hour)
+    when = kst_naive(departure_time)
+    segments, stations = _build_segments_from_subpaths(subpaths, when.hour)
 
     if not stations:
         raise OdsayError("ODsay 경로에 지하철 구간이 없습니다.")
 
     model_source = "mock"
     if get_predictor() is not None:
-        stations = apply_model_to_route_stations(stations, departure_time)
+        stations = apply_model_to_route_stations(stations, when)
         segments = apply_model_to_segments(segments, stations)
         if any(s.get("source") == "model" for s in stations):
             model_source = "model"
 
     overall, overall_level = overall_from_stations(stations)
     if model_source == "mock":
-        overall = min(_base_congestion(departure_time.hour) + 6, 100)
+        overall = min(_base_congestion(when.hour) + 6, 100)
         overall_level = congestion_level(overall)
 
     transfer_count = max(0, int(info.get("subwayTransitCount", 0) or 0))
@@ -271,7 +290,8 @@ async def predict_route_with_odsay(
 
     start_key = normalize_station_name(start)
     end_key = normalize_station_name(end)
-    cache_key = f"v3|{start_key}|{end_key}|{departure_time.date().isoformat()}|{departure_time.hour}"
+    when = kst_naive(departure_time)
+    cache_key = f"v5|{start_key}|{end_key}|{when.date().isoformat()}|{when.hour}"
     cached = cache_get("route", cache_key)
     if cached is not None:
         return cached
@@ -286,7 +306,9 @@ async def predict_route_with_odsay(
 
         parsed: list[dict[str, Any]] = []
         seen: set[str] = set()
-        for path_item in paths[:MAX_ROUTE_PATHS]:
+        for path_item in paths[:MAX_ROUTE_PATHS * 3]:
+            if not _path_uses_only_supported_lines(path_item):
+                continue
             try:
                 body = _route_from_odsay_path(start, end, departure_time, path_item)
             except OdsayError:
@@ -296,9 +318,11 @@ async def predict_route_with_odsay(
                 continue
             seen.add(key)
             parsed.append(body)
+            if len(parsed) >= MAX_ROUTE_PATHS:
+                break
 
         if not parsed:
-            raise OdsayError("유효한 지하철 경로가 없습니다.")
+            raise OdsayError("1~8호선만으로 이동 가능한 경로가 없습니다.")
 
         primary = parsed[0]
         route_body = {
@@ -322,7 +346,9 @@ def _mock_or_fixture_route(
         paths = (fixture.get("result") or {}).get("path") or []
         parsed: list[dict[str, Any]] = []
         seen: set[str] = set()
-        for path_item in paths[:MAX_ROUTE_PATHS]:
+        for path_item in paths[:MAX_ROUTE_PATHS * 3]:
+            if not _path_uses_only_supported_lines(path_item):
+                continue
             try:
                 body = _route_from_odsay_path(start, end, departure_time, path_item)
             except OdsayError:
@@ -335,6 +361,8 @@ def _mock_or_fixture_route(
             if body.get("summary"):
                 body["summary"] = {**body["summary"], "model_source": body["summary"].get("model_source")}
             parsed.append(body)
+            if len(parsed) >= MAX_ROUTE_PATHS:
+                break
         if parsed:
             primary = parsed[0]
             return {
@@ -343,6 +371,6 @@ def _mock_or_fixture_route(
                 "source": "fixture",
             }
 
-    body = build_mock_route(start, end, departure_time.hour)
+    body = build_mock_route(start, end, kst_naive(departure_time).hour)
     body.setdefault("alternatives", [])
     return _enrich_with_model(body, departure_time)

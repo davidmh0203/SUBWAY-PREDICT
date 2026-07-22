@@ -16,6 +16,7 @@ from typing import Any
 
 from app.schemas import congestion_level
 from app.station_types import station_type_for
+from app.timeutil import kst_naive
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,8 @@ MODELS_DIR = Path(__file__).resolve().parent.parent / "models"
 
 
 def hour_to_time_slot(dt: datetime) -> str:
-    h = dt.hour
+    local = kst_naive(dt)
+    h = local.hour
     if h < 6:
         return "before_06"
     if h >= 24:
@@ -82,12 +84,13 @@ def predict_station(
     if predictor is None:
         return None
     st_type = station_type or station_type_for(name)
+    when = kst_naive(departure_time)
     try:
         return predictor.predict(
             station_name=name,
             station_type=st_type,
-            date=departure_time.strftime("%Y-%m-%d"),
-            time_slot=hour_to_time_slot(departure_time),
+            date=when.strftime("%Y-%m-%d"),
+            time_slot=hour_to_time_slot(when),
             weather=weather,
             event=event,
         )
@@ -109,11 +112,12 @@ def apply_model_to_route_stations(
         {"name": s.get("name", ""), "type": station_type_for(s.get("name", ""))}
         for s in stations
     ]
+    when = kst_naive(departure_time)
     try:
         results = predictor.predict_route(
             stations=payload,
-            date=departure_time.strftime("%Y-%m-%d"),
-            time_slot=hour_to_time_slot(departure_time),
+            date=when.strftime("%Y-%m-%d"),
+            time_slot=hour_to_time_slot(when),
         )
     except Exception:
         logger.exception("경로 혼잡 예측 실패")

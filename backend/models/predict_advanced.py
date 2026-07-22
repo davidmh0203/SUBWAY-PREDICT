@@ -30,13 +30,16 @@ STATION_NAME_MAP = {
     "대림":   "대림(구로구청)",
     "삼성":   "삼성(무역센터)",
     "잠실":   "잠실(송파구청)",
+    # ODsay/UI 짧은 역명 → 학습 DB 역명
+    "경복궁": "경복궁(정부서울청사)",
+    "광화문": "광화문(세종문화회관)",
 }
 
 CONGESTION_LEVELS = [
-    (100, "극혼잡",  "darkred"),
-    (80,  "매우혼잡", "red"),
+    (90,  "극혼잡",  "darkred"),
+    (75,  "매우혼잡", "red"),
     (60,  "혼잡",   "orange"),
-    (30,  "보통",   "yellow"),
+    (40,  "보통",   "yellow"),
     (0,   "여유",   "green"),
 ]
 
@@ -104,6 +107,18 @@ LAST_SERVICE_BY_LINE = {
 HOLIDAY_DATES = {
     "01-01","03-01","05-05","06-06",
     "08-15","10-03","10-09","12-25"
+}
+
+# 요일별 혼잡도 가중치 (실제 승하차 데이터 기반)
+# 평일 평균 대비 각 요일의 상대적 혼잡 수준
+WEEKDAY_FACTOR = {
+    0: 0.950,  # 월요일 (주초 한산)
+    1: 0.982,  # 화요일
+    2: 0.989,  # 수요일
+    3: 0.995,  # 목요일
+    4: 1.084,  # 금요일 (주말 앞 가장 혼잡)
+    5: 1.000,  # 토요일 (요일유형별 데이터 별도 존재)
+    6: 1.000,  # 일요일
 }
 
 
@@ -596,36 +611,52 @@ class AdvancedCongestionPredictor:
         else:
             label = "normal"
 
-        # 혼잡도 계산
-        max_pax    = self.station_max.get(station_db, 15000)
-        usual_bl   = self._get_baseline(station_db, time_slot, day_type)
-        usual_pct  = round(usual_bl / max_pax * 100, 1)
+        # ============================================================
+        # 혼잡도 계산 (공식 혼잡도 기반으로 전면 수정)
+        # 기준: 서울교통공사 공식 열차 내부 혼잡도 (열차 정원 대비 %)
+        # 공식: official_usual × (1 + prob × 보정계수 0.35)
+        # ============================================================
+        BOOST = 0.25
+        max_pax = self.station_max.get(station_db, 15000)
         baseline_pct = round(baseline_total / max_pax * 100, 1)
 
+        # 공식 혼잡도 조회 (기준점)
+        official_pct_raw = self.official_congestion.get(
+            station_db, {}
+        ).get(day_type, {}).get(time_slot, None)
+
+        # 공식 혼잡도 없는 역 → 기존 방식 fallback
+        base_for_calc = float(official_pct_raw) if official_pct_raw else baseline_pct
+
+        # 행사 있을 때 → 행사 인원 / 평소 인원 비율로 스케일링
         if event_type != '없음' and event_timing > 0:
             key = f'{event_type}_{event_timing}'
             ev_pax = self.event_baseline.get(station_db, {}).get(key)
-            congestion_pct = round(ev_pax / max_pax * 100, 1) if ev_pax else \
-                             round(baseline_pct * (1 + proba[idx_inc] * 0.8), 1)
+            if ev_pax:
+                usual_bl = self._get_baseline(station_db, time_slot, day_type)
+                scale = (ev_pax / usual_bl) if usual_bl > 0 else 1.0
+                congestion_pct = round(base_for_calc * scale, 1)
+            else:
+                congestion_pct = round(base_for_calc * (1 + proba[idx_inc] * BOOST), 1)
         elif label == "increase":
-            congestion_pct = round(baseline_pct * (1 + proba[idx_inc] * 0.8), 1)
+            congestion_pct = round(base_for_calc * (1 + proba[idx_inc] * BOOST), 1)
         elif label == "decrease":
-            congestion_pct = round(baseline_pct * (1 - proba[idx_dec] * 0.3), 1)
+            congestion_pct = round(base_for_calc * (1 - proba[idx_dec] * 0.30), 1)
         else:
-            congestion_pct = round(baseline_pct, 1)
+            congestion_pct = round(base_for_calc, 1)
 
-        level, color             = self._get_congestion_level(congestion_pct)
+        level, color = self._get_congestion_level(congestion_pct)
+
+        # 평소 혼잡도 (공식 혼잡도 × 요일 가중치)
+        # 평일 내에서도 월~금 패턴 차이 반영
+        wd_factor = WEEKDAY_FACTOR.get(dt.weekday(), 1.0) if day_type == '평일' else 1.0
+        usual_pct = round(float(official_pct_raw) * wd_factor, 1) if official_pct_raw else round(baseline_pct, 1)
         usual_level, usual_color = self._get_congestion_level(usual_pct)
 
-        # 공식 혼잡도 (서울교통공사 실측값 기반 평균)
-        official_pct = self.official_congestion.get(
-            station_db, {}
-        ).get(day_type, {}).get(time_slot, None)
-        if official_pct is not None:
-            official_pct = round(official_pct, 1)
-            official_level, official_color = self._get_congestion_level(official_pct)
-        else:
-            official_level = official_color = None
+        # 공식 혼잡도 (반환용)
+        official_pct   = round(float(official_pct_raw), 1) if official_pct_raw else None
+        official_level = self._get_congestion_level(official_pct)[0] if official_pct else None
+        official_color = self._get_congestion_level(official_pct)[1] if official_pct else None
 
         result = {
             "label":              label,

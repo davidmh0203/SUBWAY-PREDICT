@@ -1,0 +1,30 @@
+# Render Blueprint — Dashboard → New → Blueprint
+# https://render.com/docs/blueprint-spec
+#
+# 사전: 이 파일이 GitHub 기본 브랜치에 있어야 함.
+# 생성 시 sync:false 변수(ODSAY_API_KEY 등)는 대시보드에서 직접 입력.
+
+services:
+  - type: web
+    name: yeoyuro-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ODSAY_API_KEY
+        sync: false
+      - key: ODSAY_FORCE_MOCK
+        value: "0"
+      - key: CORS_ORIGINS
+        value: "https://subway-predict-dashboard.vercel.app,http://localhost:5173"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATA_GO_API_KEY
+        sync: false
+      - key: KAKAO_REST_API_KEY
+        sync: false
+      - key: TRAIN_ALERT_API_DECOIND_KEY
+        sync: false

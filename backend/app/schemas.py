@@ -10,19 +10,19 @@ from pydantic import BaseModel
 
 # ---------- 공통 헬퍼 ----------
 def congestion_level(value: int | float) -> str:
-    """혼잡도 %(역 최대 대비) → 모델 단계 라벨.
+    """혼잡도 % → 모델 단계 라벨.
 
-    CongestionPredictor CONGESTION_LEVELS와 동일:
-    여유 <30 / 보통 <60 / 혼잡 <80 / 매우혼잡 <100 / 극혼잡 ≥100
+    AdvancedCongestionPredictor CONGESTION_LEVELS와 동일:
+    여유 <40 / 보통 <60 / 혼잡 <75 / 매우혼잡 <90 / 극혼잡 ≥90
     """
     pct = float(value)
-    if pct >= 100:
+    if pct >= 90:
         return "극혼잡"
-    if pct >= 80:
+    if pct >= 75:
         return "매우혼잡"
     if pct >= 60:
         return "혼잡"
-    if pct >= 30:
+    if pct >= 40:
         return "보통"
     return "여유"
 

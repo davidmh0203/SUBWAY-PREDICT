@@ -19,6 +19,52 @@ STATIONS = [
     {"station_id": "216", "name": "잠실", "lines": ["2호선", "8호선"]},
 ]
 
+# mock 경로용 역→호선 (하드코딩 2호선 방지)
+STATION_LINES: dict[str, list[str]] = {
+    "강남": ["2호선"],
+    "역삼": ["2호선"],
+    "교대": ["2호선", "3호선"],
+    "삼성": ["2호선"],
+    "서울역": ["1호선", "4호선"],
+    "홍대입구": ["2호선"],
+    "잠실": ["2호선", "8호선"],
+    "고속터미널": ["3호선", "7호선"],
+    "연신내": ["3호선", "6호선"],
+    "원흥": ["3호선"],
+    "원당": ["3호선"],
+    "삼송": ["3호선"],
+    "지축": ["3호선"],
+    "시청": ["1호선", "2호선"],
+    "동대문": ["1호선", "4호선"],
+    "사당": ["2호선", "4호선"],
+    "종로3가": ["1호선", "3호선", "5호선"],
+    "합정": ["2호선", "6호선"],
+    "왕십리": ["2호선", "5호선"],
+}
+
+NEUTRAL_LINE = "지하철"
+
+
+def _norm_name(name: str) -> str:
+    return (name or "").strip().removesuffix("역")
+
+
+def _lines_for(name: str) -> list[str]:
+    return STATION_LINES.get(_norm_name(name), [])
+
+
+def _guess_line(from_name: str, to_name: str) -> str:
+    a = _lines_for(from_name)
+    b = _lines_for(to_name)
+    for line in a:
+        if line in b:
+            return line
+    if a:
+        return a[0]
+    if b:
+        return b[0]
+    return NEUTRAL_LINE
+
 
 def _base_congestion(hour: int) -> int:
     """시간대에 따라 기본 혼잡도를 다르게. (출퇴근 시간이 더 붐빔)"""
@@ -36,30 +82,36 @@ def build_mock_route(start: str, end: str, hour: int) -> dict:
     각 역/구간마다 모델을 호출해(예측 서빙) 값을 채웁니다.
     """
     base = _base_congestion(hour)
+    start_n = _norm_name(start)
+    end_n = _norm_name(end)
 
-    # 가짜 경로: 출발 → (교대 환승) → 도착
-    path = [start]
-    if start != "교대" and end != "교대":
-        path.append("교대")
-    path.append(end)
+    # 가짜 경로: 공통 호선이 있으면 직행, 없으면 교대 환승
+    shared = _guess_line(start_n, end_n)
+    path = [start_n]
+    if shared == NEUTRAL_LINE or (
+        shared not in _lines_for(start_n) or shared not in _lines_for(end_n)
+    ):
+        # 공통 호선이 불명확하면 교대 경유 (기존 데모 패턴)
+        if start_n != "교대" and end_n != "교대":
+            path.append("교대")
+    path.append(end_n)
 
-    # 구간별 열차 혼잡도
     segments = []
     for i in range(len(path) - 1):
         c = min(base + i * 5, 100)
+        line = _guess_line(path[i], path[i + 1])
         segments.append({
-            "line": "2호선" if i == 0 else "3호선",
+            "line": line,
             "from_station": path[i],
             "to_station": path[i + 1],
             "train_congestion": c,
             "level": congestion_level(c),
         })
 
-    # 역별 역사 내 혼잡도 (구간 line 과 일치)
     stations = []
     for i, name in enumerate(path):
         c = min(base + i * 4, 100)
-        seg_line = segments[min(i, len(segments) - 1)]["line"] if segments else "2호선"
+        seg_line = segments[min(i, len(segments) - 1)]["line"] if segments else NEUTRAL_LINE
         is_transfer = i > 0 and i < len(path) - 1 and name == "교대"
         stations.append({
             "station_id": _find_id(name),

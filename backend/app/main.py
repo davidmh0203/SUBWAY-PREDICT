@@ -5,6 +5,7 @@
 """
 
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +13,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import station_registry
 from app.db import init_db
 from app.routers import auth, calendar, congestion, favorites, forecast, odsay, stations
+
+DEFAULT_CORS_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://subway-predict-dashboard.vercel.app",
+]
+
+
+def _cors_origins() -> list[str]:
+    raw = os.getenv("CORS_ORIGINS", "").strip()
+    if not raw:
+        return DEFAULT_CORS_ORIGINS
+    return [o.strip() for o in raw.split(",") if o.strip()]
 
 
 @asynccontextmanager
@@ -22,10 +36,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="여유로 API", version="0.1.0", lifespan=lifespan)
 
-# 프론트(React)와 연동하려면 CORS 허용이 필요합니다.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # Vite 개발 서버 주소
+    allow_origins=_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
