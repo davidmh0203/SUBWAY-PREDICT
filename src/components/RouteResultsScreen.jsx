@@ -5,12 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { HourlyCongestionChart } from "@/components/HourlyCongestionChart";
 import { RouteOptionCard } from "@/components/RouteOptionCard";
-import { getHourlyCongestionData } from "@/lib/crowd-data";
-import { buildRoutes, dateToSliderIndex, sliderIndexToDate } from "@/lib/mock-data";
-import {
-  buildSliderMarksAround,
-  resolveEffectiveDeparture,
-} from "@/lib/departure-time";
+import { buildSliderMarksAround, resolveEffectiveDeparture } from "@/lib/departure-time";
 import {
   fetchBatchCongestion,
   fetchHourlyCongestion,
@@ -23,6 +18,8 @@ import {
 import { rankRoutes } from "@/lib/route-rank";
 import { CongestionLegend } from "@/components/CongestionLegend";
 import { formatHHMM } from "@/lib/route-timing";
+import { getHourlyCongestionData } from "@/lib/crowd-data";
+import { dateToSliderIndex, sliderIndexToDate } from "@/lib/mock-data";
 
 export function RouteResultsScreen({
   form,
@@ -50,11 +47,13 @@ export function RouteResultsScreen({
   const [baseRoutes, setBaseRoutes] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(true);
+  const [routesError, setRoutesError] = useState(null);
   const [congestionLoading, setCongestionLoading] = useState(false);
   const [hourlyData, setHourlyData] = useState(() =>
     getHourlyCongestionData(resolved.effective.getHours()),
   );
   const [hourlySource, setHourlySource] = useState("mock");
+  const [reloadToken, setReloadToken] = useState(0);
 
   const depName = form.departure.replace(/역.*$/, "");
   const destName = form.destination.replace(/역.*$/, "");
@@ -82,13 +81,16 @@ export function RouteResultsScreen({
       setDebouncedTime(next);
       onTimeChange(next);
       setSliderLoading(false);
-    }, 280);
+    }, 400);
     return () => clearTimeout(timer);
   }, [sliderIndex, sliderMarks, onTimeChange]);
 
   useEffect(() => {
     let cancelled = false;
     setRoutesLoading(true);
+    setRoutesError(null);
+    setBaseRoutes([]);
+    setRoutes([]);
     const fetchTime = searchTimeRef.current;
 
     (async () => {
@@ -98,16 +100,19 @@ export function RouteResultsScreen({
         if (apiRoutes.length > 0) {
           setBaseRoutes(apiRoutes);
           setRoutes(apiRoutes);
+          setRoutesError(null);
         } else {
-          const localRoutes = buildRoutes(fetchTime, depName, destName);
-          setBaseRoutes(localRoutes);
-          setRoutes(localRoutes);
+          setRoutesError("검색된 경로가 없습니다.");
         }
-      } catch {
+      } catch (err) {
         if (cancelled) return;
-        const localRoutes = buildRoutes(fetchTime, depName, destName);
-        setBaseRoutes(localRoutes);
-        setRoutes(localRoutes);
+        // 로컬 목업(2호선 등)으로 조용히 대체하지 않음 — 배포에서 ODsay 실패처럼 보임
+        const msg = err instanceof Error ? err.message : String(err);
+        setRoutesError(
+          /503|502|Failed to fetch|NetworkError|timeout/i.test(msg)
+            ? "서버가 응답하지 않습니다. Render Free 콜드스타트·과부하일 수 있어요. 잠시 후 다시 시도해 주세요."
+            : `경로를 불러오지 못했습니다. (${msg})`,
+        );
       } finally {
         if (!cancelled) setRoutesLoading(false);
       }
@@ -116,10 +121,11 @@ export function RouteResultsScreen({
     return () => {
       cancelled = true;
     };
-  }, [depName, destName, resolved.effective.getTime()]);
+  }, [depName, destName, resolved.effective.getTime(), reloadToken]);
 
-  // 시간대 차트: ODsay 없이 모델만 — 선택(유효) 날짜 기준
+  // 시간대 차트: 경로 로드 성공 후에만 (동시 폭주로 Free 인스턴스 502 방지)
   useEffect(() => {
+    if (routesLoading || routesError || !baseRoutes.length) return;
     let cancelled = false;
     const day = searchTimeRef.current;
     (async () => {
@@ -137,22 +143,25 @@ export function RouteResultsScreen({
     return () => {
       cancelled = true;
     };
-  }, [depName, resolved.effective.getTime()]);
+  }, [depName, routesLoading, routesError, baseRoutes, resolved.effective.getTime()]);
 
-  // 슬라이더 시각 → 경로 카드 혼잡만 모델로 재계산 (ODsay 없음)
+  // 슬라이더로 검색 시각과 달라질 때만 batch (초기 로드는 predict/route 혼잡 사용)
   useEffect(() => {
-    if (!baseRoutes.length) return;
+    if (!baseRoutes.length || routesError) return;
+    const searchMs = searchTimeRef.current.getTime();
+    if (Math.abs(debouncedTime.getTime() - searchMs) < 60_000) {
+      setRoutes(baseRoutes);
+      return;
+    }
+
     let cancelled = false;
     const names = collectStationNamesFromRoutes(baseRoutes);
     if (!names.length) return;
 
     setCongestionLoading(true);
-    (async () => {
+    const timer = setTimeout(async () => {
       try {
-        const { byName } = await fetchBatchCongestion(
-          names,
-          debouncedTime,
-        );
+        const { byName } = await fetchBatchCongestion(names, debouncedTime);
         if (cancelled) return;
         setRoutes(applyCongestionMapToRoutes(baseRoutes, byName));
       } catch {
@@ -160,12 +169,13 @@ export function RouteResultsScreen({
       } finally {
         if (!cancelled) setCongestionLoading(false);
       }
-    })();
+    }, 450);
 
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
-  }, [baseRoutes, debouncedTime]);
+  }, [baseRoutes, debouncedTime, routesError]);
 
   useEffect(() => {
     setDirection(`${destName} 방면`);
@@ -248,7 +258,7 @@ export function RouteResultsScreen({
             data={hourlyData}
             activeHour={activeHour}
             stationName={depName}
-            lineName={routes[0]?.lineName ?? "2호선"}
+            lineName={routes[0]?.lineName ?? "지하철"}
             direction={direction}
             dataSource={hourlySource}
             onDirectionSwap={() =>
@@ -272,6 +282,23 @@ export function RouteResultsScreen({
             <CardContent className="flex items-center justify-center gap-2 p-8 text-sm text-slate-500">
               <RefreshCw className="h-4 w-4 animate-spin" />
               경로를 불러오는 중...
+              <span className="block w-full text-center text-xs text-slate-400">
+                서버가 잠에서 깨는 중이면 최대 1분 걸릴 수 있어요.
+              </span>
+            </CardContent>
+          </Card>
+        ) : routesError ? (
+          <Card>
+            <CardContent className="space-y-3 p-6 text-center text-sm text-slate-600">
+              <p>{routesError}</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setReloadToken((n) => n + 1)}
+              >
+                다시 시도
+              </Button>
             </CardContent>
           </Card>
         ) : rankedRoutes.length === 0 ? (

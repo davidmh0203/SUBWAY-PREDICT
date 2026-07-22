@@ -1,5 +1,6 @@
 import { adaptApiRouteResponse } from "@/lib/api/route-adapter";
 import { rateToCrowdLevel } from "@/lib/congestion";
+import { toLocalISOString } from "@/lib/local-datetime";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
@@ -13,8 +14,10 @@ export async function predictRoute({ start, end, departureTime }) {
     body: JSON.stringify({
       start,
       end,
-      departure_time: departureTime.toISOString(),
+      departure_time: toLocalISOString(departureTime),
     }),
+    // Free Render 콜드스타트·모델 로딩 여유
+    signal: AbortSignal.timeout(90_000),
   });
 
   if (!res.ok) {
@@ -79,7 +82,7 @@ export async function fetchBatchCongestion(names, departureTime) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       names,
-      departure_time: departureTime.toISOString(),
+      departure_time: toLocalISOString(departureTime),
     }),
   });
   if (!res.ok) {

@@ -70,9 +70,10 @@ export default function App() {
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [routeNotice, setRouteNotice] = useState(null);
 
+  // 홈 화면에서만 주변역 조회. 결과 화면 슬라이더가 form.targetTime을
+  // 바꿀 때마다 nearby+batch가 나가면 Free Render가 502/503으로 죽을 수 있다.
   useEffect(() => {
-    if (!geoLocation) {
-      setNearbyCongestion([]);
+    if (view !== "home" || !geoLocation) {
       return;
     }
     let cancelled = false;
@@ -126,7 +127,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [geoLocation, form.targetTime]);
+  }, [view, geoLocation, form.targetTime]);
   // 페이지를 어디로 보내주는 함수
   //useCallback : 컴포넌트 리렌더링될때 함수 새로 생성하지않고 재사용(메모이제이션)하게 해주는 훅
   // 불피요한 함수 재생성 막기- > 자식컴포넌트 렌더링 최적화
