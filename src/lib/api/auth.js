@@ -34,12 +34,16 @@ async function parseErrorDetail(res) {
 }
 
 function mapSupabaseUser(user, nickname) {
+  const meta = user.user_metadata ?? {};
   return {
     id: user.id,
     email: user.email ?? "",
     nickname:
       nickname ??
-      user.user_metadata?.nickname ??
+      meta.nickname ??
+      meta.full_name ??
+      meta.name ??
+      meta.preferred_username ??
       user.email?.split("@")[0] ??
       "사용자",
   };
@@ -136,6 +140,29 @@ export async function signup(params) {
 export async function login(params) {
   if (isSupabaseAuthEnabled) return loginSupabase(params);
   return loginApi(params);
+}
+
+/**
+ * 카카오 소셜 로그인 (Supabase OAuth).
+ * 성공 시 카카오 → Supabase 콜백 → redirectTo 로 돌아온다.
+ */
+export async function loginWithKakao() {
+  if (!isSupabaseAuthEnabled) {
+    throw new Error("Supabase가 설정된 환경에서만 카카오 로그인을 사용할 수 있습니다");
+  }
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase가 설정되지 않았습니다");
+
+  const redirectTo = `${window.location.origin}/`;
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "kakao",
+    options: {
+      redirectTo,
+      skipBrowserRedirect: false,
+    },
+  });
+  if (error) throw new Error(error.message);
+  return data;
 }
 
 export async function me() {

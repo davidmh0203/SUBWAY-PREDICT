@@ -10,7 +10,14 @@ let client = null;
 export function getSupabase() {
   if (!isSupabaseAuthEnabled) return null;
   if (!client) {
-    client = createClient(url, anonKey);
+    client = createClient(url, anonKey, {
+      auth: {
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true,
+        flowType: "pkce",
+      },
+    });
   }
   return client;
 }
