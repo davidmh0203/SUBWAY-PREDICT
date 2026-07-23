@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-07-23T04:31:50.867Z",
-  "mode": "manual-date",
-  "kstHour": 13,
+  "finishedAt": "2026-07-23T12:55:32.400Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 21,
   "afterHoursFrom": 18,
-  "date": "2026-07-23",
+  "date": "2026-07-24",
   "window": [
-    "2026-07-23"
+    "2026-07-24"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14201,
-    "posts": 2379
+    "events": 14205,
+    "posts": 2380
   },
   "samples": [
     {
-      "post_id": "smpa-00338630",
-      "event_date": "2026-07-23",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00338630",
-      "event_date": "2026-07-23",
+      "post_id": "smpa-00338675",
+      "event_date": "2026-07-24",
       "time_raw": "10:00~17:00",
       "place": "CU양재역점 앞 <서초동>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00338630",
-      "event_date": "2026-07-23",
-      "time_raw": "13:00~16:00",
-      "place": "S-OIL 본사 앞 <공덕동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00338675",
+      "event_date": "2026-07-24",
+      "time_raw": "11:30~12:30",
+      "place": "금감원 앞 <여의도>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00338630",
-      "event_date": "2026-07-23",
-      "time_raw": "14:00~15:30",
-      "place": "정부서울청사 후문 앞 <적선동>",
-      "personnel_raw": "600명"
+      "post_id": "smpa-00338675",
+      "event_date": "2026-07-24",
+      "time_raw": "14:30~16:00",
+      "place": "사랑채 동측 건너편 <효자동>",
+      "personnel_raw": "60명"
+    },
+    {
+      "post_id": "smpa-00338675",
+      "event_date": "2026-07-24",
+      "time_raw": "17:00~19:00",
+      "place": "전쟁기념관 상징탑 앞 인도 <용산동>",
+      "personnel_raw": "500명"
     }
   ]
 }
