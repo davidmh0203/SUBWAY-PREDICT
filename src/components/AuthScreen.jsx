@@ -32,7 +32,9 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [kakaoSubmitting, setKakaoSubmitting] = useState(false);
   const showKakao = isUsingSupabaseAuth();
+  const busy = submitting || kakaoSubmitting;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,13 +55,13 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
 
   const handleKakao = async () => {
     setError(null);
-    setSubmitting(true);
+    setKakaoSubmitting(true);
     try {
       await loginWithKakao();
-      // 카카오·Supabase로 리다이렉트됨
+      // 카카오·Supabase로 리다이렉트됨 — 성공 시 이 화면을 떠남
     } catch (err) {
       setError(err.message || "카카오 로그인에 실패했습니다");
-      setSubmitting(false);
+      setKakaoSubmitting(false);
     }
   };
 
@@ -83,11 +85,11 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
                 type="button"
                 size="lg"
                 className="w-full gap-2 border-0 bg-[#FEE500] text-[#191919] hover:bg-[#F5DC00] hover:text-[#191919]"
-                disabled={submitting}
+                disabled={busy}
                 onClick={handleKakao}
               >
                 <KakaoIcon className="h-5 w-5" />
-                {submitting ? "카카오로 이동 중..." : "카카오로 계속하기"}
+                {kakaoSubmitting ? "카카오로 이동 중..." : "카카오로 계속하기"}
               </Button>
               <div className="flex items-center gap-3 text-[11px] text-slate-400">
                 <span className="h-px flex-1 bg-slate-200" />
@@ -120,6 +122,7 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
                     onChange={(e) => setEmail(e.target.value)}
                     className={inputClass}
                     placeholder="you@example.com"
+                    disabled={busy}
                   />
                 </label>
                 <label className="block">
@@ -131,10 +134,11 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
                     onChange={(e) => setPassword(e.target.value)}
                     className={inputClass}
                     placeholder="비밀번호"
+                    disabled={busy}
                   />
                 </label>
                 {error && <p className="text-xs text-rose-600">{error}</p>}
-                <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                <Button type="submit" size="lg" className="w-full" disabled={busy}>
                   {submitting ? "로그인 중..." : "로그인"}
                 </Button>
               </form>
@@ -151,6 +155,7 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
                     className={inputClass}
                     placeholder="닉네임"
                     maxLength={50}
+                    disabled={busy}
                   />
                 </label>
                 <label className="block">
@@ -162,6 +167,7 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
                     onChange={(e) => setEmail(e.target.value)}
                     className={inputClass}
                     placeholder="you@example.com"
+                    disabled={busy}
                   />
                 </label>
                 <label className="block">
@@ -175,10 +181,11 @@ export function AuthScreen({ onBack, onAuthSuccess }) {
                     onChange={(e) => setPassword(e.target.value)}
                     className={inputClass}
                     placeholder="8자 이상"
+                    disabled={busy}
                   />
                 </label>
                 {error && <p className="text-xs text-rose-600">{error}</p>}
-                <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                <Button type="submit" size="lg" className="w-full" disabled={busy}>
                   {submitting ? "가입 중..." : "회원가입"}
                 </Button>
               </form>
