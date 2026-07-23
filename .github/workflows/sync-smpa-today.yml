@@ -1,0 +1,104 @@
+name: Sync SMPA today
+
+# 서울경찰청 SMPA 「오늘의 집회/시위」(인원 포함)만 매일 CSV에 반영.
+# SPATIC(인원 없음)은 수집하지 않음.
+#
+# 매칭 키: 게시 작성일이 아니라 제목 「오늘의 집회 YYMMDD」의 행사일.
+# 크론: 18시 이후=내일 제목일 수집 / 07:30=당일 제목일 보강.
+# CSV 변경 시 main 커밋 + Vercel 재배포. Render는 main push 시 Docker에 data/ 포함 빌드.
+
+on:
+  schedule:
+    # 07:30 KST (UTC 22:30 전일) — 전날 저녁 수집 누락 시 당일 재동기화
+    - cron: "30 22 * * *"
+    # 18:30 KST (UTC 09:30) — 퇴근 직후 다음날 게시 확인
+    - cron: "30 9 * * *"
+    # 20:30 KST (UTC 11:30) — 늦게 올라온 글 재시도
+    - cron: "30 11 * * *"
+    # 22:30 KST (UTC 13:30) — 최종 재시도
+    - cron: "30 13 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "기준일 YYYY-MM-DD (비우면 KST 18시 기준 자동: 전=오늘 / 후=내일)"
+        required: false
+        default: ""
+      lookback:
+        description: "기준일 이전 N일 포함"
+        required: false
+        default: "0"
+      lookahead:
+        description: "기준일 이후 N일 포함"
+        required: false
+        default: "0"
+
+permissions:
+  contents: write
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install poppler (pdftotext)
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - run: npm ci
+
+      - name: Sync SMPA window into CSV
+        env:
+          INPUT_DATE: ${{ github.event.inputs.date }}
+          INPUT_LOOKBACK: ${{ github.event.inputs.lookback }}
+          INPUT_LOOKAHEAD: ${{ github.event.inputs.lookahead }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          ARGS=()
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            LOOKBACK="${INPUT_LOOKBACK:-0}"
+            LOOKAHEAD="${INPUT_LOOKAHEAD:-0}"
+            ARGS+=(--lookback "$LOOKBACK" --lookahead "$LOOKAHEAD")
+            if [ -n "${INPUT_DATE:-}" ]; then
+              ARGS+=(--date "$INPUT_DATE")
+            fi
+          fi
+          # schedule: 인자 없음 → 스크립트가 KST 18시 기준으로 오늘/내일 자동 선택
+          echo "Running: npm run sync:smpa-today -- ${ARGS[*]:-}"
+          npm run sync:smpa-today -- "${ARGS[@]}"
+
+      # GITHUB_TOKEN 푸시는 다른 워크플로(Deploy)를 트리거하지 않으므로
+      # CSV가 바뀐 경우 여기서 커밋 + Vercel 배포까지 수행한다.
+      - name: Commit CSV if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/spatic/assem-events.csv \
+            data/spatic/assem-posts.csv \
+            data/spatic/smpa-today-sync-report.json
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No CSV changes"
+            exit 0
+          fi
+          DATE=$(node -e "const r=require('./data/spatic/smpa-today-sync-report.json'); process.stdout.write(r.date||'')")
+          COUNT=$(node -e "const r=require('./data/spatic/smpa-today-sync-report.json'); process.stdout.write(String(r.eventsWritten||0))")
+          git commit -m "sync: SMPA 오늘의 집회 ${DATE} (+${COUNT} events)"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to Vercel (remote build)
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          npm install -g vercel@latest
+          vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}

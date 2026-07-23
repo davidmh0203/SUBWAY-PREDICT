@@ -95,19 +95,99 @@ export function htmlToPlainText(html = "") {
   return s.trim();
 }
 
-/** Title → event YYYY-MM-DD from YYMMDD token. */
-export function eventDateFromTitle(title = "") {
-  const m = String(title).match(/(\d{6})\s*[(\[]?\s*[월화수목금토일]?/);
-  if (!m) return "";
-  const yymmdd = m[1];
-  const yy = Number(yymmdd.slice(0, 2));
-  const mm = Number(yymmdd.slice(2, 4));
-  const dd = Number(yymmdd.slice(4, 6));
+const DOW_KO = { 일: 0, 월: 1, 화: 2, 수: 3, 목: 4, 금: 5, 토: 6 };
+
+/** YYMMDD → YYYY-MM-DD, or "" if invalid. */
+export function yymmddToIso(yymmdd = "") {
+  const s = String(yymmdd);
+  if (!/^\d{6}$/.test(s)) return "";
+  const yy = Number(s.slice(0, 2));
+  const mm = Number(s.slice(2, 4));
+  const dd = Number(s.slice(4, 6));
   if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return "";
   const year = yy >= 90 ? 1900 + yy : 2000 + yy;
   // SMPA board starts ~2011; reject absurd years from bad tokens
   if (year < 2010 || year > 2035) return "";
   return `${year}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+}
+
+function addDaysIso(iso, n) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + n));
+  return dt.toISOString().slice(0, 10);
+}
+
+/** Weekday 0=Sun … 6=Sat for a calendar date (KST noon). */
+export function weekdayKst(iso = "") {
+  const [y, m, d] = String(iso).split("-").map(Number);
+  if (!y || !m || !d) return -1;
+  return new Date(Date.UTC(y, m - 1, d, 3, 0, 0)).getUTCDay(); // 12:00 KST
+}
+
+/**
+ * Align YYMMDD with an optional 요일 letter.
+ * SMPA often posts tomorrow's schedule the day before and the title
+ * YYMMDD can lag (e.g. title `260721 수` + attach `260722(수)`).
+ */
+export function reconcileYymmddWithDow(yymmdd, dowLetter = "") {
+  const iso = yymmddToIso(yymmdd);
+  if (!iso) return "";
+  const want = DOW_KO[dowLetter];
+  if (want == null) return iso;
+  if (weekdayKst(iso) === want) return iso;
+  // Prefer +1 (전날 게시) then nearby days with matching weekday
+  for (const delta of [1, -1, 2, -2, 3, -3]) {
+    const cand = addDaysIso(iso, delta);
+    if (weekdayKst(cand) === want) return cand;
+  }
+  return iso;
+}
+
+/** Title → event YYYY-MM-DD (요일로 YYMMDD 보정). */
+export function eventDateFromTitle(title = "") {
+  const m = String(title).match(/(\d{6})\s*[(\[]?\s*([월화수목금토일])?/);
+  if (!m) return "";
+  return reconcileYymmddWithDow(m[1], m[2] || "");
+}
+
+/** Attachment name → event date, e.g. `260722(수) 오늘의 주요집회.pdf`. */
+export function eventDateFromAttachmentName(name = "") {
+  const m = String(name).match(/(\d{6})\s*[(\[]?\s*([월화수목금토일])?/);
+  if (!m) return "";
+  return reconcileYymmddWithDow(m[1], m[2] || "");
+}
+
+/** Body header → date, e.g. `2026. 7. 22.(수)`. */
+export function eventDateFromPlain(plain = "") {
+  const m = String(plain).match(
+    /(\d{4})\s*\.\s*(\d{1,2})\s*\.\s*(\d{1,2})\s*\.?\s*[(\[]?\s*([월화수목금토일])?/,
+  );
+  if (!m) return "";
+  const iso = `${m[1]}-${String(Number(m[2])).padStart(2, "0")}-${String(Number(m[3])).padStart(2, "0")}`;
+  const want = DOW_KO[m[4] || ""];
+  if (want == null) return iso;
+  if (weekdayKst(iso) === want) return iso;
+  return iso;
+}
+
+/**
+ * Best event date for an SMPA post.
+ * Priority: 주요집회 첨부명 → 본문/PDF 헤더 → 제목(요일 보정).
+ */
+export function resolveSmpaEventDate({
+  title = "",
+  attachments = [],
+  plain = "",
+} = {}) {
+  const major = attachments.filter((a) => /주요집회|오늘의\s*집회/i.test(a.name || ""));
+  const pool = major.length ? major : attachments;
+  for (const a of pool) {
+    const d = eventDateFromAttachmentName(a.name);
+    if (d) return d;
+  }
+  const fromPlain = eventDateFromPlain(plain);
+  if (fromPlain) return fromPlain;
+  return eventDateFromTitle(title);
 }
 
 /** Keep raw string + numeric total when possible (신고인원 / 인원 / 총 N명). */
