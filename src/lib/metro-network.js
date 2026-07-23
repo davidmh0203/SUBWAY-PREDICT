@@ -39,7 +39,7 @@ const transferFlags = computeTransferFlags(
 );
 const METRO_STATIONS = applyStationSpread(BASE_STATIONS, transferFlags);
 
-/** 시안용: compactCenter 등 옵션으로 좌표 재계산 */
+/** compactCenter 등 옵션으로 좌표 재계산 */
 function getStationsForMapStyle({ compactCenter = false } = {}) {
   if (!compactCenter) return METRO_STATIONS;
   return applyStationSpread(BASE_STATIONS, transferFlags, { compactCenter: true });

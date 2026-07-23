@@ -1,5 +1,7 @@
 import { getStatusFromRate } from "@/lib/congestion";
 import { estimateSubwayPayment, distributeStopOffsets } from "@/lib/route-timing";
+import { toLocalISOString } from "@/lib/local-datetime";
+import { isSupportedSeoulLine } from "@/lib/seoul-metro-stations";
 
 const LINE_PATTERN =
   /(\d+호선|신분당선|경의중앙선|공항철도|경춘선|수인분당선|수인\.분당선|에버라인|우이신설|김포골드|신림선|GTX-[A-Z]|서해선)/;
@@ -22,10 +24,10 @@ function mockCongestion(hour, index) {
 
 function congestionLevel(value) {
   const pct = Number(value) || 0;
-  if (pct >= 100) return "극혼잡";
-  if (pct >= 80) return "매우혼잡";
+  if (pct >= 90) return "극혼잡";
+  if (pct >= 75) return "매우혼잡";
   if (pct >= 60) return "혼잡";
-  if (pct >= 30) return "보통";
+  if (pct >= 40) return "보통";
   return "여유";
 }
 
@@ -33,6 +35,13 @@ function laneNameFromSubPath(subPath) {
   const lane = subPath.lane;
   if (Array.isArray(lane)) return lineLabelFromLane(lane[0]?.name);
   return lineLabelFromLane(lane?.name);
+}
+
+/** 1~8호선만 사용하는 경로인지 (9호선·신분당선 등 제외) */
+function pathUsesOnlySupportedLines(pathItem) {
+  const subways = (pathItem?.subPath ?? []).filter((sp) => sp.trafficType === 1);
+  if (!subways.length) return false;
+  return subways.every((sp) => isSupportedSeoulLine(laneNameFromSubPath(sp)));
 }
 
 function stopsFromSubPath(subPath) {
@@ -184,7 +193,7 @@ export function parseOdsayPathItem(pathItem, options) {
   return {
     start: options.start,
     end: options.end,
-    departure_time: departureTime.toISOString(),
+    departure_time: toLocalISOString(departureTime),
     summary: {
       total_time_min: Number(info.totalTime) || offsetMin,
       transfer_count: Number(info.subwayTransitCount) || 0,
@@ -214,6 +223,7 @@ export function parseOdsayResult(result, options) {
   const parsed = [];
   const seen = new Set();
   for (const pathItem of paths) {
+    if (!pathUsesOnlySupportedLines(pathItem)) continue;
     const body = parseOdsayPathItem(pathItem, options);
     const key = (body.stations ?? []).map((s) => s.name).join("|");
     if (!key || seen.has(key)) continue;
@@ -222,7 +232,7 @@ export function parseOdsayResult(result, options) {
   }
 
   if (!parsed.length) {
-    throw new Error("유효한 ODsay 경로가 없습니다.");
+    throw new Error("1~8호선만으로 이동 가능한 경로가 없습니다.");
   }
 
   const [primary, ...alternatives] = parsed;

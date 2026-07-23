@@ -37,11 +37,11 @@ const { width: VB_W, height: VB_H } = MAP_VIEWBOX;
 /**
  * @param {object} props
  * @param {'off'|'nodes'|'labelBg'|'rings'|'halo'|'busyLabels'} [props.busyHighlightMode]
- *   보통 초과 역만 가볍게 강조 (시안 비교용). off면 기존 구간 오버레이만.
+ *   보통 초과 역만 가볍게 강조. off면 기존 구간 오버레이만.
  * @param {boolean} [props.showLineCongestion] 구간 혼잡 오버레이 (기본 true)
  * @param {boolean} [props.forceShowLabels] 줌과 무관하게 역명 표시
  * @param {string} [props.mapHeightClass] 지도 영역 높이 클래스
- * @param {import('@/lib/map-style-presets').MapStyleId} [props.mapStyle] 노선도 표현 시안
+ * @param {import('@/lib/map-style-presets').MapStyleId} [props.mapStyle] 노선도 표현 스타일
  */
 function InteractiveMetroMap({
   selectedTime = "18:30",

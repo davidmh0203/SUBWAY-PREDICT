@@ -83,9 +83,7 @@ export function TrainCongestionList({ rows, departureTime, segments }) {
       <div className="flex items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-bold text-slate-900">[경로 역별 혼잡도]</h2>
-          <p className="text-xs text-slate-500">
-            {dateRange} · 모델/API 예측 (칸별 아님)
-          </p>
+          <p className="text-xs text-slate-500">{dateRange}</p>
           <p className="mt-2 text-lg font-bold text-slate-900">
             {formatDepartureLabel(departureTime)}
           </p>

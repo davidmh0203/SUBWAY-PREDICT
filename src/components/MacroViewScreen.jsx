@@ -4,11 +4,17 @@ import { Button } from "@/components/ui/button";
 import { InteractiveMetroMap } from "@/components/InteractiveMetroMap";
 import { MapScreen } from "@/components/MapScreen";
 import { MapViewModeToggle } from "@/components/MapViewModeToggle";
-import { SLIDER_MARKS } from "@/lib/mock-data";
+import { SLIDER_MARKS, dateToSliderIndex, sliderIndexToDate } from "@/lib/mock-data";
 import { formatTime } from "@/lib/congestion";
 import { getNearestStationsByGeo } from "@/lib/metro-network";
 import { sameStation } from "@/lib/station-id";
 import { formatStationLabel } from "@/lib/station-name";
+
+function timeChipFromDate(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return SLIDER_MARKS[2];
+  const idx = dateToSliderIndex(date, SLIDER_MARKS);
+  return SLIDER_MARKS[idx] ?? SLIDER_MARKS[2];
+}
 
 export function MacroViewScreen({
   form,
@@ -19,10 +25,19 @@ export function MacroViewScreen({
   onRequestLocation,
   initialMapViewMode = "schematic",
 }) {
-  const [selectedTime, setSelectedTime] = useState("18:30");
+  const selectedTime = timeChipFromDate(form.targetTime);
   const [pickRole, setPickRole] = useState("departure");
   const [focusStationId, setFocusStationId] = useState(null);
   const [mapViewMode, setMapViewMode] = useState(initialMapViewMode);
+
+  const handleTimeChip = (time) => {
+    const next = sliderIndexToDate(
+      SLIDER_MARKS.indexOf(time),
+      form.targetTime instanceof Date ? form.targetTime : new Date(),
+      SLIDER_MARKS,
+    );
+    onFormChange({ ...form, targetTime: next });
+  };
 
   const handleStationClick = (station, role) => {
     const activeRole = role ?? pickRole;
@@ -70,6 +85,25 @@ export function MacroViewScreen({
       ? "카카오 지도 위 역별 혼잡 · 마커에서 출발·도착 지정"
       : "역을 클릭해 출발·도착을 지정하세요 · 혼잡 역은 부드러운 할로로 표시";
 
+  const timeChips = (
+    <div className="flex rounded-xl bg-slate-100 p-1 shadow-[inset_0_1px_3px_rgba(15,23,42,0.05)]">
+      {SLIDER_MARKS.map((time) => (
+        <button
+          key={time}
+          type="button"
+          onClick={() => handleTimeChip(time)}
+          className={`flex-1 rounded-lg px-1.5 py-1.5 text-xs font-medium transition-all ${
+            selectedTime === time
+              ? "bg-white text-slate-800 shadow-[0_1px_3px_rgba(15,23,42,0.08)]"
+              : "text-slate-500"
+          }`}
+        >
+          {time}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="animate-fade-in space-y-3 pb-28">
       <header>
@@ -106,6 +140,8 @@ export function MacroViewScreen({
       </header>
 
       <MapViewModeToggle value={mapViewMode} onChange={setMapViewMode} />
+
+      {timeChips}
 
       {mapViewMode === "schematic" && (
         <>
@@ -146,23 +182,6 @@ export function MacroViewScreen({
             })}
           </div>
 
-          <div className="flex rounded-xl bg-slate-100 p-1 shadow-[inset_0_1px_3px_rgba(15,23,42,0.05)]">
-            {SLIDER_MARKS.map((time) => (
-              <button
-                key={time}
-                type="button"
-                onClick={() => setSelectedTime(time)}
-                className={`flex-1 rounded-lg px-1.5 py-1.5 text-xs font-medium transition-all ${
-                  selectedTime === time
-                    ? "bg-white text-slate-800 shadow-[0_1px_3px_rgba(15,23,42,0.08)]"
-                    : "text-slate-500"
-                }`}
-              >
-                {time}
-              </button>
-            ))}
-          </div>
-
           <InteractiveMetroMap
             selectedTime={selectedTime}
             departureStationId={form.departureStationId}
@@ -188,6 +207,7 @@ export function MacroViewScreen({
           )}
           <MapScreen
             embedded
+            targetTime={form.targetTime}
             onConfirmRoute={handleConfirmRouteFromMap}
           />
         </>
@@ -199,7 +219,7 @@ export function MacroViewScreen({
 
       <p className="text-center text-[10px] text-slate-400">
         {mapViewMode === "geo" ? "카카오맵 · 뷰포트 혼잡 로딩" : "보통 초과 역 소프트 할로"} ·{" "}
-        {selectedTime} · {formatTime(new Date())} 갱신
+        {selectedTime} · {formatTime(form.targetTime ?? new Date())} 기준
       </p>
     </div>
   );

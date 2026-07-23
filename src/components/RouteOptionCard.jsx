@@ -13,6 +13,10 @@ import {
 } from "@/lib/congestion";
 import { getCardCongestionRate } from "@/lib/route-congestion-summary";
 import {
+  DEFAULT_ROUTE_CARD_STYLE,
+  getRouteCardChrome,
+} from "@/lib/route-card-styles";
+import {
   formatArrivalTime,
   MOCK_WALK_TRANSFER_MINUTES,
 } from "@/lib/route-timing";
@@ -99,6 +103,7 @@ export function RouteOptionCard({
   isFavorited = false,
   favoriteDisabled = false,
   onToggleFavorite,
+  cardStyleId = DEFAULT_ROUTE_CARD_STYLE,
 }) {
   const legs = buildTimelineLegs(route);
   const arriveAt = formatArrivalTime(departureTime, route.totalTime);
@@ -106,7 +111,7 @@ export function RouteOptionCard({
   const cardCongestion = getCardCongestionRate(route);
   const crowdLevel = rateToCrowdLevel(cardCongestion);
   const crowdColor = CROWD_COLORS[crowdLevel];
-  const isFeatured = badges.length > 0;
+  const chrome = getRouteCardChrome({ badges, styleId: cardStyleId });
 
   return (
     <div
@@ -119,86 +124,94 @@ export function RouteOptionCard({
           onClick?.();
         }
       }}
-      className={`w-full cursor-pointer rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] transition hover:shadow-[0_2px_8px_rgba(15,23,42,0.08)] ${
-        isFeatured ? "ring-1 ring-slate-200" : ""
-      }`}
+      className={chrome.className}
+      style={chrome.style}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-2xl font-bold tracking-tight text-slate-900">
-              {route.totalTime}분
-            </span>
-            {badges.map((b) => (
-              <span
-                key={b}
-                className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${BADGE_STYLE[b] ?? "bg-slate-100 text-slate-600"}`}
-              >
-                {BADGE_LABEL[b] ?? b}
+      {chrome.showLeftBar && chrome.leftBarColor && (
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-1 rounded-l-2xl"
+          style={{ backgroundColor: chrome.leftBarColor }}
+        />
+      )}
+      <div style={chrome.headerStyle}>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <span className="text-2xl font-bold tracking-tight text-slate-900">
+                {route.totalTime}분
               </span>
-            ))}
-            {scheduleTag && (
-              <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
-                {scheduleTag}
-              </span>
-            )}
-            {timeDiff > 0 && (
-              <span className="text-xs text-slate-400">+{timeDiff}분</span>
-            )}
-          </div>
-          <p className="mt-0.5 text-sm tabular-nums text-slate-500">
-            {departAt} – {arriveAt}
-            <span className="mx-1.5 text-slate-300">|</span>
-            {route.payment?.toLocaleString()}원
-          </p>
-        </div>
-        <div className="flex shrink-0 items-start gap-1.5">
-          <div className="text-right">
-            <p className="text-xs text-slate-500">
-              환승{" "}
-              <strong className="text-slate-800">{route.transfers}</strong>회
-            </p>
-            <div
-              className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-1"
-              style={{ backgroundColor: `${crowdColor}22` }}
-            >
-              <span
-                className="h-3.5 w-3.5 shrink-0 rounded-full"
-                style={{ backgroundColor: crowdColor }}
-                aria-hidden
-              />
-              <span className="text-sm font-bold tabular-nums text-slate-800">
-                {cardCongestion}%
-              </span>
-              <span className="text-[11px] font-semibold" style={{ color: crowdColor }}>
-                {CROWD_LABELS[crowdLevel]}
-              </span>
-            </div>
-            <p className="mt-0.5 text-[9px] text-slate-400">출발가중</p>
-          </div>
-          {onToggleFavorite && (
-            <button
-              type="button"
-              aria-label={isFavorited ? "즐겨찾기 해제" : "즐겨찾기 추가"}
-              title={favoriteDisabled ? "즐겨찾기는 5개까지 저장할 수 있습니다" : undefined}
-              disabled={favoriteDisabled}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite();
-              }}
-              className={cn(
-                "-mr-1 -mt-1 rounded-lg p-1.5 transition hover:bg-slate-50",
-                favoriteDisabled && "cursor-not-allowed opacity-40 hover:bg-transparent",
+              {badges.map((b) => (
+                <span
+                  key={b}
+                  className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${BADGE_STYLE[b] ?? "bg-slate-100 text-slate-600"}`}
+                >
+                  {BADGE_LABEL[b] ?? b}
+                </span>
+              ))}
+              {scheduleTag && (
+                <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                  {scheduleTag}
+                </span>
               )}
-            >
-              <Star
+              {timeDiff > 0 && (
+                <span className="text-xs text-slate-400">+{timeDiff}분</span>
+              )}
+            </div>
+            <p className="mt-0.5 text-sm tabular-nums text-slate-500">
+              {departAt} – {arriveAt}
+              <span className="mx-1.5 text-slate-300">|</span>
+              {route.payment?.toLocaleString()}원
+            </p>
+          </div>
+          <div className="flex shrink-0 items-start gap-1.5">
+            <div className="text-right">
+              <p className="text-xs text-slate-500">
+                환승{" "}
+                <strong className="text-slate-800">{route.transfers}</strong>회
+              </p>
+              <div
+                className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-1"
+                style={{ backgroundColor: `${crowdColor}22` }}
+              >
+                <span
+                  className="h-3.5 w-3.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: crowdColor }}
+                  aria-hidden
+                />
+                <span className="text-sm font-bold tabular-nums text-slate-800">
+                  {cardCongestion}%
+                </span>
+                <span className="text-[11px] font-semibold" style={{ color: crowdColor }}>
+                  {CROWD_LABELS[crowdLevel]}
+                </span>
+              </div>
+              <p className="mt-0.5 text-[9px] text-slate-400">출발가중</p>
+            </div>
+            {onToggleFavorite && (
+              <button
+                type="button"
+                aria-label={isFavorited ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                title={favoriteDisabled ? "즐겨찾기는 5개까지 저장할 수 있습니다" : undefined}
+                disabled={favoriteDisabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite();
+                }}
                 className={cn(
-                  "h-4 w-4",
-                  isFavorited ? "fill-amber-400 text-amber-400" : "text-slate-300",
+                  "-mr-1 -mt-1 rounded-lg p-1.5 transition hover:bg-slate-50",
+                  favoriteDisabled && "cursor-not-allowed opacity-40 hover:bg-transparent",
                 )}
-              />
-            </button>
-          )}
+              >
+                <Star
+                  className={cn(
+                    "h-4 w-4",
+                    isFavorited ? "fill-amber-400 text-amber-400" : "text-slate-300",
+                  )}
+                />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

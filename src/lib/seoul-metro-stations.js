@@ -2,9 +2,9 @@ import { METRO_STATIONS } from "./metro-network";
 import { getStationLineColor, getLineKeyForColor } from "./metro-network";
 import { baseStationId } from "./station-id";
 
-/** 서울 지하철 1~8호선만 지원 (9호선 제외) */
+/** 서울 지하철 1~8호선만 지원 (9호선·신분당선 제외) */
 const SEOUL_LINE_PATTERN = /^[1-8]호선/;
-const EXCLUDED_LINE_KEYS = new Set(["9호선"]);
+const EXCLUDED_LINE_KEYS = new Set(["9호선", "신분당선"]);
 
 function isExcludedLine(lineKey) {
   return EXCLUDED_LINE_KEYS.has(lineKey);

@@ -1,6 +1,6 @@
 {
   "name": "subway-predict-dashboard",
-  "description": "여유로 — 수도권 지하철 혼잡도 예측·경로 안내 목업",
+  "description": "여유로 — 수도권 지하철 혼잡도 예측·경로 안내",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -27,6 +27,7 @@
     "parse:smpa-assem": "node scripts/parse-smpa-assem.mjs",
     "smpa-assem": "npm run crawl:smpa-assem && npm run parse:smpa-assem",
     "fill:assem-personnel": "node scripts/fill-assem-personnel.mjs",
+    "sync:smpa-today": "node scripts/sync-smpa-today.mjs",
     "crawl:smpa-overlap": "node scripts/crawl-smpa-assem.mjs --after 2024-03-18 --before 2099-01-01 --list-file data/spatic/raw/smpa/list-overlap.jsonl --refresh-list",
     "crawl:metro-ntce": "node scripts/crawl-metro-ntce.mjs",
     "filter:metro-ntce-events": "node scripts/filter-metro-ntce-events.mjs",

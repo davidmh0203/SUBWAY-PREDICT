@@ -16,7 +16,7 @@ import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
 import { formatStationLabel } from "@/lib/station-name";
 
-/** 모델/API 역별 예측 → 경로 혼잡 리스트 rows (칸별 아님) */
+/** 경로 역별 혼잡 → 리스트 rows */
 function buildCongestionRowsFromRoute(route) {
   if (route.stationPredictions?.length) {
     return route.stationPredictions.map((p) => ({

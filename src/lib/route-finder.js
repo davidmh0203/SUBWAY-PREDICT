@@ -1,6 +1,8 @@
 import { METRO_STATIONS, METRO_LINE_SEGMENTS, getLineKeyForColor, normalizeLineColor } from "./metro-network";
 import { getStatusFromRate } from "./congestion";
 import { pruneNoRideSegments } from "./route-station-groups";
+import { getRegistryLines } from "./station-line-registry";
+import { isSupportedSeoulLine } from "./seoul-metro-stations";
 import {
   MOCK_MINUTES_PER_STOP,
   MOCK_WALK_TRANSFER_MINUTES,
@@ -41,7 +43,15 @@ function stationOnSegment(station, seg) {
     Math.hypot(seg.x2 - station.x, seg.y2 - station.y) < SEGMENT_ENDPOINT_TOL;
   const onSegment =
     pointToSegmentDistance(station.x, station.y, seg) < STATION_ON_SEGMENT_TOL;
-  return nearStart || nearEnd || onSegment;
+  if (!(nearStart || nearEnd || onSegment)) return false;
+
+  // 레지스트리에 호선이 있으면 해당 호선 세그먼트에만 연결 (고속터미널↔2호선 등 방지)
+  const registry = getRegistryLines(station.name);
+  if (registry?.length) {
+    const lineKey = getLineKeyForColor(seg.color);
+    if (!registry.includes(lineKey)) return false;
+  }
+  return true;
 }
 
 function addGraphEdge(graph, from, to, color) {
@@ -63,6 +73,7 @@ function buildGraph() {
   const graph = /* @__PURE__ */ new Map();
 
   for (const seg of METRO_LINE_SEGMENTS) {
+    if (!isSupportedSeoulLine(getLineKeyForColor(seg.color))) continue;
     const onSegment = [];
     for (const station of METRO_STATIONS) {
       if (stationOnSegment(station, seg)) {

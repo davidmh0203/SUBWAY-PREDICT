@@ -13,7 +13,7 @@ export function formatHHMM(date) {
   return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
-/** 역 수·환승 수로 목업 요금 추정 (ODsay payment 대체) */
+/** 역 수·환승 수로 요금 추정 (ODsay payment 대체) */
 export function estimateSubwayPayment(stationCount, transferCount) {
   const base = 1400;
   const extraStops = Math.max(0, stationCount - 2);

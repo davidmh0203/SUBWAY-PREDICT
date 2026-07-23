@@ -4,10 +4,24 @@ import { adaptApiRouteResponse } from "./api/route-adapter";
 import { parseOdsayResult } from "./api/odsay-to-route";
 import { estimateLocalRouteMinutes, estimateSubwayPayment } from "./route-timing";
 import { findDemoRoutePair } from "./demo-route-pairs";
+import { getRegistryLines } from "./station-line-registry";
 import cityhallDongdaemunFixture from "./fixtures/odsay-cityhall-dongdaemun.json";
 import sadangJongno3Fixture from "./fixtures/odsay-sadang-jongno3.json";
 import seoulWangsimniFixture from "./fixtures/odsay-seoul-wangsimni.json";
 import hapjeongJamsilFixture from "./fixtures/odsay-hapjeong-jamsil.json";
+
+const NEUTRAL_LINE = "지하철";
+
+/** 출발·도착 레지스트리 공통 호선, 없으면 출발 첫 호선, 없으면 중립 */
+function guessLineForOd(departure, destination) {
+  const depLines = getRegistryLines(departure) ?? [];
+  const destLines = getRegistryLines(destination) ?? [];
+  const shared = depLines.find((l) => destLines.includes(l));
+  if (shared) return shared;
+  if (depLines[0]) return depLines[0];
+  if (destLines[0]) return destLines[0];
+  return NEUTRAL_LINE;
+}
 
 const DEMO_ROUTE_FIXTURES = {
   "cityhall-dongdaemun": cityhallDongdaemunFixture,
@@ -141,10 +155,10 @@ function getChartData() {
 }
 function congestionLevel(value) {
   const pct = Number(value) || 0;
-  if (pct >= 100) return "극혼잡";
-  if (pct >= 80) return "매우혼잡";
+  if (pct >= 90) return "극혼잡";
+  if (pct >= 75) return "매우혼잡";
   if (pct >= 60) return "혼잡";
-  if (pct >= 30) return "보통";
+  if (pct >= 40) return "보통";
   return "여유";
 }
 
@@ -197,11 +211,12 @@ function fallbackRouteResponse(targetTime, departure, destination) {
   const dep = departure.replace(/역$/, "");
   const dest = destination.replace(/역$/, "");
   const stationNames = [dep, dest];
+  const line = guessLineForOd(dep, dest);
   const offsetMin = estimateLocalRouteMinutes(2, 0);
   const stations = stationNames.map((name, i) => ({
     station_id: name,
     name,
-    line: "2호선",
+    line,
     station_congestion: 60 + i * 5,
     level: congestionLevel(60 + i * 5),
     is_transfer: false,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { Home, Map, Route, Star } from "lucide-react";
 import { HomeScreen } from "@/components/HomeScreen";
 import { RouteResultsScreen } from "@/components/RouteResultsScreen";
@@ -18,7 +18,25 @@ import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites"
 import { fetchRoutesFromApi } from "@/lib/api/client";
 import { formatHHMM } from "@/lib/route-timing";
 
-const VIEWS = ["home", "results", "detail", "favorites", "macro", "map", "login"];
+/** 로컬(dev) 전용 — 배포 빌드에는 포함되지 않도록 lazy */
+const RouteCardStyleCompareScreen = import.meta.env.DEV
+  ? lazy(() =>
+      import("@/components/RouteCardStyleCompareScreen").then((m) => ({
+        default: m.RouteCardStyleCompareScreen,
+      })),
+    )
+  : null;
+
+const VIEWS = [
+  "home",
+  "results",
+  "detail",
+  "favorites",
+  "macro",
+  "map",
+  "login",
+  ...(import.meta.env.DEV ? ["card-style"] : []),
+];
 
 function createDefaultTime() {
   const d = new Date();
@@ -35,12 +53,7 @@ function createDefaultTime() {
 
 function readHashView() {
   const hash = window.location.hash.replace("#", "");
-  // 현재페이지의 location: 주소 url 에서 #과 뒤에 있는 문자를 가져온다 -> url의 해시: 프레그먼트를
-  // #와 그 뒤에 붙는 문자열을 가져온다 ex: #section1
-  //가져온문자열에서 #를 "" 순수 빈 문자열로 바꾸고  순수한값만 추출-> section1만
-  // 그렇게 가져온 순수 값을 hash 라는 변수에 담음
   return VIEWS.includes(hash) ? hash : null;
-  // 가져온 해시가 VIEW에 담긴 라우터와 일치하면 그대로, 아니면 null 리턴
 }
 
 export default function App() {
@@ -495,6 +508,13 @@ export default function App() {
             initialMapViewMode="geo"
           />
         )}
+        {import.meta.env.DEV &&
+          RouteCardStyleCompareScreen &&
+          view === "card-style" && (
+            <Suspense fallback={null}>
+              <RouteCardStyleCompareScreen onBack={() => navigateTo("home")} />
+            </Suspense>
+          )}
         {view === "login" && (
           <AuthScreen
             onBack={() => navigateTo(authReturnView || "home")}
@@ -503,7 +523,8 @@ export default function App() {
         )}
       </div>
 
-      {view !== "login" && (
+      {view !== "login" &&
+        !(import.meta.env.DEV && view === "card-style") && (
         <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-lg -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-[0_-1px_12px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-around px-2 py-2">
             {bottomNav.map(({ id, label, icon: Icon }) => {

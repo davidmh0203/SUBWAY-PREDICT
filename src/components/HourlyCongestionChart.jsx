@@ -14,22 +14,13 @@ export function HourlyCongestionChart({
   data,
   activeHour,
   stationName = "사당",
-  lineName = "2호선",
+  lineName = "지하철",
   direction = "강남 방면",
-  dataSource,
   onDirectionSwap,
 }) {
   const today = new Date();
   const dateRange = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}.`;
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
-  const sourceHint =
-    dataSource === "model"
-      ? "모델 예측"
-      : dataSource === "mock"
-        ? "목업"
-        : dataSource
-          ? dataSource
-          : null;
 
   return (
     <div className="space-y-4">
@@ -39,10 +30,7 @@ export function HourlyCongestionChart({
             [{lineName} {formatStationLabel(stationName)}] 시간대별 혼잡도
           </h2>
           <p className="mt-1 text-xs text-slate-500">
-            {dateRange}
-            {sourceHint ? ` · ${sourceHint}` : ""}
-            {", "}
-            {direction}, {dayNames[today.getDay()]}요일
+            {dateRange}, {direction}, {dayNames[today.getDay()]}요일
           </p>
         </div>
         {onDirectionSwap && (

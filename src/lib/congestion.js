@@ -12,13 +12,13 @@ const CROWD_LABELS = {
   VERY_BUSY: "매우혼잡",
   EXTREME: "극혼잡",
 };
-/** 모델 CongestionPredictor CONGESTION_LEVELS와 동일 */
+/** AdvancedCongestionPredictor CONGESTION_LEVELS와 동일 */
 const CROWD_PERCENT_RANGES = {
-  RELAXED: "<30%",
-  NORMAL: "30–59%",
-  BUSY: "60–79%",
-  VERY_BUSY: "80–99%",
-  EXTREME: "≥100%",
+  RELAXED: "<40%",
+  NORMAL: "40–59%",
+  BUSY: "60–74%",
+  VERY_BUSY: "75–89%",
+  EXTREME: "≥90%",
 };
 const CONGESTION_STYLES = {
   SMOOTH: {
@@ -71,10 +71,10 @@ const API_LEVEL_TO_CROWD = {
 
 function rateToCrowdLevel(rate) {
   const pct = Number(rate) || 0;
-  if (pct >= 100) return "EXTREME";
-  if (pct >= 80) return "VERY_BUSY";
+  if (pct >= 90) return "EXTREME";
+  if (pct >= 75) return "VERY_BUSY";
   if (pct >= 60) return "BUSY";
-  if (pct >= 30) return "NORMAL";
+  if (pct >= 40) return "NORMAL";
   return "RELAXED";
 }
 

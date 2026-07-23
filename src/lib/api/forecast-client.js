@@ -1,3 +1,5 @@
+import { toLocalISOString } from "@/lib/local-datetime";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 /**
@@ -15,7 +17,7 @@ export async function fetchForecastCards({ lat, lng, stations, at } = {}) {
   if (lng != null && Number.isFinite(lng)) params.set("lng", String(lng));
   if (stations?.length) params.set("stations", stations.join(","));
   if (at instanceof Date && !Number.isNaN(at.getTime())) {
-    params.set("at", at.toISOString());
+    params.set("at", toLocalISOString(at));
   }
 
   const qs = params.toString();

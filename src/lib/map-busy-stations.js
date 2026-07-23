@@ -5,8 +5,8 @@ import { stripStationSuffix } from "@/lib/station-name";
 export const BUSY_ABOVE_NORMAL = new Set(["BUSY", "VERY_BUSY", "EXTREME"]);
 
 /**
- * 노선도 시안용 데모 혼잡 (보통 초과만).
- * 실제 API 연동 전 비교 UI용 — 출퇴근 피크 역 위주.
+ * 노선도 혼잡 강조용 데이터 (보통 초과만).
+ * API 연동 전 출퇴근 피크 역 위주 표시.
  */
 const DEMO_BUSY_BY_NAME = {
   강남: "VERY_BUSY",

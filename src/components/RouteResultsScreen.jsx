@@ -16,6 +16,10 @@ import {
   collectStationNamesFromRoutes,
 } from "@/lib/api/apply-congestion";
 import { rankRoutes } from "@/lib/route-rank";
+import {
+  DEFAULT_ROUTE_CARD_STYLE,
+  readRouteCardStyle,
+} from "@/lib/route-card-styles";
 import { CongestionLegend } from "@/components/CongestionLegend";
 import { formatHHMM } from "@/lib/route-timing";
 import { getHourlyCongestionData } from "@/lib/crowd-data";
@@ -106,7 +110,7 @@ export function RouteResultsScreen({
         }
       } catch (err) {
         if (cancelled) return;
-        // 로컬 목업(2호선·출발/도착만)으로 조용히 대체하지 않음
+        // 로컬 단순 경로(출발/도착만)로 조용히 대체하지 않음
         const msg = err instanceof Error ? err.message : String(err);
         let friendly =
           "경로를 불러오지 못했습니다. 경로 탐색(ODsay)에 문제가 있어요.";
@@ -192,6 +196,9 @@ export function RouteResultsScreen({
   const activeHour = debouncedTime.getHours();
   const isFirstTrain = resolved.mode === "first-train";
   const rankedRoutes = useMemo(() => rankRoutes(routes), [routes]);
+  const cardStyleId = import.meta.env.DEV
+    ? readRouteCardStyle()
+    : DEFAULT_ROUTE_CARD_STYLE;
 
   // 즐겨찾기 식별자는 (출발, 도착, route_key, 출발 시각)까지 봐야 한다 —
   // 같은 경로라도 시각이 다르면(출근/퇴근) 별개의 즐겨찾기이기 때문.
@@ -334,6 +341,7 @@ export function RouteResultsScreen({
                 badges={badges}
                 scheduleTag={isFirstTrain ? "첫차" : null}
                 timeDiff={timeDiff}
+                cardStyleId={cardStyleId}
                 onClick={() => onSelectRoute(route)}
                 isFavorited={isRouteFavorited(route)}
                 favoriteDisabled={isFavoriteDisabled(route)}

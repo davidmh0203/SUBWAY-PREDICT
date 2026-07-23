@@ -1,10 +1,34 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { METRO_STATIONS, stationToPseudoGeo } from "@/lib/metro-network";
 import { fetchBatchCongestion } from "@/lib/api/client";
 import { rateToCrowdLevel } from "@/lib/congestion";
 import { getStationCongestionSnapshot } from "@/lib/crowd-data";
 import realCoords from "@/lib/generated/real-station-coords.json";
+
+const LIVE_WINDOW_MS = 5 * 60 * 1000;
+const LIVE_REFRESH_MS = 5 * 60 * 1000;
+
+function resolveQueryTime(targetTime) {
+  if (targetTime instanceof Date && !Number.isNaN(targetTime.getTime())) {
+    return targetTime;
+  }
+  return new Date();
+}
+
+function isLiveQueryTime(date) {
+  return Math.abs(date.getTime() - Date.now()) <= LIVE_WINDOW_MS;
+}
+
+function timeKeyOf(date) {
+  return [
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+  ].join("-");
+}
 
 // 엑셀에서 변환된 실제 위경도를 가져오고, 데이터가 없는 41개 역은 가상 좌표로 폴백
 const getCoords = (station) => {
@@ -44,11 +68,11 @@ const colorOf = (level) => LEVEL_COLOR[level] ?? LEVEL_COLOR.DEFAULT;
 
 // 레벨별 구간. rateToCrowdLevel의 임계값과 반드시 일치해야 한다.
 const LEVEL_BAND = {
-  RELAXED: [0, 30],
-  NORMAL: [30, 60],
-  BUSY: [60, 80],
-  VERY_BUSY: [80, 100],
-  EXTREME: [100, 150],
+  RELAXED: [0, 40],
+  NORMAL: [40, 60],
+  BUSY: [60, 75],
+  VERY_BUSY: [75, 90],
+  EXTREME: [90, 150],
   DEFAULT: [0, 100],
 };
 
@@ -139,6 +163,7 @@ export function MapScreen({
   onConfirmRoute,
   embedded = false,
   mapHeightClass = "h-[min(52vh,420px)]",
+  targetTime = null,
 }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -150,7 +175,11 @@ export function MapScreen({
   const loadedRef = useRef(new Set()); // 이미 부른(또는 요청 중인) 역
   const queueRef = useRef([]); // 부를 차례를 기다리는 역
   const runningRef = useRef(false); // 큐 소진 루프가 도는 중인지
+  const queryTimeRef = useRef(resolveQueryTime(targetTime));
+  const syncViewportRef = useRef(() => {});
+  const applySnapshotRef = useRef(() => {});
 
+  const [liveTick, setLiveTick] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
@@ -158,6 +187,20 @@ export function MapScreen({
   const [congestionLoading, setCongestionLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [tempDeparture, setTempDeparture] = useState(null);
+
+  const effectiveTime = useMemo(() => {
+    const base = resolveQueryTime(targetTime);
+    if (isLiveQueryTime(base)) {
+      // live: interval tick마다 wall clock 갱신
+      void liveTick;
+      return new Date();
+    }
+    return base;
+  }, [targetTime, liveTick]);
+
+  const timeKey = timeKeyOf(effectiveTime);
+  const liveMode = isLiveQueryTime(resolveQueryTime(targetTime));
+  queryTimeRef.current = effectiveTime;
 
   // 지도의 마커와 원을 갱신. level은 받지 않고 rate에서 직접 계산한다.
   const updateStationOnMap = (stationName, rate) => {
@@ -200,8 +243,8 @@ export function MapScreen({
           const batch = queueRef.current.splice(0, CHUNK_SIZE);
 
           try {
-            // 요청 시점의 현재 시각을 쓴다 (사용자가 오래 머물 수 있으므로)
-            const res = await fetchBatchCongestion(batch, new Date());
+            // 사용자 설정 시각(또는 live 현재 시각) — queryTimeRef로 최신값 참조
+            const res = await fetchBatchCongestion(batch, queryTimeRef.current);
             if (cancelled) return;
 
             for (const name of batch) {
@@ -260,13 +303,28 @@ export function MapScreen({
       drainQueue();
     };
 
+    syncViewportRef.current = syncViewport;
+
+    const applySnapshot = (when) => {
+      const snapshot = getStationCongestionSnapshot(when);
+      const snapshotRates = {};
+      for (const item of snapshot) {
+        snapshotRates[item.stationName] = item.stationRate;
+      }
+      for (const [name] of markersMapRef.current) {
+        const rate = snapshotRates[name] ?? null;
+        updateStationOnMap(name, rate);
+      }
+    };
+    applySnapshotRef.current = applySnapshot;
+
     function initMap() {
       window.kakao.maps.load(() => {
         if (cancelled || !mapContainerRef.current) return;
 
         // 로컬 스냅샷으로 전체 핀에 즉시 색을 입힌다.
         // 화면에 들어온 역만 이후 백엔드 값으로 교체된다.
-        const snapshot = getStationCongestionSnapshot(new Date());
+        const snapshot = getStationCongestionSnapshot(queryTimeRef.current);
         const snapshotRates = {};
         for (const item of snapshot) {
           // stationLevel은 쓰지 않는다. 레벨은 rate로부터만 계산한다.
@@ -411,7 +469,7 @@ export function MapScreen({
       setCongestionLoading(true);
     }
 
-    fetchBatchCongestion([stationName], new Date())
+    fetchBatchCongestion([stationName], queryTimeRef.current)
       .then((res) => {
         if (stale) return;
         const info = res.byName[stationName];
@@ -436,6 +494,24 @@ export function MapScreen({
       stale = true; // 빠르게 다른 역을 클릭했을 때 이전 응답이 덮어쓰지 않도록
     };
   }, [selectedStation]);
+
+  // 시각 변경 시: 혼잡 스냅샷 재적용 + 뷰포트 API 캐시 리셋
+  useEffect(() => {
+    if (loading || error) return;
+    if (!mapRef.current) return;
+
+    loadedRef.current.clear();
+    queueRef.current = [];
+    applySnapshotRef.current(queryTimeRef.current);
+    syncViewportRef.current();
+  }, [timeKey, loading, error]);
+
+  // live(지금±5분)일 때만 주기 갱신
+  useEffect(() => {
+    if (!liveMode) return undefined;
+    const id = setInterval(() => setLiveTick((n) => n + 1), LIVE_REFRESH_MS);
+    return () => clearInterval(id);
+  }, [liveMode]);
 
   // 하단 서랍이 열리고 닫히며 지도 높이가 바뀔 때 relayout
   useEffect(() => {
@@ -530,9 +606,7 @@ export function MapScreen({
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-red-50/95 p-6 text-center gap-2">
                 <p className="text-sm font-bold text-red-600">지도 로딩 실패</p>
                 <p className="text-xs text-red-400 leading-relaxed">
-                  프로젝트의 <code className="px-1 bg-white border rounded">.env</code> 파일에 유효한{" "}
-                  <code className="px-1 bg-white border rounded">VITE_KAKAO_MAP_API_KEY</code>를
-                  등록하고, 개발자 센터에 도메인 화이트리스트가 등록되어 있는지 확인해주세요.
+                  지도를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
                 </p>
               </div>
             )}
@@ -599,7 +673,7 @@ export function MapScreen({
                 <div className="flex-1 flex items-center justify-center gap-2 bg-slate-50 rounded-xl p-3 border border-slate-100/50">
                   <div className="w-4 h-4 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
                   <span className="text-xs text-slate-500 font-medium">
-                    FastAPI 예측 데이터 조회 중...
+                    혼잡도 불러오는 중...
                   </span>
                 </div>
               ) : congestion ? (

@@ -1,4 +1,4 @@
-import { Settings, MapPin, Train, LocateFixed, UserRound } from "lucide-react";
+import { MapPin, Train, LocateFixed, UserRound } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +20,6 @@ export function HomeScreen({
   onRequestLocation,
   user = null,
   onAuthEntry,
-  onOpenCongViz,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [forecastEvents, setForecastEvents] = useState([]);
@@ -63,14 +62,6 @@ export function HomeScreen({
   return (
     <div className="animate-fade-in space-y-5 pb-24">
       <header className="flex items-center justify-between px-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="혼잡 UI 비교"
-          onClick={onOpenCongViz}
-        >
-          <Settings className="h-5 w-5" />
-        </Button>
         <div className="flex items-center gap-2">
           <Train className="h-5 w-5 text-slate-600" />
           <h1 className="text-lg font-bold tracking-tight text-slate-800">{APP_NAME}</h1>

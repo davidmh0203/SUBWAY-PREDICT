@@ -188,7 +188,7 @@ function buildRouteFromResponse(apiResponse, departureTime, options) {
     totalTime: totalMin + timeExtra,
     payment: summary.payment ?? 1400,
     transfers: summary.transfer_count,
-    lineName: segments[0]?.lineName ?? "2호선",
+    lineName: segments[0]?.lineName ?? "지하철",
     maxCongestion,
     departureCongestion,
     arrivalCongestion,

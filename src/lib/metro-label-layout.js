@@ -7,7 +7,7 @@ import {
 import { getLineEndBadges } from "./metro-line-badges";
 import { getRegistryLines } from "./station-line-registry";
 import { colorForLineKey } from "./station-line-colors";
-import { isExcludedLine, isSupportedSeoulLine } from "./seoul-metro-stations";
+import { isSupportedSeoulLine } from "./seoul-metro-stations";
 import svgLabelPositions from "./generated/metro-label-positions.json";
 
 const BASE_STATION_R = 4.5;
@@ -93,13 +93,14 @@ function computeAllStationMeta(stations) {
       lineColors = registryLines.map((key) => colorForLineKey(key));
     }
 
-    lineKeys = lineKeys.filter(
-      (key) => !isExcludedLine(key) && (isSupportedSeoulLine(key) || !/^\d+호선/.test(key)),
-    );
+    lineKeys = lineKeys.filter((key) => isSupportedSeoulLine(key));
     lineColors = lineKeys.map((key) => colorForLineKey(key));
 
     const isTransfer = lineKeys.length >= 2;
-    const lineColor = getNearestSegmentColor(station.x, station.y).toLowerCase();
+    const lineColor =
+      lineKeys.length > 0
+        ? colorForLineKey(lineKeys[0]).toLowerCase()
+        : getNearestSegmentColor(station.x, station.y).toLowerCase();
     map.set(station.id, { isTransfer, lineColor, lineKeys, lineColors });
   }
   return map;
@@ -387,7 +388,7 @@ function computeLabelLayouts(meta, stations, layoutMode = "classic") {
 const LABEL_LAYOUT_CACHE = /* @__PURE__ */ new Map();
 
 /**
- * 시안별 라벨 맵 (노드 좌표가 바뀌면 stations 기준으로 재계산)
+ * 라벨 맵 (노드 좌표가 바뀌면 stations 기준으로 재계산)
  * @param {Map<string, object>} meta
  * @param {Array<{ id: string, name: string, x: number, y: number }>} stations
  * @param {'classic' | 'orthogonal'} layoutMode

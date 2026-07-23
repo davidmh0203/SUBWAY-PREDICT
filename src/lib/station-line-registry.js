@@ -1,3 +1,5 @@
+import { isExcludedLine } from "@/lib/seoul-metro-stations";
+
 /**
  * 역별 실제 환승 호선 (노선도 SVG 지오메트리 보정)
  * 지도 데이터에 없거나 잘못 연결된 호선은 여기서 우선 적용합니다.
@@ -27,5 +29,5 @@ export function getRegistryLines(stationName) {
   const clean = stationName.replace(/역.*$/, "").trim();
   const lines = STATION_LINE_REGISTRY[clean];
   if (!lines) return null;
-  return lines.filter((lineKey) => lineKey !== "9호선");
+  return lines.filter((lineKey) => !isExcludedLine(lineKey));
 }
