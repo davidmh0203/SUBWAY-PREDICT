@@ -63,8 +63,8 @@ export function RouteResultsScreen({
   const destName = form.destination.replace(/역.*$/, "");
   const [direction, setDirection] = useState(`${destName} 방면`);
 
-  // 경로(ODsay)는 화면 진입 시·OD 변경 시 1회 — 유효 출발(첫차 폴백 포함)
   const searchTimeRef = useRef(resolved.effective);
+  const prevSliderIndexRef = useRef(null);
 
   useEffect(() => {
     searchTimeRef.current = resolved.effective;
@@ -74,19 +74,33 @@ export function RouteResultsScreen({
     setDebouncedTime(resolved.effective);
   }, [resolved.effective, resolved.mode]);
 
+  // 슬라이더를 사용자가 움직일 때만 디바운스·스피너. 마운트/시각 동기화는 조용히 반영.
   useEffect(() => {
+    const next = sliderIndexToDate(
+      sliderIndex,
+      searchTimeRef.current,
+      sliderMarks,
+    );
+    const prevIdx = prevSliderIndexRef.current;
+    prevSliderIndexRef.current = sliderIndex;
+
+    // 최초 마운트·검색 시각 동기화(인덱스 동일)는 스피너 없이 반영
+    if (prevIdx === null || prevIdx === sliderIndex) {
+      setDebouncedTime(next);
+      setSliderLoading(false);
+      return;
+    }
+
     setSliderLoading(true);
     const timer = setTimeout(() => {
-      const next = sliderIndexToDate(
-        sliderIndex,
-        searchTimeRef.current,
-        sliderMarks,
-      );
       setDebouncedTime(next);
       onTimeChange(next);
       setSliderLoading(false);
     }, 400);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      setSliderLoading(false);
+    };
   }, [sliderIndex, sliderMarks, onTimeChange]);
 
   useEffect(() => {
@@ -112,16 +126,22 @@ export function RouteResultsScreen({
         if (cancelled) return;
         // 로컬 단순 경로(출발/도착만)로 조용히 대체하지 않음
         const msg = err instanceof Error ? err.message : String(err);
+        const detail = err?.detail || msg;
         let friendly =
           "경로를 불러오지 못했습니다. 경로 탐색(ODsay)에 문제가 있어요.";
-        if (/503|502|Bad Gateway|Service Unavailable/i.test(msg)) {
+        if (/1\s*~\s*8호선|미지원|신분당/i.test(detail) || err?.status === 422) {
           friendly =
-            "서버 또는 경로 탐색(ODsay)에 실패했습니다. Render가 잠들었거나 과부하일 수 있어요. 잠시 후 다시 시도해 주세요.";
+            detail.replace(/^predict\/route \d+:\s*/i, "").trim() ||
+            "1~8호선만으로 이동 가능한 경로가 없습니다. (9호선·신분당선 미지원)";
         } else if (/Failed to fetch|NetworkError|timeout|AbortError/i.test(msg)) {
           friendly =
             "서버에 연결하지 못했습니다. 네트워크를 확인하거나 잠시 후 다시 시도해 주세요.";
-        } else if (/ODsay|경로 탐색|불완전/i.test(msg)) {
-          friendly = msg.replace(/^predict\/route \d+:\s*/i, "").trim() || friendly;
+        } else if (/ODsay|경로 탐색|불완전/i.test(detail)) {
+          friendly =
+            detail.replace(/^predict\/route \d+:\s*/i, "").trim() || friendly;
+        } else if (/503|502|Bad Gateway|Service Unavailable/i.test(msg)) {
+          friendly =
+            "서버 또는 경로 탐색(ODsay)에 실패했습니다. Render가 잠들었거나 과부하일 수 있어요. 잠시 후 다시 시도해 주세요.";
         }
         setRoutesError(friendly);
       } finally {
@@ -185,6 +205,7 @@ export function RouteResultsScreen({
     return () => {
       cancelled = true;
       clearTimeout(timer);
+      setCongestionLoading(false);
     };
   }, [baseRoutes, debouncedTime, routesError]);
 
