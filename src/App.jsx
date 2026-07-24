@@ -7,15 +7,14 @@ import { MacroViewScreen } from "@/components/MacroViewScreen";
 import { FavoritesScreen } from "@/components/FavoritesScreen";
 import { AuthScreen } from "@/components/AuthScreen";
 import { buildRoutes } from "@/lib/mock-data";
-import { getNearbyStationCongestion } from "@/lib/crowd-data";
 import { fetchNearbyStations } from "@/lib/api/nearby-stations-client";
-import { fetchBatchCongestion } from "@/lib/api/client";
+import { fetchBatchCongestion, fetchRoutesFromApi } from "@/lib/api/client";
 import { rateToCrowdLevel } from "@/lib/congestion";
+import { getNearestStationsByGeo } from "@/lib/metro-network";
 import { cn } from "@/lib/utils";
 import { getToken, isUsingSupabaseAuth, logout as apiLogout, me } from "@/lib/api/auth";
 import { getSupabase } from "@/lib/supabase-client";
 import { addFavorite, listFavorites, removeFavorite } from "@/lib/api/favorites";
-import { fetchRoutesFromApi } from "@/lib/api/client";
 import { formatHHMM } from "@/lib/route-timing";
 
 /** 로컬(dev) 전용 — 배포 빌드에는 포함되지 않도록 lazy */
@@ -88,51 +87,60 @@ export default function App() {
     }
     let cancelled = false;
     (async () => {
+      /** @type {{ id?: string, name: string, distanceM?: number }[]} */
+      let stations = [];
       try {
-        const { stations } = await fetchNearbyStations({
+        const nearby = await fetchNearbyStations({
           lat: geoLocation.lat,
           lng: geoLocation.lng,
           limit: 4,
         });
-        if (cancelled) return;
-        if (!stations.length) {
-          setNearbyCongestion(
-            getNearbyStationCongestion(form.targetTime, geoLocation, 4),
-          );
-          return;
-        }
-        const names = stations.map((s) => s.name);
-        let byName = {};
-        try {
-          const batch = await fetchBatchCongestion(names, form.targetTime);
-          byName = batch.byName ?? {};
-        } catch {
-          byName = {};
-        }
-        if (cancelled) return;
-        setNearbyCongestion(
-          stations.map((s) => {
-            const hit = byName[s.name];
-            const stationRate = hit?.rate ?? 50;
-            const trainRate = Math.min(stationRate + 8, 160);
-            return {
-              stationId: s.id || s.name,
-              stationName: s.name,
-              distanceM: s.distanceM,
-              stationRate,
-              stationLevel: rateToCrowdLevel(stationRate),
-              trainRate,
-              trainLevel: rateToCrowdLevel(trainRate),
-              source: hit?.source ?? "fallback",
-            };
-          }),
-        );
-      } catch {
-        if (cancelled) return;
-        setNearbyCongestion(
-          getNearbyStationCongestion(form.targetTime, geoLocation, 4),
-        );
+        stations = nearby.stations ?? [];
+      } catch (err) {
+        console.warn("[nearby] 카카오 주변역 실패 — 로컬 역 목록으로 대체", err);
       }
+
+      // 카카오 실패/빈 결과 시에도 가짜 혼잡%를 쓰지 않고, 가까운 역 이름만 로컬에서 고른 뒤
+      // 실제 /congestion/batch 모델 값을 붙인다. (목업 75%/88% 같은 불일치 방지)
+      if (!stations.length) {
+        stations = getNearestStationsByGeo(
+          geoLocation.lat,
+          geoLocation.lng,
+          4,
+        ).map((s) => ({ id: s.id, name: s.name }));
+      }
+      if (cancelled) return;
+
+      let byName = {};
+      try {
+        const batch = await fetchBatchCongestion(
+          stations.map((s) => s.name),
+          form.targetTime,
+        );
+        byName = batch.byName ?? {};
+      } catch (err) {
+        console.warn("[nearby] 혼잡 batch 실패", err);
+        byName = {};
+      }
+      if (cancelled) return;
+
+      setNearbyCongestion(
+        stations.map((s) => {
+          const hit = byName[s.name];
+          const stationRate = hit?.rate ?? 50;
+          const trainRate = Math.min(stationRate + 8, 160);
+          return {
+            stationId: s.id || s.name,
+            stationName: s.name,
+            distanceM: s.distanceM,
+            stationRate,
+            stationLevel: rateToCrowdLevel(stationRate),
+            trainRate,
+            trainLevel: rateToCrowdLevel(trainRate),
+            source: hit?.source ?? "fallback",
+          };
+        }),
+      );
     })();
     return () => {
       cancelled = true;
