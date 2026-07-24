@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-07-23T23:30:47.983Z",
+  "finishedAt": "2026-07-24T15:13:07.639Z",
   "mode": "same-day",
-  "kstHour": 8,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-07-24",
+  "date": "2026-07-25",
   "window": [
-    "2026-07-24"
+    "2026-07-25"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14205,
-    "posts": 2380
+    "events": 14211,
+    "posts": 2381
   },
   "samples": [
     {
-      "post_id": "smpa-00338675",
-      "event_date": "2026-07-24",
-      "time_raw": "10:00~17:00",
-      "place": "CU양재역점 앞 <서초동>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00338703",
+      "event_date": "2026-07-25",
+      "time_raw": "11:30~17:00",
+      "place": "동화면세점 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00338675",
-      "event_date": "2026-07-24",
-      "time_raw": "11:30~12:30",
-      "place": "금감원 앞 <여의도>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00338675",
-      "event_date": "2026-07-24",
-      "time_raw": "14:30~16:00",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "60명"
-    },
-    {
-      "post_id": "smpa-00338675",
-      "event_date": "2026-07-24",
-      "time_raw": "17:00~19:00",
-      "place": "전쟁기념관 상징탑 앞 인도 <용산동>",
+      "post_id": "smpa-00338703",
+      "event_date": "2026-07-25",
+      "time_raw": "16:00~18:00",
+      "place": "교보빌딩 -> 효령빌딩 <세종대로 등>",
       "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00338703",
+      "event_date": "2026-07-25",
+      "time_raw": "17:00~19:00",
+      "place": "SK서린빌딩 <-> 광화문R <종로 등>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00338703",
+      "event_date": "2026-07-25",
+      "time_raw": "17:30~19:30",
+      "place": "석촌호수 서호 -> 올림픽공원 남2문 <오금로 등>",
+      "personnel_raw": "200명"
+    },
+    {
+      "post_id": "smpa-00338703",
+      "event_date": "2026-07-25",
+      "time_raw": "18:00~20:00",
+      "place": "서초역 8出 -> CGV 강남 <강남대로 등>",
+      "personnel_raw": "5,000명"
+    },
+    {
+      "post_id": "smpa-00338703",
+      "event_date": "2026-07-25",
+      "time_raw": "19:00~21:30",
+      "place": "고궁박물관 -> 美대사관 <세종대로 등>",
+      "personnel_raw": "10,000명"
     }
   ]
 }
