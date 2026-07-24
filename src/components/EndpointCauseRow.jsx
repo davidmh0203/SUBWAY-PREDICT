@@ -1,6 +1,5 @@
-import { CrowdBlock } from "@/components/CongestionLegend";
-import { CauseChip, normalizeCause } from "@/lib/congestion-cause";
-import { CROWD_LABELS, rateToCrowdLevel } from "@/lib/congestion";
+import { CROWD_COLORS, CROWD_LABELS, rateToCrowdLevel } from "@/lib/congestion";
+import { normalizeCause } from "@/lib/congestion-cause";
 import { flattenRouteStations } from "@/components/RouteCongestionStrip";
 import { formatStationLabel } from "@/lib/station-name";
 
@@ -20,7 +19,7 @@ function causeByStationName(route) {
 }
 
 /**
- * 경로 출발·도착만 혼잡 + 예측 원인 칩
+ * 경로 출발·도착 — `31% 혼잡 (저녁피크)` 형식
  * @param {{ route: object, compact?: boolean, className?: string }} props
  */
 export function EndpointCauseRow({ route, compact = false, className = "" }) {
@@ -46,31 +45,38 @@ export function EndpointCauseRow({ route, compact = false, className = "" }) {
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
-      {endpoints.map((ep) => (
-        <div
-          key={`${ep.role}-${ep.name}`}
-          className={`inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50/80 ${
-            compact ? "px-1.5 py-1" : "px-2 py-1.5"
-          }`}
-        >
-          <span className="text-[10px] font-medium text-slate-400">{ep.role}</span>
-          <span
-            className={`font-semibold text-slate-700 ${
-              compact ? "text-[10px]" : "text-[11px]"
+      {endpoints.map((ep) => {
+        const color = CROWD_COLORS[ep.level];
+        const label = CROWD_LABELS[ep.level];
+        return (
+          <div
+            key={`${ep.role}-${ep.name}`}
+            className={`inline-flex max-w-full items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50/80 ${
+              compact ? "px-1.5 py-1" : "px-2 py-1.5"
             }`}
           >
-            {formatStationLabel(ep.name)}
-          </span>
-          {!compact && (
-            <CrowdBlock
-              level={ep.level}
-              label={CROWD_LABELS[ep.level]}
-              className="h-6 w-12 shrink-0 text-[9px]"
-            />
-          )}
-          {ep.cause ? <CauseChip cause={ep.cause} size={compact ? "sm" : "md"} /> : null}
-        </div>
-      ))}
+            <span className="text-[10px] font-medium text-slate-400">{ep.role}</span>
+            <span
+              className={`font-semibold text-slate-700 ${
+                compact ? "text-[10px]" : "text-[11px]"
+              }`}
+            >
+              {formatStationLabel(ep.name)}
+            </span>
+            <span
+              className={`inline-flex items-baseline gap-0.5 font-semibold tabular-nums ${
+                compact ? "text-[10px]" : "text-[11px]"
+              }`}
+            >
+              <span className="text-slate-800">{ep.rate}%</span>
+              <span style={{ color }}>{label}</span>
+              {ep.cause ? (
+                <span className="font-medium text-slate-400">({ep.cause})</span>
+              ) : null}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

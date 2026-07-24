@@ -7,8 +7,8 @@ import {
   YAxis,
 } from "recharts";
 import { CROWD_COLORS, CROWD_LABELS, rateToCrowdLevel } from "@/lib/congestion";
-import { CauseChip, normalizeCause } from "@/lib/congestion-cause";
-import { CongestionLegend, CrowdBlock } from "@/components/CongestionLegend";
+import { normalizeCause } from "@/lib/congestion-cause";
+import { CongestionLegend } from "@/components/CongestionLegend";
 import { flattenRouteStations } from "@/components/RouteCongestionStrip";
 import { formatStationLabel } from "@/lib/station-name";
 
@@ -29,7 +29,7 @@ function mergeCauseFromPredictions(stations, route) {
 
 /**
  * 경로 상세용 — 지나는 역별 혼잡도 막대 (시간대별 차트와 동일 톤)
- * 출발·도착 역에 한해 예측 원인을 CrowdBlock 옆 칩으로 표시
+ * 출발·도착 역에 한해 `31% 혼잡 (저녁피크)` 형식으로 예측 원인 표시
  */
 export function StationCongestionChart({ route, departureTime }) {
   const stations = mergeCauseFromPredictions(
@@ -116,23 +116,28 @@ export function StationCongestionChart({ route, departureTime }) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {endpoints.map((ep) => (
-          <div
-            key={`${ep.role}-${ep.name}`}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-white px-2 py-1.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
-          >
-            <span className="text-[10px] font-medium text-slate-400">{ep.role}</span>
-            <span className="text-[11px] font-semibold text-slate-700">
-              {formatStationLabel(ep.name)}
-            </span>
-            <CrowdBlock
-              level={ep.level}
-              label={CROWD_LABELS[ep.level]}
-              className="h-6 w-12 shrink-0 text-[9px]"
-            />
-            {ep.cause ? <CauseChip cause={ep.cause} /> : null}
-          </div>
-        ))}
+        {endpoints.map((ep) => {
+          const color = CROWD_COLORS[ep.level];
+          const label = CROWD_LABELS[ep.level];
+          return (
+            <div
+              key={`${ep.role}-${ep.name}`}
+              className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-slate-100 bg-white px-2 py-1.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+            >
+              <span className="text-[10px] font-medium text-slate-400">{ep.role}</span>
+              <span className="text-[11px] font-semibold text-slate-700">
+                {formatStationLabel(ep.name)}
+              </span>
+              <span className="inline-flex items-baseline gap-0.5 text-[11px] font-semibold tabular-nums">
+                <span className="text-slate-800">{ep.rate}%</span>
+                <span style={{ color }}>{label}</span>
+                {ep.cause ? (
+                  <span className="font-medium text-slate-400">({ep.cause})</span>
+                ) : null}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       <CongestionLegend compact />

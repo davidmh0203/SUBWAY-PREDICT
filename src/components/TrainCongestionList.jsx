@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { CongestionLegend, CrowdBlock } from "@/components/CongestionLegend";
+import { CongestionLegend } from "@/components/CongestionLegend";
 import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
 import { CROWD_COLORS, CROWD_LABELS, formatDepartureLabel, rateToCrowdLevel } from "@/lib/congestion";
-import { getCauseMeta, normalizeCause } from "@/lib/congestion-cause";
+import { normalizeCause } from "@/lib/congestion-cause";
 import { buildRidingLegs } from "@/lib/route-station-groups";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
 import { getStationLineColor } from "@/lib/route-segment-colors";
@@ -10,8 +10,7 @@ import { getStationLineColor } from "@/lib/route-segment-colors";
 function CongestionRow({ stationName, overallRate, level, lineColor, cause }) {
   const barColor = CROWD_COLORS[level] ?? CROWD_COLORS.NORMAL;
   const causeLabel = normalizeCause(cause);
-  const causeMeta = getCauseMeta(causeLabel);
-  const CauseIcon = causeMeta?.icon;
+  const label = CROWD_LABELS[level];
   return (
     <div className="relative flex items-center gap-3">
       <div className="relative flex min-w-0 flex-1 items-center">
@@ -19,17 +18,8 @@ function CongestionRow({ stationName, overallRate, level, lineColor, cause }) {
           className="absolute left-[9px] top-1/2 z-10 h-2.5 w-2.5 -translate-y-1/2 rounded-full border-2 border-white shadow-sm"
           style={{ backgroundColor: lineColor }}
         />
-        <span className="ml-5 flex min-w-0 items-center gap-0.5 text-[11px] font-medium text-slate-700">
-          <span className="truncate">{stationName}</span>
-          {causeLabel ? (
-            <span className="inline-flex shrink-0 items-center gap-0.5 font-normal text-slate-400">
-              (
-              {CauseIcon ? (
-                <CauseIcon className="h-2.5 w-2.5" strokeWidth={2.25} aria-hidden />
-              ) : null}
-              {causeLabel})
-            </span>
-          ) : null}
+        <span className="ml-5 truncate text-[11px] font-medium text-slate-700">
+          {stationName}
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -42,13 +32,12 @@ function CongestionRow({ stationName, overallRate, level, lineColor, cause }) {
             }}
           />
         </div>
-        <CrowdBlock
-          level={level}
-          label={CROWD_LABELS[level]}
-          className="h-7 w-14 shrink-0 text-[10px]"
-        />
-        <span className="w-9 shrink-0 text-right text-[11px] font-semibold tabular-nums text-slate-600">
-          {overallRate}%
+        <span className="inline-flex shrink-0 items-baseline gap-0.5 text-[11px] font-semibold tabular-nums">
+          <span className="text-slate-700">{overallRate}%</span>
+          <span style={{ color: barColor }}>{label}</span>
+          {causeLabel ? (
+            <span className="font-medium text-slate-400">({causeLabel})</span>
+          ) : null}
         </span>
       </div>
     </div>
