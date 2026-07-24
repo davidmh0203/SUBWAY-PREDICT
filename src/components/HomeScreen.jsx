@@ -125,7 +125,7 @@ export function HomeScreen({
 
       <section>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-slate-600">내 주변 역/열차 혼잡도</h2>
+          <h2 className="text-sm font-medium text-slate-600">내 주변 역 혼잡도</h2>
           <Button
             type="button"
             variant="ghost"
@@ -149,7 +149,7 @@ export function HomeScreen({
             )}
             {locationState !== "loading" && nearbyCongestion.length === 0 && (
               <p className="text-xs text-slate-500">
-                위치를 불러오면 주변 역의 역 혼잡도/열차 혼잡도를 보여줍니다.
+                위치를 불러오면 주변 역의 혼잡도를 보여줍니다.
               </p>
             )}
             {nearbyCongestion.map((item) => (
@@ -167,15 +167,9 @@ export function HomeScreen({
                     </span>
                   )}
                 </p>
-                <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-600">
-                  <span>
-                    역 혼잡도: <strong>{item.stationRate}%</strong> ({CROWD_LABELS[item.stationLevel]})
-                  </span>
-                  <span className="text-slate-300">|</span>
-                  <span>
-                    열차 혼잡도: <strong>{item.trainRate}%</strong> ({CROWD_LABELS[item.trainLevel]})
-                  </span>
-                </div>
+                <p className="mt-1 text-[11px] text-slate-600">
+                  혼잡도: <strong>{item.stationRate}%</strong> ({CROWD_LABELS[item.stationLevel]})
+                </p>
               </div>
             ))}
           </CardContent>

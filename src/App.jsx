@@ -128,15 +128,12 @@ export default function App() {
         stations.map((s) => {
           const hit = byName[s.name];
           const stationRate = hit?.rate ?? 50;
-          const trainRate = Math.min(stationRate + 8, 160);
           return {
             stationId: s.id || s.name,
             stationName: s.name,
             distanceM: s.distanceM,
             stationRate,
             stationLevel: rateToCrowdLevel(stationRate),
-            trainRate,
-            trainLevel: rateToCrowdLevel(trainRate),
             source: hit?.source ?? "fallback",
           };
         }),
