@@ -3,7 +3,7 @@ import { ArrowLeft, MapPin } from "lucide-react";
 import { METRO_STATIONS, stationToPseudoGeo } from "@/lib/metro-network";
 import { fetchBatchCongestion } from "@/lib/api/client";
 import { rateToCrowdLevel } from "@/lib/congestion";
-import { CauseChip, normalizeCause } from "@/lib/congestion-cause";
+import { normalizeCause } from "@/lib/congestion-cause";
 import { getStationCongestionSnapshot } from "@/lib/crowd-data";
 import realCoords from "@/lib/generated/real-station-coords.json";
 
@@ -576,13 +576,7 @@ export function MapScreen({
             style={
               embedded
                 ? undefined
-                : {
-                    height: selectedStation
-                      ? congestion?.cause
-                        ? "calc(100% - 148px)"
-                        : "calc(100% - 132px)"
-                      : "100%",
-                  }
+                : { height: selectedStation ? "calc(100% - 132px)" : "100%" }
             }
             className={`relative overflow-hidden rounded-xl border border-slate-100 bg-slate-100 shadow-inner transition-[height] duration-300 ease-in-out ${
               embedded ? mapHeightClass : "flex-grow"
@@ -627,25 +621,16 @@ export function MapScreen({
 
           {selectedStation && (
             <div
-              className={`flex flex-col gap-2 pt-2 border-t border-slate-100 animate-slide-up flex-shrink-0 justify-center ${
-                congestion?.cause ? "min-h-[136px]" : "h-[120px]"
-              }`}
+              className="flex h-[120px] flex-col gap-2 pt-2 border-t border-slate-100 animate-slide-up flex-shrink-0 justify-center"
             >
               <div className="flex items-center justify-between">
                 <div className="flex min-w-0 items-center gap-2">
                   <div className="p-1.5 bg-slate-800 text-white rounded-lg shrink-0">
                     <MapPin className="w-4 h-4" />
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-slate-800 text-sm truncate">
-                      {selectedStation.name}역 혼잡도
-                    </h3>
-                    {congestion?.cause ? (
-                      <div className="mt-0.5">
-                        <CauseChip cause={congestion.cause} size="sm" />
-                      </div>
-                    ) : null}
-                  </div>
+                  <h3 className="font-bold text-slate-800 text-sm truncate">
+                    {selectedStation.name}역 혼잡도
+                  </h3>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button
@@ -703,20 +688,26 @@ export function MapScreen({
                   // 핀 / 원 / 배지가 모두 같은 함수로 레벨을 구한다.
                   const level = rateToCrowdLevel(congestion.rate);
                   const style = getCongestionStyle(level);
+                  const cause = normalizeCause(congestion.cause);
                   return (
                     <div className="flex-1 flex flex-col justify-center gap-2.5 bg-slate-50 rounded-xl p-3 border border-slate-100">
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-xs text-slate-500 font-medium">
                           실시간 예측 혼잡률
                         </span>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${style.color}`}
                           >
                             {style.label}
                           </span>
-                          <span className="text-sm font-bold text-slate-800">
-                            {congestion.rate}%
+                          <span className="inline-flex items-baseline gap-0.5 text-sm font-bold tabular-nums text-slate-800">
+                            <span>{congestion.rate}%</span>
+                            {cause ? (
+                              <span className="text-[11px] font-semibold text-slate-400">
+                                ({cause})
+                              </span>
+                            ) : null}
                           </span>
                         </div>
                       </div>
