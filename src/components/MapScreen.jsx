@@ -3,6 +3,7 @@ import { ArrowLeft, MapPin } from "lucide-react";
 import { METRO_STATIONS, stationToPseudoGeo } from "@/lib/metro-network";
 import { fetchBatchCongestion } from "@/lib/api/client";
 import { rateToCrowdLevel } from "@/lib/congestion";
+import { CauseChip, normalizeCause } from "@/lib/congestion-cause";
 import { getStationCongestionSnapshot } from "@/lib/crowd-data";
 import realCoords from "@/lib/generated/real-station-coords.json";
 
@@ -463,7 +464,7 @@ export function MapScreen({
     const cached = ratesRef.current.get(stationName);
 
     if (cached != null) {
-      setCongestion({ rate: cached, source: "CACHE" });
+      setCongestion({ rate: cached, cause: null, source: "CACHE" });
       setCongestionLoading(false); // 이미 값이 있으므로 스피너를 띄우지 않는다
     } else {
       setCongestionLoading(true);
@@ -474,7 +475,11 @@ export function MapScreen({
         if (stale) return;
         const info = res.byName[stationName];
         const rate = info ? info.rate : (cached ?? 50);
-        setCongestion({ rate, source: info ? "PREDICTION" : "FALLBACK" });
+        setCongestion({
+          rate,
+          cause: normalizeCause(info?.cause),
+          source: info ? "PREDICTION" : "FALLBACK",
+        });
         updateStationOnMap(stationName, rate);
         loadedRef.current.add(stationName);
       })
@@ -482,7 +487,7 @@ export function MapScreen({
         if (stale) return;
         console.error("[KakaoMap] Failed to fetch station congestion:", err);
         if (cached == null) {
-          setCongestion({ rate: 45, source: "FALLBACK" });
+          setCongestion({ rate: 45, cause: null, source: "FALLBACK" });
           updateStationOnMap(stationName, 45);
         }
       })
@@ -571,7 +576,13 @@ export function MapScreen({
             style={
               embedded
                 ? undefined
-                : { height: selectedStation ? "calc(100% - 132px)" : "100%" }
+                : {
+                    height: selectedStation
+                      ? congestion?.cause
+                        ? "calc(100% - 148px)"
+                        : "calc(100% - 132px)"
+                      : "100%",
+                  }
             }
             className={`relative overflow-hidden rounded-xl border border-slate-100 bg-slate-100 shadow-inner transition-[height] duration-300 ease-in-out ${
               embedded ? mapHeightClass : "flex-grow"
@@ -615,17 +626,28 @@ export function MapScreen({
           </div>
 
           {selectedStation && (
-            <div className="h-[120px] flex flex-col gap-2 pt-2 border-t border-slate-100 animate-slide-up flex-shrink-0 justify-center">
+            <div
+              className={`flex flex-col gap-2 pt-2 border-t border-slate-100 animate-slide-up flex-shrink-0 justify-center ${
+                congestion?.cause ? "min-h-[136px]" : "h-[120px]"
+              }`}
+            >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-slate-800 text-white rounded-lg">
+                <div className="flex min-w-0 items-center gap-2">
+                  <div className="p-1.5 bg-slate-800 text-white rounded-lg shrink-0">
                     <MapPin className="w-4 h-4" />
                   </div>
-                  <h3 className="font-bold text-slate-800 text-sm">
-                    {selectedStation.name}역 혼잡도
-                  </h3>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-slate-800 text-sm truncate">
+                      {selectedStation.name}역 혼잡도
+                    </h3>
+                    {congestion?.cause ? (
+                      <div className="mt-0.5">
+                        <CauseChip cause={congestion.cause} size="sm" />
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     type="button"
                     onClick={() => {
@@ -683,8 +705,10 @@ export function MapScreen({
                   const style = getCongestionStyle(level);
                   return (
                     <div className="flex-1 flex flex-col justify-center gap-2.5 bg-slate-50 rounded-xl p-3 border border-slate-100">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-500 font-medium">실시간 예측 혼잡률</span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs text-slate-500 font-medium">
+                          실시간 예측 혼잡률
+                        </span>
                         <div className="flex items-center gap-1.5">
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${style.color}`}

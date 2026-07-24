@@ -30,10 +30,13 @@ async def predict_route(req: RouteRequest):
     ODsay로 경로를 구하고, 혼잡도는 models/ CongestionPredictor로 채웁니다.
     live 모드에서 ODsay 실패 시 502 (가짜 출발·도착만 경로로 대체하지 않음).
     """
-    from app.odsay_client import OdsayError
+    from app.odsay_client import OdsayError, UnsupportedLineRouteError
 
     try:
         result = await predict_route_with_odsay(req.start, req.end, req.departure_time)
+    except UnsupportedLineRouteError as exc:
+        # 인프라 장애(502)와 구분 — 프론트가 Render 콜드스타트로 오인하지 않도록
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except OdsayError as exc:
         raise HTTPException(
             status_code=502,
@@ -92,6 +95,8 @@ def get_station_congestion(
             "prob_increase": pred.get("prob_increase"),
             "prob_normal": pred.get("prob_normal"),
             "prob_decrease": pred.get("prob_decrease"),
+            "cause": pred.get("cause"),
+            "cause_prob": pred.get("cause_prob"),
             "source": "model",
         }
 
@@ -175,6 +180,8 @@ def batch_station_congestion(req: BatchCongestionRequest):
                     "station_congestion": int(round(pct)),
                     "level": pred["congestion_level"],
                     "congestion_pct": pct,
+                    "cause": pred.get("cause"),
+                    "cause_prob": pred.get("cause_prob"),
                     "source": "model",
                 }
             )
@@ -186,6 +193,8 @@ def batch_station_congestion(req: BatchCongestionRequest):
                     "station_congestion": c,
                     "level": congestion_level(c),
                     "congestion_pct": float(c),
+                    "cause": None,
+                    "cause_prob": None,
                     "source": "mock",
                 }
             )

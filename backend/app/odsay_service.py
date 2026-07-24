@@ -15,6 +15,7 @@ from app.fixture_routes import find_fixture_payload
 from app.mock_data import STATIONS, _base_congestion, build_mock_route
 from app.odsay_client import (
     OdsayError,
+    UnsupportedLineRouteError,
     is_configured,
     normalize_station_name,
     search_pub_trans_path,
@@ -308,7 +309,8 @@ async def predict_route_with_odsay(
 
         parsed: list[dict[str, Any]] = []
         seen: set[str] = set()
-        for path_item in paths[:MAX_ROUTE_PATHS * 3]:
+        # ODsay가 9호선·신분당을 앞에 두면 앞 N개만 보면 1~8 대안을 놓침 → 전체 스캔
+        for path_item in paths:
             if not _path_uses_only_supported_lines(path_item):
                 continue
             try:
@@ -324,7 +326,10 @@ async def predict_route_with_odsay(
                 break
 
         if not parsed:
-            raise OdsayError("1~8호선만으로 이동 가능한 경로가 없습니다.")
+            raise UnsupportedLineRouteError(
+                "1~8호선만으로 이동 가능한 경로가 없습니다. "
+                "(9호선·신분당선 등 미지원 구간만 있습니다)"
+            )
 
         primary = parsed[0]
         route_body = {
@@ -348,7 +353,7 @@ def _mock_or_fixture_route(
         paths = (fixture.get("result") or {}).get("path") or []
         parsed: list[dict[str, Any]] = []
         seen: set[str] = set()
-        for path_item in paths[:MAX_ROUTE_PATHS * 3]:
+        for path_item in paths:
             if not _path_uses_only_supported_lines(path_item):
                 continue
             try:

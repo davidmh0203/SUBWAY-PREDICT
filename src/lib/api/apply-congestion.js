@@ -7,7 +7,7 @@ import {
 /**
  * 경로 UI 객체에 역별 혼잡 맵을 덮어쓴다 (ODsay 경로 유지).
  * @param {object[]} routes
- * @param {Record<string, { rate: number, level?: string }>} byName
+ * @param {Record<string, { rate: number, level?: string, cause?: string | null }>} byName
  */
 export function applyCongestionMapToRoutes(routes, byName) {
   if (!routes?.length || !byName) return routes;
@@ -21,6 +21,7 @@ export function applyCongestionMapToRoutes(routes, byName) {
         ...p,
         congestionRate,
         level: hit.level ?? p.level,
+        cause: hit.cause !== undefined ? hit.cause : p.cause,
         status: hit.level
           ? getStatusFromApiLevel(hit.level)
           : getStatusFromRate(congestionRate),
@@ -37,6 +38,7 @@ export function applyCongestionMapToRoutes(routes, byName) {
           ...st,
           congestionRate,
           congestionLevel: hit.level ?? st.congestionLevel,
+          cause: hit.cause !== undefined ? hit.cause : st.cause,
           congestionStatus: hit.level
             ? getStatusFromApiLevel(hit.level)
             : getStatusFromRate(congestionRate),

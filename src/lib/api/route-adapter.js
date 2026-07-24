@@ -74,6 +74,8 @@ export function buildSegmentsFromRouteStations(apiStations, departureTime, walkT
       congestionStatus: stationCongestionStatus(st, congestionRate),
       congestionLevel: st.level,
       congestionLabel: st.congestion_label,
+      cause: st.cause ?? null,
+      causeProb: st.cause_prob ?? null,
       heading: st.heading,
     });
   });
@@ -122,6 +124,8 @@ function buildStationPredictions(apiStations, departureTime, factor = 1) {
       status: stationCongestionStatus(st, congestionRate),
       level: st.level,
       congestionLabel: st.congestion_label,
+      cause: st.cause ?? null,
+      causeProb: st.cause_prob ?? null,
       heading: st.heading ?? "방면",
       arrivalTime: formatArrivalTime(departureTime, offsetMin),
     };

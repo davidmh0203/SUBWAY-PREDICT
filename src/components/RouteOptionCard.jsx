@@ -6,6 +6,7 @@ import {
   buildTimelineLegs,
 } from "@/components/RouteTimelineBar";
 import { RouteCongestionStrip } from "@/components/RouteCongestionStrip";
+import { EndpointCauseRow } from "@/components/EndpointCauseRow";
 import {
   CROWD_COLORS,
   CROWD_LABELS,
@@ -220,6 +221,7 @@ export function RouteOptionCard({
       </div>
 
       <RouteCongestionStrip route={route} className="mt-2.5" />
+      <EndpointCauseRow route={route} compact className="mt-2" />
 
       <div className="mt-3">
         <TransferOutline route={route} />

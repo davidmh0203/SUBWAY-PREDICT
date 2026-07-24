@@ -271,7 +271,7 @@ function buildRoutes(targetTime, departure = "시청", destination = "동대문"
       ? [finderToRouteResponse(alt, departure, destination)]
       : [];
     return adaptApiRouteResponse(
-      { ...primary, alternatives, source: "mock" },
+      { ...primary, alternatives, source: "local-graph" },
       targetTime,
     );
   }
@@ -279,6 +279,23 @@ function buildRoutes(targetTime, departure = "시청", destination = "동대문"
   const fallback = fallbackRouteResponse(targetTime, departure, destination);
   return adaptApiRouteResponse(
     { ...fallback, alternatives: [], source: "mock" },
+    targetTime,
+  );
+}
+
+/**
+ * 1~8호선 로컬 노선도 그래프 경로만 (가짜 출발·도착 폴백 없음).
+ * ODsay가 9호선·신분당만 줄 때 대체용.
+ */
+function buildLocalGraphRoutes(targetTime, departure, destination) {
+  const { fast, alt } = findRouteVariants(departure, destination, targetTime);
+  if (!fast) return [];
+  const primary = finderToRouteResponse(fast, departure, destination);
+  const alternatives = alt
+    ? [finderToRouteResponse(alt, departure, destination)]
+    : [];
+  return adaptApiRouteResponse(
+    { ...primary, alternatives, source: "local-graph" },
     targetTime,
   );
 }
@@ -353,6 +370,7 @@ export {
   SLIDER_MARKS,
   TODAY_EVENTS,
   buildRoutes,
+  buildLocalGraphRoutes,
   dateToSliderIndex,
   getChartData,
   getCongestionIndexForTime,

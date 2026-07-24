@@ -19,11 +19,13 @@ export function flattenRouteStations(segments) {
       const last = out[out.length - 1];
       if (last && last.name === name) {
         last.congestionRate = st.congestionRate ?? last.congestionRate;
+        if (st.cause) last.cause = st.cause;
         continue;
       }
       out.push({
         name,
         congestionRate: st.congestionRate ?? 0,
+        cause: st.cause ?? null,
       });
     }
   }

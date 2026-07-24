@@ -4,20 +4,25 @@
  */
 
 export const ROUTE_CARD_STYLE_IDS = [
+  "headerWash",
   "leftAccent",
   "softWash",
   "haloRing",
-  "headerWash",
 ];
 
 /** @typedef {'softWash'|'leftAccent'|'haloRing'|'headerWash'} RouteCardStyleId */
 
 /** @type {Record<RouteCardStyleId, { id: RouteCardStyleId, title: string, blurb: string }>} */
 export const ROUTE_CARD_STYLE_PRESETS = {
+  headerWash: {
+    id: "headerWash",
+    title: "상단만 워시",
+    blurb: "시간·뱃지 줄만 연한 배경 (배포 기본)",
+  },
   leftAccent: {
     id: "leftAccent",
     title: "왼쪽 액센트",
-    blurb: "왼쪽 컬러 바 + 아주 옅은 배경 (배포 기본)",
+    blurb: "왼쪽 컬러 바 + 아주 옅은 배경",
   },
   softWash: {
     id: "softWash",
@@ -29,15 +34,10 @@ export const ROUTE_CARD_STYLE_PRESETS = {
     title: "할로 링",
     blurb: "뱃지색 테두리를 그림자처럼 두름",
   },
-  headerWash: {
-    id: "headerWash",
-    title: "상단만 워시",
-    blurb: "시간·뱃지 줄만 연한 배경",
-  },
 };
 
 /** 배포(prod) 고정 시안. 로컬 `#card-style`에서만 다른 시안 미리보기 가능. */
-export const DEFAULT_ROUTE_CARD_STYLE = "leftAccent";
+export const DEFAULT_ROUTE_CARD_STYLE = "headerWash";
 
 const STORAGE_KEY = "yeoyuro.routeCardStyle";
 
@@ -153,6 +153,15 @@ export function getRouteCardChrome({ badges = [], styleId = DEFAULT_ROUTE_CARD_S
         showLeftBar: false,
         leftBarColor: null,
       };
+    case "leftAccent":
+      return {
+        kind,
+        className: `${base} relative overflow-hidden bg-white pl-5`,
+        style: { background: accentFill(kind, 0.06) },
+        headerStyle: undefined,
+        showLeftBar: true,
+        leftBarColor: solid,
+      };
     case "haloRing":
       return {
         kind,
@@ -165,6 +174,7 @@ export function getRouteCardChrome({ badges = [], styleId = DEFAULT_ROUTE_CARD_S
         leftBarColor: null,
       };
     case "headerWash":
+    default:
       return {
         kind,
         className: `${base} bg-white ring-1 ring-slate-200/80`,
@@ -177,16 +187,6 @@ export function getRouteCardChrome({ badges = [], styleId = DEFAULT_ROUTE_CARD_S
         },
         showLeftBar: false,
         leftBarColor: null,
-      };
-    case "leftAccent":
-    default:
-      return {
-        kind,
-        className: `${base} relative overflow-hidden bg-white pl-5`,
-        style: { background: accentFill(kind, 0.06) },
-        headerStyle: undefined,
-        showLeftBar: true,
-        leftBarColor: solid,
       };
   }
 }

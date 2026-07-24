@@ -6,21 +6,43 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CROWD_COLORS, rateToCrowdLevel } from "@/lib/congestion";
-import { CongestionLegend } from "@/components/CongestionLegend";
+import { CROWD_COLORS, CROWD_LABELS, rateToCrowdLevel } from "@/lib/congestion";
+import { CauseChip, normalizeCause } from "@/lib/congestion-cause";
+import { CongestionLegend, CrowdBlock } from "@/components/CongestionLegend";
 import { flattenRouteStations } from "@/components/RouteCongestionStrip";
+import { formatStationLabel } from "@/lib/station-name";
+
+function mergeCauseFromPredictions(stations, route) {
+  const byName = new Map();
+  for (const p of route?.stationPredictions ?? []) {
+    const key = String(p.stationName ?? "").replace(/역$/u, "");
+    if (key && p.cause) byName.set(key, p.cause);
+  }
+  return stations.map((st) => {
+    const key = String(st.name ?? "").replace(/역$/u, "");
+    return {
+      ...st,
+      cause: normalizeCause(st.cause ?? byName.get(key)),
+    };
+  });
+}
 
 /**
  * 경로 상세용 — 지나는 역별 혼잡도 막대 (시간대별 차트와 동일 톤)
+ * 출발·도착 역에 한해 예측 원인을 CrowdBlock 옆 칩으로 표시
  */
 export function StationCongestionChart({ route, departureTime }) {
-  const stations = flattenRouteStations(route?.segments);
+  const stations = mergeCauseFromPredictions(
+    flattenRouteStations(route?.segments),
+    route,
+  );
   const data = stations.map((st) => {
     const rate = Number(st.congestionRate) || 0;
     return {
       name: st.name,
       rate,
       level: rateToCrowdLevel(rate),
+      cause: normalizeCause(st.cause),
     };
   });
 
@@ -37,6 +59,10 @@ export function StationCongestionChart({ route, departureTime }) {
 
   const many = data.length > 10;
   const chartMinWidth = many ? Math.max(320, data.length * 28) : "100%";
+  const endpoints = [
+    { role: "출발", ...data[0] },
+    ...(data.length > 1 ? [{ role: "도착", ...data[data.length - 1] }] : []),
+  ];
 
   return (
     <div className="space-y-4">
@@ -88,6 +114,27 @@ export function StationCongestionChart({ route, departureTime }) {
           </div>
         </div>
       </div>
+
+      <div className="flex flex-wrap gap-2">
+        {endpoints.map((ep) => (
+          <div
+            key={`${ep.role}-${ep.name}`}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-white px-2 py-1.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+          >
+            <span className="text-[10px] font-medium text-slate-400">{ep.role}</span>
+            <span className="text-[11px] font-semibold text-slate-700">
+              {formatStationLabel(ep.name)}
+            </span>
+            <CrowdBlock
+              level={ep.level}
+              label={CROWD_LABELS[ep.level]}
+              className="h-6 w-12 shrink-0 text-[9px]"
+            />
+            {ep.cause ? <CauseChip cause={ep.cause} /> : null}
+          </div>
+        ))}
+      </div>
+
       <CongestionLegend compact />
     </div>
   );

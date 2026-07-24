@@ -17,6 +17,13 @@ class OdsayError(Exception):
         self.code = code
 
 
+class UnsupportedLineRouteError(OdsayError):
+    """ODsay 경로는 있으나 1~8호선만으로는 이동 불가 (9호선·신분당 등)."""
+
+    def __init__(self, message: str = "1~8호선만으로 이동 가능한 경로가 없습니다."):
+        super().__init__(message, code="unsupported_lines")
+
+
 def is_configured() -> bool:
     """키가 있고 강제 목업이 아닐 때만 실호출."""
     if ODSAY_FORCE_MOCK:

@@ -80,6 +80,8 @@ class RouteStation(BaseModel):
     prob_increase: float | None = None
     prob_normal: float | None = None
     prob_decrease: float | None = None
+    cause: str | None = None  # 혼잡 증가 원인 (아침피크, 행사 등)
+    cause_prob: float | None = None
     source: str | None = None  # model | mock
 
 
@@ -127,6 +129,8 @@ class StationCongestion(BaseModel):
     prob_increase: float | None = None
     prob_normal: float | None = None
     prob_decrease: float | None = None
+    cause: str | None = None
+    cause_prob: float | None = None
     source: str | None = None
 
 
@@ -157,6 +161,8 @@ class BatchCongestionItem(BaseModel):
     station_congestion: int
     level: str
     congestion_pct: float | None = None
+    cause: str | None = None
+    cause_prob: float | None = None
     source: str | None = None
 
 

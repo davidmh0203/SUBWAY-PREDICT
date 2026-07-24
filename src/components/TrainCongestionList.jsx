@@ -2,25 +2,38 @@ import { useMemo } from "react";
 import { CongestionLegend, CrowdBlock } from "@/components/CongestionLegend";
 import { RouteLegExpandToggle } from "@/components/RouteLegExpandToggle";
 import { CROWD_COLORS, CROWD_LABELS, formatDepartureLabel, rateToCrowdLevel } from "@/lib/congestion";
+import { getCauseMeta, normalizeCause } from "@/lib/congestion-cause";
 import { buildRidingLegs } from "@/lib/route-station-groups";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
 import { getStationLineColor } from "@/lib/route-segment-colors";
 
-function CongestionRow({ stationName, overallRate, level, lineColor }) {
+function CongestionRow({ stationName, overallRate, level, lineColor, cause }) {
   const barColor = CROWD_COLORS[level] ?? CROWD_COLORS.NORMAL;
+  const causeLabel = normalizeCause(cause);
+  const causeMeta = getCauseMeta(causeLabel);
+  const CauseIcon = causeMeta?.icon;
   return (
     <div className="relative flex items-center gap-3">
-      <div className="relative flex w-20 shrink-0 items-center">
+      <div className="relative flex min-w-0 flex-1 items-center">
         <div
           className="absolute left-[9px] top-1/2 z-10 h-2.5 w-2.5 -translate-y-1/2 rounded-full border-2 border-white shadow-sm"
           style={{ backgroundColor: lineColor }}
         />
-        <span className="ml-5 truncate text-[11px] font-medium text-slate-700">
-          {stationName}
+        <span className="ml-5 flex min-w-0 items-center gap-0.5 text-[11px] font-medium text-slate-700">
+          <span className="truncate">{stationName}</span>
+          {causeLabel ? (
+            <span className="inline-flex shrink-0 items-center gap-0.5 font-normal text-slate-400">
+              (
+              {CauseIcon ? (
+                <CauseIcon className="h-2.5 w-2.5" strokeWidth={2.25} aria-hidden />
+              ) : null}
+              {causeLabel})
+            </span>
+          ) : null}
         </span>
       </div>
-      <div className="flex flex-1 items-center gap-2">
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+      <div className="flex shrink-0 items-center gap-2">
+        <div className="h-2 w-14 overflow-hidden rounded-full bg-slate-100 sm:w-20">
           <div
             className="h-full rounded-full transition-all"
             style={{
@@ -34,7 +47,7 @@ function CongestionRow({ stationName, overallRate, level, lineColor }) {
           label={CROWD_LABELS[level]}
           className="h-7 w-14 shrink-0 text-[10px]"
         />
-        <span className="w-10 shrink-0 text-right text-[11px] font-semibold tabular-nums text-slate-600">
+        <span className="w-9 shrink-0 text-right text-[11px] font-semibold tabular-nums text-slate-600">
           {overallRate}%
         </span>
       </div>
@@ -50,6 +63,7 @@ function rowFromName(rowsByName, name, fallbackColor) {
       stationName: key || name,
       overallRate: 0,
       level: rateToCrowdLevel(0),
+      cause: null,
     };
   return {
     ...row,
@@ -77,6 +91,37 @@ export function TrainCongestionList({ rows, departureTime, segments }) {
     }
     return map;
   }, [rows]);
+
+  /** 경로 전체 출발·도착에만 예측 원인 표시 */
+  const endpointKeys = useMemo(() => {
+    const keys = new Set();
+    if (legs.length) {
+      const first = String(legs[0].boarding?.name ?? "").replace(/역$/, "");
+      const last = String(legs[legs.length - 1].alighting?.name ?? "").replace(
+        /역$/,
+        "",
+      );
+      if (first) keys.add(first);
+      if (last) keys.add(last);
+      return keys;
+    }
+    const list = rows ?? [];
+    if (list.length) {
+      const first = String(list[0].stationName ?? "").replace(/역$/, "");
+      const last = String(list[list.length - 1].stationName ?? "").replace(
+        /역$/,
+        "",
+      );
+      if (first) keys.add(first);
+      if (last) keys.add(last);
+    }
+    return keys;
+  }, [legs, rows]);
+
+  const causeFor = (row) => {
+    const key = String(row.stationName ?? "").replace(/역$/, "");
+    return endpointKeys.has(key) ? row.cause : null;
+  };
 
   return (
     <div className="space-y-4">
@@ -108,6 +153,7 @@ export function TrainCongestionList({ rows, departureTime, segments }) {
                 stationName={row.stationName}
                 overallRate={row.overallRate}
                 level={row.level}
+                cause={causeFor(row)}
                 lineColor={getStationLineColor(row.stationName, segments) ?? primaryColor}
               />
             ))
@@ -125,6 +171,7 @@ export function TrainCongestionList({ rows, departureTime, segments }) {
                     stationName={boarding.stationName}
                     overallRate={boarding.overallRate}
                     level={boarding.level}
+                    cause={causeFor(boarding)}
                     lineColor={leg.lineColor}
                   />
                   {waypointRows.length > 0 && (
@@ -143,6 +190,7 @@ export function TrainCongestionList({ rows, departureTime, segments }) {
                             stationName={row.stationName}
                             overallRate={row.overallRate}
                             level={row.level}
+                            cause={null}
                             lineColor={leg.lineColor}
                           />
                         ))}
@@ -152,6 +200,7 @@ export function TrainCongestionList({ rows, departureTime, segments }) {
                     stationName={alighting.stationName}
                     overallRate={alighting.overallRate}
                     level={alighting.level}
+                    cause={causeFor(alighting)}
                     lineColor={leg.lineColor}
                   />
                 </div>

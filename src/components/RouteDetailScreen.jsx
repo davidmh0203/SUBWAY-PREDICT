@@ -11,10 +11,11 @@ import {
   buildTimelineLegs,
 } from "@/components/RouteTimelineBar";
 import { RouteCongestionStrip } from "@/components/RouteCongestionStrip";
-import { rateToCrowdLevel } from "@/lib/congestion";
+import { EndpointCauseRow } from "@/components/EndpointCauseRow";
 import { isSeoulMetroStation } from "@/lib/seoul-metro-stations";
 import { useRouteCollapse } from "@/hooks/useRouteCollapse";
 import { formatStationLabel } from "@/lib/station-name";
+import { rateToCrowdLevel } from "@/lib/congestion";
 
 /** 경로 역별 혼잡 → 리스트 rows */
 function buildCongestionRowsFromRoute(route) {
@@ -23,6 +24,7 @@ function buildCongestionRowsFromRoute(route) {
       stationName: p.stationName,
       overallRate: p.congestionRate,
       level: rateToCrowdLevel(p.congestionRate),
+      cause: p.cause ?? null,
     }));
   }
   if (route.segments?.length) {
@@ -31,6 +33,7 @@ function buildCongestionRowsFromRoute(route) {
         stationName: s.name,
         overallRate: s.congestionRate ?? 0,
         level: rateToCrowdLevel(s.congestionRate ?? 0),
+        cause: s.cause ?? null,
       })),
     );
   }
@@ -92,6 +95,7 @@ export function RouteDetailScreen({ route, departureTime, onBack }) {
                 totalTime={route.totalTime}
               />
               <RouteCongestionStrip route={route} className="mt-3" />
+              <EndpointCauseRow route={route} className="mt-2.5" />
               <p className="mb-4 mt-5 text-xs font-semibold text-slate-500">
                 경로 다이어그램
               </p>

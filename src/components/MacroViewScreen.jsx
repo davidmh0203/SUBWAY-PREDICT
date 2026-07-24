@@ -218,8 +218,14 @@ export function MacroViewScreen({
       </Button>
 
       <p className="text-center text-[10px] text-slate-400">
-        {mapViewMode === "geo" ? "카카오맵 · 뷰포트 혼잡 로딩" : "보통 초과 역 소프트 할로"} ·{" "}
-        {selectedTime} · {formatTime(form.targetTime ?? new Date())} 기준
+        {mapViewMode === "geo" ? (
+          <>
+            카카오맵 · 뷰포트 혼잡 로딩 · {formatTime(form.targetTime ?? new Date())}{" "}
+            기준
+          </>
+        ) : (
+          <>{formatTime(form.targetTime ?? new Date())} 기준</>
+        )}
       </p>
     </div>
   );
