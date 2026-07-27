@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-07-26T23:31:59.464Z",
-  "mode": "same-day",
-  "kstHour": 8,
+  "finishedAt": "2026-07-27T12:42:38.316Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 21,
   "afterHoursFrom": 18,
-  "date": "2026-07-27",
+  "date": "2026-07-28",
   "window": [
-    "2026-07-27"
+    "2026-07-28"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14218,
-    "posts": 2383
+    "events": 14222,
+    "posts": 2384
   },
   "samples": [
     {
-      "post_id": "smpa-00338706",
-      "event_date": "2026-07-27",
-      "time_raw": "07:00~17:00",
-      "place": "SK V1 라온건설 앞 <문정동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00338772",
+      "event_date": "2026-07-28",
+      "time_raw": "11:00~12:30",
+      "place": "의사당역 2出 앞 <여의도>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00338706",
-      "event_date": "2026-07-27",
-      "time_raw": "11:30~12:30",
-      "place": "금감원 앞 <여의도>",
+      "post_id": "smpa-00338772",
+      "event_date": "2026-07-28",
+      "time_raw": "15:00~16:00",
+      "place": "시의회 앞 인도 <세종대로>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00338772",
+      "event_date": "2026-07-28",
+      "time_raw": "18:00~21:00",
+      "place": "보국문로 35가길 <정릉동>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00338706",
-      "event_date": "2026-07-27",
-      "time_raw": "13:00~15:00",
-      "place": "구 효자치안센터 앞 <효자동>",
-      "personnel_raw": "150명"
-    },
-    {
-      "post_id": "smpa-00338706",
-      "event_date": "2026-07-27",
-      "time_raw": "13:00~18:00",
-      "place": "정곡빌딩 남관 앞 <서초동>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00338772",
+      "event_date": "2026-07-28",
+      "time_raw": "19:00~20:00",
+      "place": "세종호텔 앞 <명동>",
+      "personnel_raw": "200명"
     }
   ]
 }
