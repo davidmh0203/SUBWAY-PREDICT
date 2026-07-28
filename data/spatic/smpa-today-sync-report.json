@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-07-27T23:37:13.454Z",
-  "mode": "same-day",
-  "kstHour": 8,
+  "finishedAt": "2026-07-28T11:35:43.800Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 20,
   "afterHoursFrom": 18,
-  "date": "2026-07-28",
+  "date": "2026-07-29",
   "window": [
-    "2026-07-28"
+    "2026-07-29"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14222,
-    "posts": 2384
+    "events": 14226,
+    "posts": 2385
   },
   "samples": [
     {
-      "post_id": "smpa-00338772",
-      "event_date": "2026-07-28",
-      "time_raw": "11:00~12:30",
-      "place": "의사당역 2出 앞 <여의도>",
+      "post_id": "smpa-00338798",
+      "event_date": "2026-07-29",
+      "time_raw": "12:00~13:00",
+      "place": "동화면세점~원표공원 <태평로1가>",
+      "personnel_raw": "4,000명"
+    },
+    {
+      "post_id": "smpa-00338798",
+      "event_date": "2026-07-29",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 <수송동>",
+      "personnel_raw": "300명"
+    },
+    {
+      "post_id": "smpa-00338798",
+      "event_date": "2026-07-29",
+      "time_raw": "14:00~16:00",
+      "place": "시의회 앞 <-> 개풍R <태평로1가 등>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00338772",
-      "event_date": "2026-07-28",
-      "time_raw": "15:00~16:00",
-      "place": "시의회 앞 인도 <세종대로>",
+      "post_id": "smpa-00338798",
+      "event_date": "2026-07-29",
+      "time_raw": "14:00~16:30",
+      "place": "넷마블 본사 <-> 한화비즈메트로 1차 <구로3동 등>",
       "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00338772",
-      "event_date": "2026-07-28",
-      "time_raw": "18:00~21:00",
-      "place": "보국문로 35가길 <정릉동>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00338772",
-      "event_date": "2026-07-28",
-      "time_raw": "19:00~20:00",
-      "place": "세종호텔 앞 <명동>",
-      "personnel_raw": "200명"
     }
   ]
 }
