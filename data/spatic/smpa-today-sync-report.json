@@ -1,7 +1,7 @@
 {
-  "finishedAt": "2026-07-30T13:00:32.651Z",
-  "mode": "next-day-after-hours",
-  "kstHour": 22,
+  "finishedAt": "2026-07-30T15:31:16.726Z",
+  "mode": "same-day",
+  "kstHour": 0,
   "afterHoursFrom": 18,
   "date": "2026-07-31",
   "window": [
