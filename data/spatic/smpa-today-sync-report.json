@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-07-29T23:34:16.385Z",
-  "mode": "same-day",
-  "kstHour": 8,
+  "finishedAt": "2026-07-30T11:28:58.749Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 20,
   "afterHoursFrom": 18,
-  "date": "2026-07-30",
+  "date": "2026-07-31",
   "window": [
-    "2026-07-30"
+    "2026-07-31"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14229,
-    "posts": 2386
+    "events": 14233,
+    "posts": 2387
   },
   "samples": [
     {
-      "post_id": "smpa-00338834",
-      "event_date": "2026-07-30",
-      "time_raw": "11:00~13:00",
-      "place": "광화문종합금융센터 앞 로얄빌딩 < 태평로 1 가 >",
-      "personnel_raw": "70 명"
+      "post_id": "smpa-00338875",
+      "event_date": "2026-07-31",
+      "time_raw": "15:00~16:30",
+      "place": "광화문KT 앞 인도 하단 <세종로>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00338834",
-      "event_date": "2026-07-30",
-      "time_raw": "14:00~15:30",
-      "place": "현대차 본사 앞 < 양재동 >",
-      "personnel_raw": "2,500 명"
+      "post_id": "smpa-00338875",
+      "event_date": "2026-07-31",
+      "time_raw": "17:00~19:00",
+      "place": "광화문역 2出 남측 인도 <세종로>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00338834",
-      "event_date": "2026-07-30",
-      "time_raw": "14:00~17:00",
-      "place": "현대모비스 앞 < 역삼동 >",
-      "personnel_raw": "360 명"
+      "post_id": "smpa-00338875",
+      "event_date": "2026-07-31",
+      "time_raw": "18:00~19:00",
+      "place": "소녀상 앞 인도 <수송동>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00338875",
+      "event_date": "2026-07-31",
+      "time_raw": "19:00~21:30",
+      "place": "국회의사당역 2出 <-> 與野 당사 <의사당대로 등>",
+      "personnel_raw": "200명"
     }
   ]
 }
