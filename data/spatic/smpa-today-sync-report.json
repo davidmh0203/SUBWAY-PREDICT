@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-07-30T15:31:16.726Z",
-  "mode": "same-day",
-  "kstHour": 0,
+  "finishedAt": "2026-07-31T11:38:49.679Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 20,
   "afterHoursFrom": 18,
-  "date": "2026-07-31",
+  "date": "2026-08-01",
   "window": [
-    "2026-07-31"
+    "2026-08-01"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14233,
-    "posts": 2387
+    "events": 14239,
+    "posts": 2388
   },
   "samples": [
     {
-      "post_id": "smpa-00338875",
-      "event_date": "2026-07-31",
-      "time_raw": "15:00~16:30",
-      "place": "광화문KT 앞 인도 하단 <세종로>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00338915",
+      "event_date": "2026-08-01",
+      "time_raw": "12:30~16:00",
+      "place": "동화면세점 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00338875",
-      "event_date": "2026-07-31",
-      "time_raw": "17:00~19:00",
-      "place": "광화문역 2出 남측 인도 <세종로>",
+      "post_id": "smpa-00338915",
+      "event_date": "2026-08-01",
+      "time_raw": "13:00~16:30",
+      "place": "영추문 -> 송현공원 남측 <효자동 등>",
+      "personnel_raw": "150명"
+    },
+    {
+      "post_id": "smpa-00338915",
+      "event_date": "2026-08-01",
+      "time_raw": "14:00~16:00",
+      "place": "국회의사당역 2出 앞 <여의도>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00338915",
+      "event_date": "2026-08-01",
+      "time_raw": "15:30~18:00",
+      "place": "잠실역 3出 -> 올림픽공원역 2出 <송파대로 등>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00338915",
+      "event_date": "2026-08-01",
+      "time_raw": "18:00~21:00",
+      "place": "서초역 8出 -> CGV 강남 <강남대로 등>",
+      "personnel_raw": "5,000명"
+    },
+    {
+      "post_id": "smpa-00338915",
+      "event_date": "2026-08-01",
+      "time_raw": "18:30~20:30",
+      "place": "홍대입구역 7出 <-> 홍대입구R <양화로 등>",
       "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00338875",
-      "event_date": "2026-07-31",
-      "time_raw": "18:00~19:00",
-      "place": "소녀상 앞 인도 <수송동>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00338875",
-      "event_date": "2026-07-31",
-      "time_raw": "19:00~21:30",
-      "place": "국회의사당역 2出 <-> 與野 당사 <의사당대로 등>",
-      "personnel_raw": "200명"
     }
   ]
 }
