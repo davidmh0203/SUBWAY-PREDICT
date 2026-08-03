@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-02T23:31:26.568Z",
+  "finishedAt": "2026-08-03T16:02:11.979Z",
   "mode": "same-day",
-  "kstHour": 8,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-08-03",
+  "date": "2026-08-04",
   "window": [
-    "2026-08-03"
+    "2026-08-04"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14246,
-    "posts": 2390
+    "events": 14250,
+    "posts": 2391
   },
   "samples": [
     {
-      "post_id": "smpa-00338917",
-      "event_date": "2026-08-03",
-      "time_raw": "10:00~11:00",
-      "place": "한국재정정보원 앞 <세종대로>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00338993",
+      "event_date": "2026-08-04",
+      "time_raw": "10:00~14:00",
+      "place": "서울시청 별관 앞 인도 <정동>",
+      "personnel_raw": "50명"
     },
     {
-      "post_id": "smpa-00338917",
-      "event_date": "2026-08-03",
-      "time_raw": "11:30~13:00",
-      "place": "교보빌딩 <-> 광화문R <세종대로 등>",
+      "post_id": "smpa-00338993",
+      "event_date": "2026-08-04",
+      "time_raw": "13:30~15:00",
+      "place": "구 효자치안센터 앞 <효자동>",
+      "personnel_raw": "50명"
+    },
+    {
+      "post_id": "smpa-00338993",
+      "event_date": "2026-08-04",
+      "time_raw": "15:00~16:00",
+      "place": "시의회 앞 인도 <세종대로>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00338917",
-      "event_date": "2026-08-03",
-      "time_raw": "13:00~15:00",
-      "place": "경찰청 정문 앞 인도 <미근동>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00338917",
-      "event_date": "2026-08-03",
-      "time_raw": "16:30~18:00",
-      "place": "금감원 앞 <여의도>",
-      "personnel_raw": "99명"
+      "post_id": "smpa-00338993",
+      "event_date": "2026-08-04",
+      "time_raw": "15:00~16:30",
+      "place": "SK서린빌딩 앞 <서린동>",
+      "personnel_raw": "50명"
     }
   ]
 }
