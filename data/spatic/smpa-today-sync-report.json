@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-04T23:35:11.157Z",
+  "finishedAt": "2026-08-05T23:31:13.958Z",
   "mode": "same-day",
   "kstHour": 8,
   "afterHoursFrom": 18,
-  "date": "2026-08-05",
+  "date": "2026-08-06",
   "window": [
-    "2026-08-05"
+    "2026-08-06"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14254,
-    "posts": 2392
+    "events": 14258,
+    "posts": 2393
   },
   "samples": [
     {
-      "post_id": "smpa-00339039",
-      "event_date": "2026-08-05",
-      "time_raw": "10:00~14:00",
-      "place": "서울시청 별관 앞 인도 <정동>",
-      "personnel_raw": "50명"
+      "post_id": "smpa-00339087",
+      "event_date": "2026-08-06",
+      "time_raw": "11:00~13:00",
+      "place": "청량리역 5 出 -> 한미빌딩 < 청량리동 >",
+      "personnel_raw": "30 명"
     },
     {
-      "post_id": "smpa-00339039",
-      "event_date": "2026-08-05",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00339087",
+      "event_date": "2026-08-06",
+      "time_raw": "15:00~16:00",
+      "place": "시의회 앞 < 세종대로 >",
+      "personnel_raw": "300 명"
     },
     {
-      "post_id": "smpa-00339039",
-      "event_date": "2026-08-05",
-      "time_raw": "12:00~14:30",
-      "place": "국민의힘 당사 -> 민주당사 <국회대로 등>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339087",
+      "event_date": "2026-08-06",
+      "time_raw": "16:00~17:30",
+      "place": "현대모비스 앞 < 역삼동 >",
+      "personnel_raw": "360 명"
     },
     {
-      "post_id": "smpa-00339039",
-      "event_date": "2026-08-05",
-      "time_raw": "14:30~16:00",
-      "place": "시의회 앞 인도 <태평로1가>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339087",
+      "event_date": "2026-08-06",
+      "time_raw": "18:00~19:00",
+      "place": "소녀상 앞 < 수송동 >",
+      "personnel_raw": "100 명"
     }
   ]
 }
