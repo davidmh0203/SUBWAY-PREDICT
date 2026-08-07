@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-08-05T23:31:13.958Z",
-  "mode": "same-day",
-  "kstHour": 8,
+  "finishedAt": "2026-08-07T10:25:51.960Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-06",
+  "date": "2026-08-08",
   "window": [
-    "2026-08-06"
+    "2026-08-08"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14258,
-    "posts": 2393
+    "events": 14264,
+    "posts": 2394
   },
   "samples": [
     {
-      "post_id": "smpa-00339087",
-      "event_date": "2026-08-06",
-      "time_raw": "11:00~13:00",
-      "place": "청량리역 5 出 -> 한미빌딩 < 청량리동 >",
-      "personnel_raw": "30 명"
+      "post_id": "smpa-00339174",
+      "event_date": "2026-08-08",
+      "time_raw": "11:00~16:00",
+      "place": "사랑채 동측 건너편 -> 탑골공원 <사직로 등>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00339087",
-      "event_date": "2026-08-06",
-      "time_raw": "15:00~16:00",
-      "place": "시의회 앞 < 세종대로 >",
-      "personnel_raw": "300 명"
+      "post_id": "smpa-00339174",
+      "event_date": "2026-08-08",
+      "time_raw": "12:30~16:00",
+      "place": "동화면세점 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00339087",
-      "event_date": "2026-08-06",
-      "time_raw": "16:00~17:30",
-      "place": "현대모비스 앞 < 역삼동 >",
-      "personnel_raw": "360 명"
+      "post_id": "smpa-00339174",
+      "event_date": "2026-08-08",
+      "time_raw": "14:00~17:00",
+      "place": "산업은행 정문 앞 <여의도>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339087",
-      "event_date": "2026-08-06",
-      "time_raw": "18:00~19:00",
-      "place": "소녀상 앞 < 수송동 >",
-      "personnel_raw": "100 명"
+      "post_id": "smpa-00339174",
+      "event_date": "2026-08-08",
+      "time_raw": "17:00~19:00",
+      "place": "SK서린빌딩 <-> 광화문R <서린동 등>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00339174",
+      "event_date": "2026-08-08",
+      "time_raw": "17:30~20:00",
+      "place": "석촌호수 서호 -> 올림픽공원 남2문 <오금로 등>",
+      "personnel_raw": "200명"
+    },
+    {
+      "post_id": "smpa-00339174",
+      "event_date": "2026-08-08",
+      "time_raw": "18:00~21:00",
+      "place": "서초역 8出 -> CGV 강남 <강남대로 등>",
+      "personnel_raw": "5,000명"
     }
   ]
 }
