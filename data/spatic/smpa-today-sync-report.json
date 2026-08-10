@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-08-09T14:06:35.523Z",
+  "finishedAt": "2026-08-10T10:43:18.749Z",
   "mode": "next-day-after-hours",
-  "kstHour": 23,
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-10",
+  "date": "2026-08-11",
   "window": [
-    "2026-08-10"
+    "2026-08-11"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14271,
-    "posts": 2396
+    "events": 14277,
+    "posts": 2397
   },
   "samples": [
     {
-      "post_id": "smpa-00339177",
-      "event_date": "2026-08-10",
-      "time_raw": "07:00~16:00",
-      "place": "중흥건설 앞 <당산동>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00339236",
+      "event_date": "2026-08-11",
+      "time_raw": "10:00~11:00",
+      "place": "사랑채 동측 건너편 < 효자동 >",
+      "personnel_raw": "200 명"
     },
     {
-      "post_id": "smpa-00339177",
-      "event_date": "2026-08-10",
-      "time_raw": "08:00~19:00",
-      "place": "감사원 앞 <삼청동>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00339236",
+      "event_date": "2026-08-11",
+      "time_raw": "10:00~12:00",
+      "place": "사랑채 동측 건너편 고궁박물관 남측 < 효자동 >",
+      "personnel_raw": "300 명"
     },
     {
-      "post_id": "smpa-00339177",
-      "event_date": "2026-08-10",
-      "time_raw": "11:00~12:00",
-      "place": "한국재정정보원 앞 인도 및 2개 차로 <세종대로>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00339236",
+      "event_date": "2026-08-11",
+      "time_raw": "11:30~12:30",
+      "place": "KB 국민은행 본관 앞 인도 < 여의도 >",
+      "personnel_raw": "50 명"
     },
     {
-      "post_id": "smpa-00339177",
-      "event_date": "2026-08-10",
-      "time_raw": "17:00~21:00",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00339236",
+      "event_date": "2026-08-11",
+      "time_raw": "15:00~16:00",
+      "place": "서울시의회 앞 인도 < 세종로 >",
+      "personnel_raw": "500 명"
+    },
+    {
+      "post_id": "smpa-00339236",
+      "event_date": "2026-08-11",
+      "time_raw": "17:00~19:00",
+      "place": "동화면세점 앞 인도 < 세종로 >",
+      "personnel_raw": "100 명"
+    },
+    {
+      "post_id": "smpa-00339236",
+      "event_date": "2026-08-11",
+      "time_raw": "19:00~20:30",
+      "place": "산업은행 측면 2 개 차로 < 여의도 >",
+      "personnel_raw": "1,500 명"
     }
   ]
 }
