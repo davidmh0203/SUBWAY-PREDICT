@@ -1,68 +1,47 @@
 {
-  "finishedAt": "2026-08-10T10:43:18.749Z",
+  "finishedAt": "2026-08-11T10:24:45.974Z",
   "mode": "next-day-after-hours",
   "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-11",
+  "date": "2026-08-12",
   "window": [
-    "2026-08-11"
+    "2026-08-12"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 6,
-  "withPersonnel": 6,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 6,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14277,
-    "posts": 2397
+    "events": 14280,
+    "posts": 2398
   },
   "samples": [
     {
-      "post_id": "smpa-00339236",
-      "event_date": "2026-08-11",
-      "time_raw": "10:00~11:00",
-      "place": "사랑채 동측 건너편 < 효자동 >",
-      "personnel_raw": "200 명"
+      "post_id": "smpa-00339275",
+      "event_date": "2026-08-12",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 인도 및 3 개 차로 < 수송동 >",
+      "personnel_raw": "600 명"
     },
     {
-      "post_id": "smpa-00339236",
-      "event_date": "2026-08-11",
-      "time_raw": "10:00~12:00",
-      "place": "사랑채 동측 건너편 고궁박물관 남측 < 효자동 >",
-      "personnel_raw": "300 명"
-    },
-    {
-      "post_id": "smpa-00339236",
-      "event_date": "2026-08-11",
-      "time_raw": "11:30~12:30",
-      "place": "KB 국민은행 본관 앞 인도 < 여의도 >",
-      "personnel_raw": "50 명"
-    },
-    {
-      "post_id": "smpa-00339236",
-      "event_date": "2026-08-11",
-      "time_raw": "15:00~16:00",
-      "place": "서울시의회 앞 인도 < 세종로 >",
+      "post_id": "smpa-00339275",
+      "event_date": "2026-08-12",
+      "time_raw": "18:00~19:00",
+      "place": "청계천로 일대 ( 무교동사거리 ~ 광교 ) < 청계천로 >",
       "personnel_raw": "500 명"
     },
     {
-      "post_id": "smpa-00339236",
-      "event_date": "2026-08-11",
-      "time_raw": "17:00~19:00",
-      "place": "동화면세점 앞 인도 < 세종로 >",
-      "personnel_raw": "100 명"
-    },
-    {
-      "post_id": "smpa-00339236",
-      "event_date": "2026-08-11",
-      "time_raw": "19:00~20:30",
-      "place": "산업은행 측면 2 개 차로 < 여의도 >",
-      "personnel_raw": "1,500 명"
+      "post_id": "smpa-00339275",
+      "event_date": "2026-08-12",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞 < 오류동 >",
+      "personnel_raw": "500 명"
     }
   ]
 }
