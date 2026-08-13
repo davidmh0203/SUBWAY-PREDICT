@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-12T23:13:47.104Z",
-  "mode": "same-day",
-  "kstHour": 8,
+  "finishedAt": "2026-08-13T10:35:55.980Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-13",
+  "date": "2026-08-14",
   "window": [
-    "2026-08-13"
+    "2026-08-14"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14284,
-    "posts": 2399
+    "events": 14288,
+    "posts": 2400
   },
   "samples": [
     {
-      "post_id": "smpa-00339311",
-      "event_date": "2026-08-13",
-      "time_raw": "10:00~11:00",
-      "place": "쿠팡 본사 앞 < 자양동 >",
-      "personnel_raw": "500 명"
+      "post_id": "smpa-00339358",
+      "event_date": "2026-08-14",
+      "time_raw": "09:30~10:30",
+      "place": "여의도 IFC2 앞 <여의도>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00339311",
-      "event_date": "2026-08-13",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 < 오류동 >",
-      "personnel_raw": "500 명"
+      "post_id": "smpa-00339358",
+      "event_date": "2026-08-14",
+      "time_raw": "16:30~18:00",
+      "place": "용산역 광장 앞 <한강로동>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339311",
-      "event_date": "2026-08-13",
-      "time_raw": "10:30~13:00",
-      "place": "소녀상 건너편 ~ 종로구청 남측 < 중학동 >",
-      "personnel_raw": "300 명"
+      "post_id": "smpa-00339358",
+      "event_date": "2026-08-14",
+      "time_raw": "19:00~21:00",
+      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
+      "personnel_raw": "600명"
     },
     {
-      "post_id": "smpa-00339311",
-      "event_date": "2026-08-13",
-      "time_raw": "19:00~20:00",
-      "place": "소녀상 앞 인도 및 2 개 차로 < 수송동 >",
-      "personnel_raw": "1,000 명"
+      "post_id": "smpa-00339358",
+      "event_date": "2026-08-14",
+      "time_raw": "19:30~21:30",
+      "place": "시청 동편 인도 및 2개 차로 <태평로1가>",
+      "personnel_raw": "10,000명"
     }
   ]
 }
