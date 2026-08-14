@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-08-13T23:20:13.088Z",
-  "mode": "same-day",
-  "kstHour": 8,
+  "finishedAt": "2026-08-14T10:33:01.999Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-14",
+  "date": "2026-08-15",
   "window": [
-    "2026-08-14"
+    "2026-08-15"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14288,
-    "posts": 2400
+    "events": 14294,
+    "posts": 2401
   },
   "samples": [
     {
-      "post_id": "smpa-00339358",
-      "event_date": "2026-08-14",
-      "time_raw": "09:30~10:30",
-      "place": "여의도 IFC2 앞 <여의도>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00339402",
+      "event_date": "2026-08-15",
+      "time_raw": "11:30~17:00",
+      "place": "동화면세점 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00339358",
-      "event_date": "2026-08-14",
-      "time_raw": "16:30~18:00",
-      "place": "용산역 광장 앞 <한강로동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339402",
+      "event_date": "2026-08-15",
+      "time_raw": "11:30~13:30",
+      "place": "마로니에공원 -> 서린R <대학로 등>",
+      "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00339358",
-      "event_date": "2026-08-14",
-      "time_raw": "19:00~21:00",
-      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
-      "personnel_raw": "600명"
+      "post_id": "smpa-00339402",
+      "event_date": "2026-08-15",
+      "time_raw": "12:00~18:00",
+      "place": "서울역 4出 -> 종로3가역 14出 <퇴계로 등>",
+      "personnel_raw": "2,000명"
     },
     {
-      "post_id": "smpa-00339358",
-      "event_date": "2026-08-14",
-      "time_raw": "19:30~21:30",
-      "place": "시청 동편 인도 및 2개 차로 <태평로1가>",
+      "post_id": "smpa-00339402",
+      "event_date": "2026-08-15",
+      "time_raw": "14:00~16:00",
+      "place": "송현공원 앞 -> 숭례문 <송현동 등>",
+      "personnel_raw": "3,000명"
+    },
+    {
+      "post_id": "smpa-00339402",
+      "event_date": "2026-08-15",
+      "time_raw": "14:30~17:00",
+      "place": "광화문R -> 숭례문R <세종대로 등>",
       "personnel_raw": "10,000명"
+    },
+    {
+      "post_id": "smpa-00339402",
+      "event_date": "2026-08-15",
+      "time_raw": "15:00~16:30",
+      "place": "효령빌딩 -> 서울역광장 <세종대로 등>",
+      "personnel_raw": "700명"
     }
   ]
 }
