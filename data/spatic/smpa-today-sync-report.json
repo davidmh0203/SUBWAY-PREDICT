@@ -1,47 +1,40 @@
 {
-  "finishedAt": "2026-08-15T22:52:26.468Z",
-  "mode": "same-day",
-  "kstHour": 7,
+  "finishedAt": "2026-08-16T11:41:34.919Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 20,
   "afterHoursFrom": 18,
-  "date": "2026-08-16",
+  "date": "2026-08-17",
   "window": [
-    "2026-08-16"
+    "2026-08-17"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 2,
+  "withPersonnel": 2,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 2,
   "totals": {
-    "events": 14297,
-    "posts": 2402
+    "events": 14299,
+    "posts": 2403
   },
   "samples": [
     {
-      "post_id": "smpa-00339405",
-      "event_date": "2026-08-16",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00339406",
+      "event_date": "2026-08-17",
+      "time_raw": "11:00~14:00",
+      "place": "혼다코리아 앞 인도 <대치동>",
+      "personnel_raw": "69명"
     },
     {
-      "post_id": "smpa-00339405",
-      "event_date": "2026-08-16",
-      "time_raw": "11:00~13:00",
-      "place": "동화면세점 앞 인도 <신문로1가 등>",
-      "personnel_raw": "10,000명"
-    },
-    {
-      "post_id": "smpa-00339405",
-      "event_date": "2026-08-16",
-      "time_raw": "14:00~16:30",
-      "place": "보신각 앞 <관철동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339406",
+      "event_date": "2026-08-17",
+      "time_raw": "18:00~22:00",
+      "place": "홍대레드로드 R2 앞 <서교동>",
+      "personnel_raw": "50명"
     }
   ]
 }
