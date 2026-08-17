@@ -1,40 +1,54 @@
 {
-  "finishedAt": "2026-08-16T22:49:29.078Z",
-  "mode": "same-day",
-  "kstHour": 7,
+  "finishedAt": "2026-08-17T10:05:38.830Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-17",
+  "date": "2026-08-18",
   "window": [
-    "2026-08-17"
+    "2026-08-18"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 2,
-  "withPersonnel": 2,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 2,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14299,
-    "posts": 2403
+    "events": 14303,
+    "posts": 2404
   },
   "samples": [
     {
-      "post_id": "smpa-00339406",
-      "event_date": "2026-08-17",
-      "time_raw": "11:00~14:00",
-      "place": "혼다코리아 앞 인도 <대치동>",
-      "personnel_raw": "69명"
+      "post_id": "smpa-00339412",
+      "event_date": "2026-08-18",
+      "time_raw": "08:00~10:00",
+      "place": "LH서울본부 앞 인도 <논현동>",
+      "personnel_raw": "20명"
     },
     {
-      "post_id": "smpa-00339406",
-      "event_date": "2026-08-17",
-      "time_raw": "18:00~22:00",
-      "place": "홍대레드로드 R2 앞 <서교동>",
-      "personnel_raw": "50명"
+      "post_id": "smpa-00339412",
+      "event_date": "2026-08-18",
+      "time_raw": "09:00~10:30",
+      "place": "나루뜰공원 內 <자양동>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00339412",
+      "event_date": "2026-08-18",
+      "time_raw": "11:00~13:00",
+      "place": "한국재정정보원 앞 -> 브라운스톤남산 <세종대로, 후암동 등>",
+      "personnel_raw": "3,000명"
+    },
+    {
+      "post_id": "smpa-00339412",
+      "event_date": "2026-08-18",
+      "time_raw": "13:00~16:00",
+      "place": "한국노총 앞 <여의도>",
+      "personnel_raw": "500명"
     }
   ]
 }
