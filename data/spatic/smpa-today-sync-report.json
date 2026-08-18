@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-17T22:52:25.877Z",
+  "finishedAt": "2026-08-18T22:53:51.267Z",
   "mode": "same-day",
   "kstHour": 7,
   "afterHoursFrom": 18,
-  "date": "2026-08-18",
+  "date": "2026-08-19",
   "window": [
-    "2026-08-18"
+    "2026-08-19"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,36 +18,36 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14303,
-    "posts": 2404
+    "events": 14307,
+    "posts": 2405
   },
   "samples": [
     {
-      "post_id": "smpa-00339412",
-      "event_date": "2026-08-18",
-      "time_raw": "08:00~10:00",
-      "place": "LH서울본부 앞 인도 <논현동>",
-      "personnel_raw": "20명"
+      "post_id": "smpa-00339468",
+      "event_date": "2026-08-19",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 인도 <수송동>",
+      "personnel_raw": "600명"
     },
     {
-      "post_id": "smpa-00339412",
-      "event_date": "2026-08-18",
-      "time_raw": "09:00~10:30",
-      "place": "나루뜰공원 內 <자양동>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00339468",
+      "event_date": "2026-08-19",
+      "time_raw": "13:00~15:00",
+      "place": "한국노총 앞 <여의도>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339412",
-      "event_date": "2026-08-18",
-      "time_raw": "11:00~13:00",
-      "place": "한국재정정보원 앞 -> 브라운스톤남산 <세종대로, 후암동 등>",
+      "post_id": "smpa-00339468",
+      "event_date": "2026-08-19",
+      "time_raw": "15:30~16:30",
+      "place": "한국재정정보원 앞 인도 <남대문로5가>",
       "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00339412",
-      "event_date": "2026-08-18",
-      "time_raw": "13:00~16:00",
-      "place": "한국노총 앞 <여의도>",
+      "post_id": "smpa-00339468",
+      "event_date": "2026-08-19",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
     }
   ]
