@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-18T22:53:51.267Z",
-  "mode": "same-day",
-  "kstHour": 7,
+  "finishedAt": "2026-08-19T09:58:33.109Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 18,
   "afterHoursFrom": 18,
-  "date": "2026-08-19",
+  "date": "2026-08-20",
   "window": [
-    "2026-08-19"
+    "2026-08-20"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14307,
-    "posts": 2405
+    "events": 14311,
+    "posts": 2406
   },
   "samples": [
     {
-      "post_id": "smpa-00339468",
-      "event_date": "2026-08-19",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 인도 <수송동>",
-      "personnel_raw": "600명"
+      "post_id": "smpa-00339499",
+      "event_date": "2026-08-20",
+      "time_raw": "09:30~11:30",
+      "place": "정곡빌딩 -> 삼성전자 서초사옥 <서초동 등>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00339468",
-      "event_date": "2026-08-19",
-      "time_raw": "13:00~15:00",
-      "place": "한국노총 앞 <여의도>",
+      "post_id": "smpa-00339499",
+      "event_date": "2026-08-20",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339468",
-      "event_date": "2026-08-19",
-      "time_raw": "15:30~16:30",
-      "place": "한국재정정보원 앞 인도 <남대문로5가>",
+      "post_id": "smpa-00339499",
+      "event_date": "2026-08-20",
+      "time_raw": "13:00~16:00",
+      "place": "프레스센터 -> 사랑채 동측 건너편 <세종대로 등>",
       "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00339468",
-      "event_date": "2026-08-19",
-      "time_raw": "19:00~20:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339499",
+      "event_date": "2026-08-20",
+      "time_raw": "14:00~16:00",
+      "place": "수협 본사 앞 인도 <신천동>",
+      "personnel_raw": "200명"
     }
   ]
 }
