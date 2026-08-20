@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-19T22:53:26.715Z",
-  "mode": "same-day",
-  "kstHour": 7,
+  "finishedAt": "2026-08-20T09:59:45.626Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 18,
   "afterHoursFrom": 18,
-  "date": "2026-08-20",
+  "date": "2026-08-21",
   "window": [
-    "2026-08-20"
+    "2026-08-21"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14311,
-    "posts": 2406
+    "events": 14315,
+    "posts": 2407
   },
   "samples": [
     {
-      "post_id": "smpa-00339499",
-      "event_date": "2026-08-20",
-      "time_raw": "09:30~11:30",
-      "place": "정곡빌딩 -> 삼성전자 서초사옥 <서초동 등>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00339499",
-      "event_date": "2026-08-20",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
+      "post_id": "smpa-00339526",
+      "event_date": "2026-08-21",
+      "time_raw": "11:00~12:40",
+      "place": "농협중앙회 -> 사랑채 동측 건너편 <효자로 등>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339499",
-      "event_date": "2026-08-20",
-      "time_raw": "13:00~16:00",
-      "place": "프레스센터 -> 사랑채 동측 건너편 <세종대로 등>",
+      "post_id": "smpa-00339526",
+      "event_date": "2026-08-21",
+      "time_raw": "14:00~15:00",
+      "place": "현대차 본사 앞 <양재동>",
+      "personnel_raw": "4,000명"
+    },
+    {
+      "post_id": "smpa-00339526",
+      "event_date": "2026-08-21",
+      "time_raw": "15:00~19:00",
+      "place": "삼성전자 서초사옥 <-> 강남역 8出·6出 <서초동 등>",
       "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00339499",
-      "event_date": "2026-08-20",
-      "time_raw": "14:00~16:00",
-      "place": "수협 본사 앞 인도 <신천동>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00339526",
+      "event_date": "2026-08-21",
+      "time_raw": "16:00~17:00",
+      "place": "사랑채 동측 건너편 -> 진명R <효자로>",
+      "personnel_raw": "500명"
     }
   ]
 }
