@@ -1,54 +1,61 @@
 {
-  "finishedAt": "2026-08-20T22:57:17.805Z",
+  "finishedAt": "2026-08-21T22:53:37.421Z",
   "mode": "same-day",
   "kstHour": 7,
   "afterHoursFrom": 18,
-  "date": "2026-08-21",
+  "date": "2026-08-22",
   "window": [
-    "2026-08-21"
+    "2026-08-22"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 5,
+  "withPersonnel": 5,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 5,
   "totals": {
-    "events": 14315,
-    "posts": 2407
+    "events": 14320,
+    "posts": 2408
   },
   "samples": [
     {
-      "post_id": "smpa-00339526",
-      "event_date": "2026-08-21",
-      "time_raw": "11:00~12:40",
-      "place": "농협중앙회 -> 사랑채 동측 건너편 <효자로 등>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339562",
+      "event_date": "2026-08-22",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점·원표공원 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00339526",
-      "event_date": "2026-08-21",
-      "time_raw": "14:00~15:00",
-      "place": "현대차 본사 앞 <양재동>",
-      "personnel_raw": "4,000명"
-    },
-    {
-      "post_id": "smpa-00339526",
-      "event_date": "2026-08-21",
-      "time_raw": "15:00~19:00",
-      "place": "삼성전자 서초사옥 <-> 강남역 8出·6出 <서초동 등>",
+      "post_id": "smpa-00339562",
+      "event_date": "2026-08-22",
+      "time_raw": "13:30~19:00",
+      "place": "마로니에공원 -> 사랑채 동측 건너편 <율곡로 등>",
       "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00339526",
-      "event_date": "2026-08-21",
-      "time_raw": "16:00~17:00",
-      "place": "사랑채 동측 건너편 -> 진명R <효자로>",
+      "post_id": "smpa-00339562",
+      "event_date": "2026-08-22",
+      "time_raw": "16:00~18:00",
+      "place": "교보빌딩 -> 명동역 6出 <세종대로 등>",
       "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00339562",
+      "event_date": "2026-08-22",
+      "time_raw": "17:00~19:30",
+      "place": "SK서린빌딩 -> 회현R -> SK서린빌딩 <청계남로 등>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00339562",
+      "event_date": "2026-08-22",
+      "time_raw": "18:00~21:00",
+      "place": "서초역 8出 -> CGV 강남 <강남대로 등>",
+      "personnel_raw": "5,000명"
     }
   ]
 }
