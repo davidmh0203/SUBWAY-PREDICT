@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-23T11:42:13.815Z",
+  "finishedAt": "2026-08-24T10:10:24.800Z",
   "mode": "next-day-after-hours",
-  "kstHour": 20,
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-24",
+  "date": "2026-08-25",
   "window": [
-    "2026-08-24"
+    "2026-08-25"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14327,
-    "posts": 2410
+    "events": 14331,
+    "posts": 2411
   },
   "samples": [
     {
-      "post_id": "smpa-00339564",
-      "event_date": "2026-08-24",
-      "time_raw": "10:00~11:00",
+      "post_id": "smpa-00339621",
+      "event_date": "2026-08-25",
+      "time_raw": "11:00~12:00",
+      "place": "사랑채 동측 건너편 인도 <효자동>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00339621",
+      "event_date": "2026-08-25",
+      "time_raw": "14:00~16:00",
       "place": "시의회 앞 인도 <태평로1가>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339564",
-      "event_date": "2026-08-24",
-      "time_raw": "13:00~15:00",
-      "place": "구 효자치안센터 앞 <효자동>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00339564",
-      "event_date": "2026-08-24",
+      "post_id": "smpa-00339621",
+      "event_date": "2026-08-25",
       "time_raw": "14:00~15:00",
       "place": "마포구청 앞 <성산동>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00339564",
-      "event_date": "2026-08-24",
-      "time_raw": "16:30~18:00",
-      "place": "금감원 앞 <여의도>",
-      "personnel_raw": "99명"
+      "post_id": "smpa-00339621",
+      "event_date": "2026-08-25",
+      "time_raw": "19:00~20:00",
+      "place": "세종호텔 앞 <명동>",
+      "personnel_raw": "200명"
     }
   ]
 }
