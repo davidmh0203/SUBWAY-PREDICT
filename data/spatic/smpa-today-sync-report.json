@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-24T22:55:52.494Z",
-  "mode": "same-day",
-  "kstHour": 7,
+  "finishedAt": "2026-08-25T10:00:44.999Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-25",
+  "date": "2026-08-26",
   "window": [
-    "2026-08-25"
+    "2026-08-26"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14331,
-    "posts": 2411
+    "events": 14335,
+    "posts": 2412
   },
   "samples": [
     {
-      "post_id": "smpa-00339621",
-      "event_date": "2026-08-25",
-      "time_raw": "11:00~12:00",
-      "place": "사랑채 동측 건너편 인도 <효자동>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00339678",
+      "event_date": "2026-08-26",
+      "time_raw": "14:00~16:00",
+      "place": "해성빌딩 앞 <대치동>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00339621",
-      "event_date": "2026-08-25",
-      "time_raw": "14:00~16:00",
-      "place": "시의회 앞 인도 <태평로1가>",
+      "post_id": "smpa-00339678",
+      "event_date": "2026-08-26",
+      "time_raw": "14:00~18:00",
+      "place": "전쟁기념관 상징탑 앞 인도 <용산동1가>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339621",
-      "event_date": "2026-08-25",
-      "time_raw": "14:00~15:00",
-      "place": "마포구청 앞 <성산동>",
+      "post_id": "smpa-00339678",
+      "event_date": "2026-08-26",
+      "time_raw": "15:00~18:00",
+      "place": "중부교육청 -> 서울시교육청 <효제동 등>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00339621",
-      "event_date": "2026-08-25",
+      "post_id": "smpa-00339678",
+      "event_date": "2026-08-26",
       "time_raw": "19:00~20:00",
-      "place": "세종호텔 앞 <명동>",
-      "personnel_raw": "200명"
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
