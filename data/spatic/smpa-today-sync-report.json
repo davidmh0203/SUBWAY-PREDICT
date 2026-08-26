@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-25T22:57:34.530Z",
-  "mode": "same-day",
-  "kstHour": 7,
+  "finishedAt": "2026-08-26T10:05:29.048Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 19,
   "afterHoursFrom": 18,
-  "date": "2026-08-26",
+  "date": "2026-08-27",
   "window": [
-    "2026-08-26"
+    "2026-08-27"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14335,
-    "posts": 2412
+    "events": 14339,
+    "posts": 2413
   },
   "samples": [
     {
-      "post_id": "smpa-00339678",
-      "event_date": "2026-08-26",
-      "time_raw": "14:00~16:00",
-      "place": "해성빌딩 앞 <대치동>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00339678",
-      "event_date": "2026-08-26",
-      "time_raw": "14:00~18:00",
-      "place": "전쟁기념관 상징탑 앞 인도 <용산동1가>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00339678",
-      "event_date": "2026-08-26",
-      "time_raw": "15:00~18:00",
-      "place": "중부교육청 -> 서울시교육청 <효제동 등>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00339678",
-      "event_date": "2026-08-26",
-      "time_raw": "19:00~20:00",
+      "post_id": "smpa-00339720",
+      "event_date": "2026-08-27",
+      "time_raw": "10:00~11:00",
       "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00339720",
+      "event_date": "2026-08-27",
+      "time_raw": "13:00~18:00",
+      "place": "정곡빌딩 남관 앞 <서초동>",
+      "personnel_raw": "800명"
+    },
+    {
+      "post_id": "smpa-00339720",
+      "event_date": "2026-08-27",
+      "time_raw": "14:00~16:00",
+      "place": "해남빌딩 앞 <태평로>",
+      "personnel_raw": "499명"
+    },
+    {
+      "post_id": "smpa-00339720",
+      "event_date": "2026-08-27",
+      "time_raw": "14:00~15:40",
+      "place": "마포구청 <-> 망원역 1出 <월드컵로>",
+      "personnel_raw": "100명"
     }
   ]
 }
