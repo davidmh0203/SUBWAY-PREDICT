@@ -1,54 +1,25 @@
 {
-  "finishedAt": "2026-08-27T03:30:11.389Z",
+  "finishedAt": "2026-08-27T19:55:51.014Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-08-27",
+  "date": "2026-08-28",
   "window": [
-    "2026-08-27"
+    "2026-08-28"
   ],
   "source": "smpa-nd54882",
-  "postsMatched": 1,
-  "fetched": 1,
+  "postsMatched": 0,
+  "fetched": 0,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 0,
+  "withPersonnel": 0,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 0,
   "totals": {
     "events": 14339,
     "posts": 2413
   },
-  "samples": [
-    {
-      "post_id": "smpa-00339720",
-      "event_date": "2026-08-27",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00339720",
-      "event_date": "2026-08-27",
-      "time_raw": "13:00~18:00",
-      "place": "정곡빌딩 남관 앞 <서초동>",
-      "personnel_raw": "800명"
-    },
-    {
-      "post_id": "smpa-00339720",
-      "event_date": "2026-08-27",
-      "time_raw": "14:00~16:00",
-      "place": "해남빌딩 앞 <태평로>",
-      "personnel_raw": "499명"
-    },
-    {
-      "post_id": "smpa-00339720",
-      "event_date": "2026-08-27",
-      "time_raw": "14:00~15:40",
-      "place": "마포구청 <-> 망원역 1出 <월드컵로>",
-      "personnel_raw": "100명"
-    }
-  ]
+  "samples": []
 }
