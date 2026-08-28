@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-08-28T06:15:35.677Z",
+  "finishedAt": "2026-08-28T20:58:01.092Z",
   "mode": "same-day",
-  "kstHour": 15,
+  "kstHour": 5,
   "afterHoursFrom": 18,
-  "date": "2026-08-28",
+  "date": "2026-08-29",
   "window": [
-    "2026-08-28"
+    "2026-08-29"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14343,
-    "posts": 2414
+    "events": 14349,
+    "posts": 2415
   },
   "samples": [
     {
-      "post_id": "smpa-00339764",
-      "event_date": "2026-08-28",
-      "time_raw": "11:00~13:00",
-      "place": "의사당역 2出 -> 민주당사 <은행로 등>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00339795",
+      "event_date": "2026-08-29",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점·원표공원 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00339764",
-      "event_date": "2026-08-28",
-      "time_raw": "19:00~20:30",
-      "place": "의사당대로 5出~더샵아일랜드 앞·산업은행 측면 <여의도>",
-      "personnel_raw": "14,000명"
+      "post_id": "smpa-00339795",
+      "event_date": "2026-08-29",
+      "time_raw": "14:00~18:00",
+      "place": "영추문 앞 -> 송현공원 <효자동 등>",
+      "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00339764",
-      "event_date": "2026-08-28",
-      "time_raw": "19:00~20:00",
-      "place": "타워8 빌딩 앞 <청진동>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00339795",
+      "event_date": "2026-08-29",
+      "time_raw": "15:00~18:00",
+      "place": "사랑채 동측 건너편 <효자동>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339764",
-      "event_date": "2026-08-28",
-      "time_raw": "19:30~21:30",
-      "place": "서울중앙우체국 -> 동화면세점 <퇴계로 등>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00339795",
+      "event_date": "2026-08-29",
+      "time_raw": "18:00~21:00",
+      "place": "서초역 8出 -> CGV 강남 <강남대로 등>",
+      "personnel_raw": "5,000명"
+    },
+    {
+      "post_id": "smpa-00339795",
+      "event_date": "2026-08-29",
+      "time_raw": "18:00~20:30",
+      "place": "정곡빌딩 -> 신사역 3出 <강남대로 등>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00339795",
+      "event_date": "2026-08-29",
+      "time_raw": "18:30~20:30",
+      "place": "홍대입구역 7出 <-> 홍대입구R <양화로 등>",
+      "personnel_raw": "500명"
     }
   ]
 }
