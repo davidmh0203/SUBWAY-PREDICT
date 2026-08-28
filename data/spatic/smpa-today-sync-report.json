@@ -1,25 +1,54 @@
 {
-  "finishedAt": "2026-08-27T23:01:48.614Z",
+  "finishedAt": "2026-08-28T06:15:35.677Z",
   "mode": "same-day",
-  "kstHour": 8,
+  "kstHour": 15,
   "afterHoursFrom": 18,
   "date": "2026-08-28",
   "window": [
     "2026-08-28"
   ],
   "source": "smpa-nd54882",
-  "postsMatched": 0,
-  "fetched": 0,
+  "postsMatched": 1,
+  "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 0,
-  "withPersonnel": 0,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 0,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14339,
-    "posts": 2413
+    "events": 14343,
+    "posts": 2414
   },
-  "samples": []
+  "samples": [
+    {
+      "post_id": "smpa-00339764",
+      "event_date": "2026-08-28",
+      "time_raw": "11:00~13:00",
+      "place": "의사당역 2出 -> 민주당사 <은행로 등>",
+      "personnel_raw": "200명"
+    },
+    {
+      "post_id": "smpa-00339764",
+      "event_date": "2026-08-28",
+      "time_raw": "19:00~20:30",
+      "place": "의사당대로 5出~더샵아일랜드 앞·산업은행 측면 <여의도>",
+      "personnel_raw": "14,000명"
+    },
+    {
+      "post_id": "smpa-00339764",
+      "event_date": "2026-08-28",
+      "time_raw": "19:00~20:00",
+      "place": "타워8 빌딩 앞 <청진동>",
+      "personnel_raw": "300명"
+    },
+    {
+      "post_id": "smpa-00339764",
+      "event_date": "2026-08-28",
+      "time_raw": "19:30~21:30",
+      "place": "서울중앙우체국 -> 동화면세점 <퇴계로 등>",
+      "personnel_raw": "100명"
+    }
+  ]
 }
