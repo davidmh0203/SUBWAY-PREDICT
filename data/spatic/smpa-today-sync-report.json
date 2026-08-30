@@ -1,68 +1,47 @@
 {
-  "finishedAt": "2026-08-29T03:49:40.383Z",
+  "finishedAt": "2026-08-30T00:36:21.679Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 9,
   "afterHoursFrom": 18,
-  "date": "2026-08-29",
+  "date": "2026-08-30",
   "window": [
-    "2026-08-29"
+    "2026-08-30"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 6,
-  "withPersonnel": 6,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 6,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14349,
-    "posts": 2415
+    "events": 14352,
+    "posts": 2416
   },
   "samples": [
     {
-      "post_id": "smpa-00339795",
-      "event_date": "2026-08-29",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점·원표공원 -> 구 효자치안센터 <세종대로 등>",
-      "personnel_raw": "50,000명"
-    },
-    {
-      "post_id": "smpa-00339795",
-      "event_date": "2026-08-29",
-      "time_raw": "14:00~18:00",
-      "place": "영추문 앞 -> 송현공원 <효자동 등>",
-      "personnel_raw": "150명"
-    },
-    {
-      "post_id": "smpa-00339795",
-      "event_date": "2026-08-29",
-      "time_raw": "15:00~18:00",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00339795",
-      "event_date": "2026-08-29",
-      "time_raw": "18:00~21:00",
-      "place": "서초역 8出 -> CGV 강남 <강남대로 등>",
-      "personnel_raw": "5,000명"
-    },
-    {
-      "post_id": "smpa-00339795",
-      "event_date": "2026-08-29",
-      "time_raw": "18:00~20:30",
-      "place": "정곡빌딩 -> 신사역 3出 <강남대로 등>",
+      "post_id": "smpa-00339796",
+      "event_date": "2026-08-30",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00339795",
-      "event_date": "2026-08-29",
-      "time_raw": "18:30~20:30",
-      "place": "홍대입구역 7出 <-> 홍대입구R <양화로 등>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00339796",
+      "event_date": "2026-08-30",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
+      "personnel_raw": "10,000명"
+    },
+    {
+      "post_id": "smpa-00339796",
+      "event_date": "2026-08-30",
+      "time_raw": "15:00~18:00",
+      "place": "교보빌딩 정문 앞 인도",
+      "personnel_raw": "100명"
     }
   ]
 }
