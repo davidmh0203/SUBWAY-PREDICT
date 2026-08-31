@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-08-31T00:47:29.578Z",
+  "finishedAt": "2026-08-31T17:11:59.750Z",
   "mode": "same-day",
-  "kstHour": 9,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-08-31",
+  "date": "2026-09-01",
   "window": [
-    "2026-08-31"
+    "2026-09-01"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14356,
-    "posts": 2417
+    "events": 14360,
+    "posts": 2418
   },
   "samples": [
     {
-      "post_id": "smpa-00339797",
-      "event_date": "2026-08-31",
-      "time_raw": "08:00~12:00",
-      "place": "시의회 별관 앞 <정동>",
-      "personnel_raw": "450명"
-    },
-    {
-      "post_id": "smpa-00339797",
-      "event_date": "2026-08-31",
-      "time_raw": "14:00~15:00",
-      "place": "마포구청 앞 <월드컵로>",
+      "post_id": "smpa-00339855",
+      "event_date": "2026-09-01",
+      "time_raw": "08:00~17:00",
+      "place": "강서양천교육지원청 정문 앞 인도 <신월동>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00339797",
-      "event_date": "2026-08-31",
-      "time_raw": "16:30~18:00",
-      "place": "금감원 앞 <여의도>",
-      "personnel_raw": "99명"
+      "post_id": "smpa-00339855",
+      "event_date": "2026-09-01",
+      "time_raw": "08:30~18:30",
+      "place": "타워8 빌딩 앞 <청진동>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00339797",
-      "event_date": "2026-08-31",
-      "time_raw": "19:00~21:00",
-      "place": "은평너른마당 -> 증산교 하부 공터 <산책로>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00339855",
+      "event_date": "2026-09-01",
+      "time_raw": "16:00~17:30",
+      "place": "명동성당 앞 인도 <-> 중앙우체국 <명동>",
+      "personnel_raw": "200명"
+    },
+    {
+      "post_id": "smpa-00339855",
+      "event_date": "2026-09-01",
+      "time_raw": "19:00~20:00",
+      "place": "세종호텔 앞 < 명동>",
+      "personnel_raw": "200명"
     }
   ]
 }
