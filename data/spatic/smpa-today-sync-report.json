@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-01T01:22:39.841Z",
+  "finishedAt": "2026-09-01T15:29:46.633Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-09-01",
+  "date": "2026-09-02",
   "window": [
-    "2026-09-01"
+    "2026-09-02"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14360,
-    "posts": 2418
+    "events": 14364,
+    "posts": 2419
   },
   "samples": [
     {
-      "post_id": "smpa-00339855",
-      "event_date": "2026-09-01",
-      "time_raw": "08:00~17:00",
-      "place": "강서양천교육지원청 정문 앞 인도 <신월동>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00339910",
+      "event_date": "2026-09-02",
+      "time_raw": "13:00~16:00",
+      "place": "의사당역 5出 앞 <여의도>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00339855",
-      "event_date": "2026-09-01",
-      "time_raw": "08:30~18:30",
-      "place": "타워8 빌딩 앞 <청진동>",
+      "post_id": "smpa-00339910",
+      "event_date": "2026-09-02",
+      "time_raw": "14:00~16:30",
+      "place": "농협중앙회 앞->경찰청 <충정로1가 등>",
+      "personnel_raw": "700명"
+    },
+    {
+      "post_id": "smpa-00339910",
+      "event_date": "2026-09-02",
+      "time_raw": "15:30~16:30",
+      "place": "서울신용보증재단 앞 <공덕동>",
       "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00339855",
-      "event_date": "2026-09-01",
-      "time_raw": "16:00~17:30",
-      "place": "명동성당 앞 인도 <-> 중앙우체국 <명동>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00339855",
-      "event_date": "2026-09-01",
+      "post_id": "smpa-00339910",
+      "event_date": "2026-09-02",
       "time_raw": "19:00~20:00",
-      "place": "세종호텔 앞 < 명동>",
-      "personnel_raw": "200명"
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
