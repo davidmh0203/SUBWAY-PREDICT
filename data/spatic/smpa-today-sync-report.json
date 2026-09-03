@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-02T17:15:03.689Z",
+  "finishedAt": "2026-09-03T15:04:24.154Z",
   "mode": "same-day",
-  "kstHour": 2,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-09-03",
+  "date": "2026-09-04",
   "window": [
-    "2026-09-03"
+    "2026-09-04"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14368,
-    "posts": 2420
+    "events": 14372,
+    "posts": 2421
   },
   "samples": [
     {
-      "post_id": "smpa-00339962",
-      "event_date": "2026-09-03",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
+      "post_id": "smpa-00340008",
+      "event_date": "2026-09-04",
+      "time_raw": "11:30~15:00",
+      "place": "동화면세점 ~ 대한문 <세종대로>",
+      "personnel_raw": "30,000명"
+    },
+    {
+      "post_id": "smpa-00340008",
+      "event_date": "2026-09-04",
+      "time_raw": "14:00~16:00",
+      "place": "정부서울청사 후문 앞 <도렴동>",
+      "personnel_raw": "80명"
+    },
+    {
+      "post_id": "smpa-00340008",
+      "event_date": "2026-09-04",
+      "time_raw": "14:00~17:00",
+      "place": "이룸센터 앞 국힘당사 이룸센터 <여의도 등>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00339962",
-      "event_date": "2026-09-03",
-      "time_raw": "11:00~13:00",
-      "place": "동원건설 앞 <양재동>",
-      "personnel_raw": "499명"
-    },
-    {
-      "post_id": "smpa-00339962",
-      "event_date": "2026-09-03",
-      "time_raw": "14:00~15:00",
-      "place": "마포구청 앞 <성산동>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00339962",
-      "event_date": "2026-09-03",
-      "time_raw": "15:00~17:30",
-      "place": "SK서린빌딩 앞 <서린동>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00340008",
+      "event_date": "2026-09-04",
+      "time_raw": "19:30~21:30",
+      "place": "성공회대학교 유한대학교3R <경인로 등>",
+      "personnel_raw": "250명"
     }
   ]
 }
