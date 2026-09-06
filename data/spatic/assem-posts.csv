@@ -1,4 +1,5 @@
 ﻿post_id,post_date,event_date,post_title,assembly_rows,pre_march_rows,event_rows,personnel_known_rows,extract_source,source_url
+smpa-00340056,2026-09-04,2026-09-07,오늘의 집회 260907 월,4,0,0,4,html,https://www.smpa.go.kr/user/nd54882.do?View&page=1&pageSC=SORT_ORDER&pageSO=DESC&dmlType=&boardNo=00340056
 smpa-00340055,2026-09-04,2026-09-06,오늘의 집회 260906 일,3,0,0,3,html,https://www.smpa.go.kr/user/nd54882.do?View&page=1&pageSC=SORT_ORDER&pageSO=DESC&dmlType=&boardNo=00340055
 smpa-00340054,2026-09-04,2026-09-05,오늘의 집회 260905 토,6,0,0,6,html,https://www.smpa.go.kr/user/nd54882.do?View&page=1&pageSC=SORT_ORDER&pageSO=DESC&dmlType=&boardNo=00340054
 smpa-00340008,2026-09-03,2026-09-04,오늘의 집회 260904 금,4,0,0,4,html,https://www.smpa.go.kr/user/nd54882.do?View&page=1&pageSC=SORT_ORDER&pageSO=DESC&dmlType=&boardNo=00340008

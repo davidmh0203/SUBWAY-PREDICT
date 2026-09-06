@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-09-05T16:10:16.699Z",
-  "mode": "same-day",
-  "kstHour": 1,
+  "finishedAt": "2026-09-06T14:16:46.968Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-09-06",
+  "date": "2026-09-07",
   "window": [
-    "2026-09-06"
+    "2026-09-07"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14381,
-    "posts": 2423
+    "events": 14385,
+    "posts": 2424
   },
   "samples": [
     {
-      "post_id": "smpa-00340055",
-      "event_date": "2026-09-06",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
+      "post_id": "smpa-00340056",
+      "event_date": "2026-09-07",
+      "time_raw": "08:00~12:00",
+      "place": "대우건설 앞 인도 <을지로4가>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00340056",
+      "event_date": "2026-09-07",
+      "time_raw": "11:00~13:00",
+      "place": "구 효자치안센터 앞 <효자동>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00340056",
+      "event_date": "2026-09-07",
+      "time_raw": "14:00~20:00",
+      "place": "교대역 7出 앞 이면도로 <서초동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00340055",
-      "event_date": "2026-09-06",
-      "time_raw": "11:00~13:00",
-      "place": "동화면세점 앞 인도 <태평로1가>",
-      "personnel_raw": "10,000명"
-    },
-    {
-      "post_id": "smpa-00340055",
-      "event_date": "2026-09-06",
-      "time_raw": "14:00~18:00",
-      "place": "영추문 앞 -> 송현공원 <효자동 등>",
-      "personnel_raw": "150명"
+      "post_id": "smpa-00340056",
+      "event_date": "2026-09-07",
+      "time_raw": "17:00~18:00",
+      "place": "광진구청 앞 인도 <자양동>",
+      "personnel_raw": "1,000명"
     }
   ]
 }
