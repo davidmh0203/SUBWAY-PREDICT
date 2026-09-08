@@ -96,9 +96,14 @@ docker run --rm -p 8000:8000 \
 |------|---------|
 | `VITE_API_BASE_URL` | `https://<your-service>.onrender.com` |
 
-3. **Production**에 저장 후 **Redeploy** (Vite는 빌드 타임에 env를 박음)  
-4. 배포 사이트에서 경로 검색 → Network에 `/api/...`가 아니라 백엔드 호스트로 가는지 확인  
-5. CORS 에러가 나면 백엔드 `CORS_ORIGINS`에 실제 Vercel URL(프리뷰 포함)을 추가
+3. **Production**에 저장 후 **새 배포** 필요 (Vite는 빌드 타임에 env를 박음)  
+   - Redeploy 모달에 `Prebuilt deployments cannot be redeployed` 빨간 경고가 나오면  
+     **Redeploy 하지 말고** `main` push로 새 배포를 만드세요 (GitHub Actions → Vercel 원격 빌드).  
+   - Dashboard → Deployments → **Create Deployment** (branch `main`)도 가능.  
+4. 배포 사이트에서 경로 검색 → Network에 `yeoyuro-api.onrender.com`으로 가는지 확인  
+5. CORS 에러가 나면 백엔드 `CORS_ORIGINS`에 실제 Vercel URL(프리뷰 포함)을 추가  
+
+`VITE_API_BASE_URL` value는 **키 문자열이 아니라** `https://yeoyuro-api.onrender.com` 입니다. Sensitive로 둘 필요는 없습니다.  
 
 ---
 

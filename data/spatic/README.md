@@ -30,6 +30,25 @@ npm run crawl:smpa-overlap          # SPATIC 기간 SMPA 첨부 수집
 npm run fill:assem-personnel       # 빈 인원 채움 + SMPA-only 행 insert
 ```
 
+## 일일 동기화 (SMPA만 · 전날 게시 대응)
+
+**수집 대상은 서울경찰청 SMPA [`오늘의 집회/시위`](https://www.smpa.go.kr/user/nd54882.do)만**입니다.  
+SPATIC 집회·통제정보 보드는 신고인원이 없어 일일 동기화에서 제외합니다.
+
+보통 **전날**에 다음날(또는 당일) 「주요집회」 PDF/본문(신고인원 포함)이 올라옵니다.  
+제목 `YYMMDD`가 하루 어긋나도 요일·첨부파일명(`260722(수) …`)으로 행사일을 맞춥니다.
+
+```bash
+npm run sync:smpa-today                    # 오늘 KST + 내일(lookahead 1)
+npm run sync:smpa-today -- --date 2026-07-22 --lookahead 0
+```
+
+GitHub Actions: `.github/workflows/sync-smpa-today.yml`  
+- cron 07:30 / 10:30 KST + `workflow_dispatch`  
+- `poppler-utils`로 PDF 텍스트 추출  
+- CSV 변경 시 main 커밋 + 같은 job에서 Vercel 프로덕션 배포  
+  (`GITHUB_TOKEN` 푸시는 Deploy 워크플로를 못 띄우므로 sync job에서 직접 배포)
+
 ## 재생성
 
 ```bash

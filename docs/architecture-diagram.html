@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>여유로 서비스 아키텍처</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+      background: #f8fafc;
+      padding: 32px;
+      color: #0f172a;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    .sub { color: #64748b; font-size: 0.875rem; margin-bottom: 28px; }
+    .canvas {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    }
+    .row { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
+    .node {
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-width: 160px;
+      text-align: center;
+      background: #fff;
+      position: relative;
+    }
+    .node .icon { width: 36px; height: 36px; margin: 0 auto 8px; display: block; }
+    .node .title { font-weight: 700; font-size: 0.95rem; }
+    .node .desc { font-size: 0.72rem; color: #64748b; margin-top: 6px; line-height: 1.4; }
+    .user { border-color: #94a3b8; background: #f1f5f9; }
+    .react { border-color: #61dafb; background: #f0fbff; }
+    .vercel { border-color: #000; }
+    .supabase { border-color: #3ecf8e; background: #f0fdf4; }
+    .postgres { border-color: #4169e1; background: #eff6ff; min-width: 140px; }
+    .render { border-color: #46e3b7; background: #ecfdf5; }
+    .fastapi { border-color: #009688; background: #f0fdfa; }
+    .external { border-color: #cbd5e1; background: #fafafa; min-width: 120px; }
+    .kakao { border-color: #fee500; background: #fffbeb; }
+    .github { border-color: #24292f; background: #f6f8fa; }
+    .group {
+      border: 2px dashed #94a3b8;
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+    }
+    .group-label {
+      position: absolute;
+      top: -11px;
+      left: 16px;
+      background: #fff;
+      padding: 0 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    .inner { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+    svg.arrows {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .legend {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.6;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 16px;
+    }
+    .legend strong { color: #334155; }
+  </style>
+</head>
+<body>
+  <h1>여유로 — 서비스 아키텍처</h1>
+  <p class="sub">2026-07-22 · GitHub main 기준 · 모델 학습 제외 · Supabase = <strong>PostgreSQL</strong></p>
+
+  <div class="canvas">
+    <!-- Row 1: User → Vercel -->
+    <div class="row">
+      <div class="node user">
+        <span style="font-size:2rem">👤</span>
+        <div class="title">사용자</div>
+        <div class="desc">모바일 브라우저</div>
+      </div>
+      <div style="align-self:center;color:#64748b;font-size:1.5rem">→</div>
+      <div class="group" style="min-width:280px">
+        <span class="group-label">Vercel · GitHub Actions 배포</span>
+        <div class="inner">
+          <div class="node react">
+            <img class="icon" src="https://cdn.simpleicons.org/react/61DAFB" alt="React" />
+            <div class="title">React 19 SPA</div>
+            <div class="desc">Vite · Tailwind · Recharts<br/>Hash #home #results …</div>
+          </div>
+          <div class="node vercel">
+            <img class="icon" src="https://cdn.simpleicons.org/vercel/000000" alt="Vercel" />
+            <div class="title">Vercel CDN</div>
+            <div class="desc">subway-predict-dashboard.vercel.app</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: branches from React -->
+    <div class="row" style="align-items:flex-start">
+      <div class="group" style="flex:1; min-width:260px">
+        <span class="group-label">Supabase (팀 공용 · PostgreSQL)</span>
+        <div class="inner">
+          <div class="node supabase">
+            <img class="icon" src="https://cdn.simpleicons.org/supabase/3ECF8E" alt="Supabase" />
+            <div class="title">Supabase Auth</div>
+            <div class="desc">Email · Kakao OAuth<br/>@supabase/supabase-js</div>
+          </div>
+          <div style="align-self:center">→</div>
+          <div class="node postgres">
+            <img class="icon" src="https://cdn.simpleicons.org/postgresql/4169E1" alt="PostgreSQL" />
+            <div class="title">PostgreSQL</div>
+            <div class="desc">auth.users<br/>public.favorite_routes<br/>RLS 정책</div>
+          </div>
+        </div>
+        <div class="desc" style="margin-top:10px;text-align:center">React → Supabase (회원 · 즐겨찾기)<br/>VITE_SUPABASE_URL · ANON_KEY</div>
+      </div>
+
+      <div class="group" style="flex:1.4; min-width:320px">
+        <span class="group-label">Render · Docker (FastAPI)</span>
+        <div class="inner">
+          <div class="node render">
+            <img class="icon" src="https://cdn.simpleicons.org/render/46E3B7" alt="Render" />
+            <div class="title">Render</div>
+            <div class="desc">render.yaml · yeoyuro-api</div>
+          </div>
+          <div style="align-self:center">→</div>
+          <div class="node fastapi">
+            <img class="icon" src="https://cdn.simpleicons.org/fastapi/009688" alt="FastAPI" />
+            <div class="title">FastAPI</div>
+            <div class="desc">/predict/route · /congestion<br/>/forecast · /odsay<br/>LightGBM .pkl 추론</div>
+          </div>
+        </div>
+        <div class="desc" style="margin-top:10px;text-align:center">React → VITE_API_BASE_URL<br/>경로 · 혼잡 · 정체예보</div>
+      </div>
+
+      <div class="group" style="min-width:140px">
+        <span class="group-label">프론트 직연</span>
+        <div class="inner">
+          <div class="node kakao">
+            <img class="icon" src="https://cdn.simpleicons.org/kakao/FEE500" alt="Kakao" />
+            <div class="title">Kakao Map JS</div>
+            <div class="desc">#macro 실측 지도<br/>VITE_KAKAO_MAP_*</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: External APIs -->
+    <div class="row">
+      <div class="group" style="width:100%">
+        <span class="group-label">외부 API · 데이터 (FastAPI 경유)</span>
+        <div class="inner">
+          <div class="node external">
+            <div class="title" style="color:#1d4ed8">ODsay LAB</div>
+            <div class="desc">경로 탐색<br/>Server 키 · TTL 캐시</div>
+          </div>
+          <div class="node kakao">
+            <img class="icon" src="https://cdn.simpleicons.org/kakao/FEE500" alt="Kakao" />
+            <div class="title">Kakao REST</div>
+            <div class="desc">Kakao Developers<br/>/stations/nearby</div>
+          </div>
+          <div class="node external" style="border-color:#2563eb">
+            <div class="title">특일정보</div>
+            <div class="desc">공공데이터포털<br/>천문연 특일</div>
+          </div>
+          <div class="node external" style="border-color:#0ea5e9">
+            <div class="title">기상데이터</div>
+            <div class="desc">공공데이터포털<br/>기상청 단기예보</div>
+          </div>
+          <div class="node external" style="border-color:#f59e0b">
+            <div class="title">지하철 돌발정보</div>
+            <div class="desc">공공데이터포털<br/>서울교통공사 ntce</div>
+          </div>
+          <div class="node external"><div class="title">CSV</div><div class="desc">SPATIC · SMPA<br/>data/</div></div>
+          <div class="node external"><div class="title">.pkl</div><div class="desc">backend/models<br/>혼잡 추론</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: CI -->
+    <div class="row">
+      <div class="node github">
+        <img class="icon" src="https://cdn.simpleicons.org/github/181717" alt="GitHub" />
+        <div class="title">GitHub</div>
+        <div class="desc">davidmh0203/SUBWAY-PREDICT</div>
+      </div>
+      <div style="align-self:center">→ push main →</div>
+      <div class="node github">
+        <img class="icon" src="https://cdn.simpleicons.org/githubactions/2088FF" alt="GitHub Actions" />
+        <div class="title">GitHub Actions</div>
+        <div class="desc">deploy.yml → Vercel 원격 빌드</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <strong>DB 정리:</strong> Supabase는 별도 DB 선택 없이 <strong>관리형 PostgreSQL</strong>을 제공한다.
+      운영(팀 공용): <code>auth.users</code> + <code>public.favorite_routes</code> (UUID PK, timestamptz, RLS).
+      로컬 fallback(Supabase env 없을 때만): FastAPI + SQLite <code>backend/data/app.db</code>.
+      혼잡·경로 데이터는 DB에 저장하지 않고 API 응답 또는 CSV·pkl 파일로 처리한다.
+    </div>
+  </div>
+</body>
+</html>

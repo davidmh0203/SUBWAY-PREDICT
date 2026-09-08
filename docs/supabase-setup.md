@@ -1,7 +1,19 @@
 # Supabase 인증·즐겨찾기 설정
 
 팀원마다 로컬 MySQL/SQLite 백엔드가 달라 로그인이 안 되는 문제를 피하려면, 프론트에서 **Supabase Auth**를 쓰면 됩니다.  
-`VITE_SUPABASE_URL`과 `VITE_SUPABASE_ANON_KEY`가 **둘 다** 있으면 FastAPI `/auth`, `/favorites` 대신 Supabase를 사용합니다. 없으면 기존 백엔드 JWT 방식 그대로입니다.
+`VITE_SUPABASE_URL`과 `VITE_SUPABASE_ANON_KEY`가 **둘 다** 있으면 FastAPI `/auth`, `/favorites` 대신 Supabase를 사용합니다. 없으면 기존 백엔드 JWT + SQLite 방식 그대로입니다.
+
+## DB: PostgreSQL (Supabase Managed)
+
+Supabase는 **MySQL/SQLite 선택 옵션이 없다**. 프로젝트 생성 시 **관리형 PostgreSQL**이 자동으로 붙는다.
+
+| 구분 | 스키마·테이블 | 비고 |
+|------|---------------|------|
+| 회원 | `auth.users` | Supabase Auth 관리, UUID PK |
+| 즐겨찾기 | `public.favorite_routes` | 아래 DDL로 생성, RLS 적용 |
+| 혼잡·경로 | (없음) | FastAPI `/predict/route` 등 — Supabase DB 미사용 |
+
+클라이언트: `@supabase/supabase-js` → PostgREST API로 PostgreSQL에 접근.
 
 ## 1. Supabase 프로젝트
 
