@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-06T14:16:46.968Z",
+  "finishedAt": "2026-09-10T13:44:57.909Z",
   "mode": "next-day-after-hours",
-  "kstHour": 23,
+  "kstHour": 22,
   "afterHoursFrom": 18,
-  "date": "2026-09-07",
+  "date": "2026-09-11",
   "window": [
-    "2026-09-07"
+    "2026-09-11"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14385,
-    "posts": 2424
+    "events": 14389,
+    "posts": 2425
   },
   "samples": [
     {
-      "post_id": "smpa-00340056",
-      "event_date": "2026-09-07",
-      "time_raw": "08:00~12:00",
-      "place": "대우건설 앞 인도 <을지로4가>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00340056",
-      "event_date": "2026-09-07",
+      "post_id": "smpa-00340281",
+      "event_date": "2026-09-11",
       "time_raw": "11:00~13:00",
-      "place": "구 효자치안센터 앞 <효자동>",
+      "place": "구 효자치안센터 앞 <궁정동>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00340056",
-      "event_date": "2026-09-07",
-      "time_raw": "14:00~20:00",
-      "place": "교대역 7出 앞 이면도로 <서초동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00340281",
+      "event_date": "2026-09-11",
+      "time_raw": "14:00~16:30",
+      "place": "시의회 본관 앞 -> 시청 동편 <세종대로 등>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00340056",
-      "event_date": "2026-09-07",
-      "time_raw": "17:00~18:00",
-      "place": "광진구청 앞 인도 <자양동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00340281",
+      "event_date": "2026-09-11",
+      "time_raw": "19:30~22:00",
+      "place": "중앙우체국 -> 명동역 1出 <명동 등>",
+      "personnel_raw": "300명"
+    },
+    {
+      "post_id": "smpa-00340281",
+      "event_date": "2026-09-11",
+      "time_raw": "20:00~22:00",
+      "place": "경동교회 앞 <장충동>",
+      "personnel_raw": "600명"
     }
   ]
 }
