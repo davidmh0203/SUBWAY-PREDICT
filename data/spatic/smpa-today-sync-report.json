@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-11T00:27:08.164Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-09-11T13:43:23.313Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 22,
   "afterHoursFrom": 18,
-  "date": "2026-09-11",
+  "date": "2026-09-12",
   "window": [
-    "2026-09-11"
+    "2026-09-12"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14389,
-    "posts": 2425
+    "events": 14393,
+    "posts": 2426
   },
   "samples": [
     {
-      "post_id": "smpa-00340281",
-      "event_date": "2026-09-11",
-      "time_raw": "11:00~13:00",
-      "place": "구 효자치안센터 앞 <궁정동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00340326",
+      "event_date": "2026-09-12",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점~원표공원 -> 구 효자치안센터 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00340281",
-      "event_date": "2026-09-11",
-      "time_raw": "14:00~16:30",
-      "place": "시의회 본관 앞 -> 시청 동편 <세종대로 등>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00340281",
-      "event_date": "2026-09-11",
-      "time_raw": "19:30~22:00",
-      "place": "중앙우체국 -> 명동역 1出 <명동 등>",
+      "post_id": "smpa-00340326",
+      "event_date": "2026-09-12",
+      "time_raw": "13:00~15:30",
+      "place": "고용노동청 앞 -> 사랑채 동측 <장교동 등>",
       "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00340281",
-      "event_date": "2026-09-11",
-      "time_raw": "20:00~22:00",
-      "place": "경동교회 앞 <장충동>",
-      "personnel_raw": "600명"
+      "post_id": "smpa-00340326",
+      "event_date": "2026-09-12",
+      "time_raw": "14:00~16:30",
+      "place": "동대문역 10出 -> 고궁박물관 남측 <종로 등>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00340326",
+      "event_date": "2026-09-12",
+      "time_raw": "16:00~18:00",
+      "place": "르메이에르빌딩 -> 사랑채 동측 <세종대로 등>",
+      "personnel_raw": "10,000명"
     }
   ]
 }
