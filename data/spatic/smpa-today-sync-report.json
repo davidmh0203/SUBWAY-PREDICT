@@ -1,54 +1,47 @@
 {
-  "finishedAt": "2026-09-12T00:32:18.481Z",
+  "finishedAt": "2026-09-12T16:25:16.992Z",
   "mode": "same-day",
-  "kstHour": 9,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-09-12",
+  "date": "2026-09-13",
   "window": [
-    "2026-09-12"
+    "2026-09-13"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14393,
-    "posts": 2426
+    "events": 14396,
+    "posts": 2427
   },
   "samples": [
     {
-      "post_id": "smpa-00340326",
-      "event_date": "2026-09-12",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점~원표공원 -> 구 효자치안센터 <세종대로 등>",
-      "personnel_raw": "50,000명"
+      "post_id": "smpa-00340327",
+      "event_date": "2026-09-13",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
+      "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00340326",
-      "event_date": "2026-09-12",
-      "time_raw": "13:00~15:30",
-      "place": "고용노동청 앞 -> 사랑채 동측 <장교동 등>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00340326",
-      "event_date": "2026-09-12",
-      "time_raw": "14:00~16:30",
-      "place": "동대문역 10出 -> 고궁박물관 남측 <종로 등>",
+      "post_id": "smpa-00340327",
+      "event_date": "2026-09-13",
+      "time_raw": "12:00~14:00",
+      "place": "사랑채 동측 건너편 <효자동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00340326",
-      "event_date": "2026-09-12",
-      "time_raw": "16:00~18:00",
-      "place": "르메이에르빌딩 -> 사랑채 동측 <세종대로 등>",
-      "personnel_raw": "10,000명"
+      "post_id": "smpa-00340327",
+      "event_date": "2026-09-13",
+      "time_raw": "14:00~16:00",
+      "place": "고용노동청 앞 -> 사랑채 동측 <장교동 등>",
+      "personnel_raw": "5,000명"
     }
   ]
 }
