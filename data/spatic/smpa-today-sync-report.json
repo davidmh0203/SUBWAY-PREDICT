@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-09-13T00:11:23.746Z",
+  "finishedAt": "2026-09-13T17:01:10.250Z",
   "mode": "same-day",
-  "kstHour": 9,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-09-13",
+  "date": "2026-09-14",
   "window": [
-    "2026-09-13"
+    "2026-09-14"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14396,
-    "posts": 2427
+    "events": 14400,
+    "posts": 2428
   },
   "samples": [
     {
-      "post_id": "smpa-00340327",
-      "event_date": "2026-09-13",
+      "post_id": "smpa-00340328",
+      "event_date": "2026-09-14",
       "time_raw": "11:00~13:00",
-      "place": "동화면세점 앞 인도 <태평로1가>",
-      "personnel_raw": "10,000명"
+      "place": "교보빌딩 앞 인도 <세종로>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00340327",
-      "event_date": "2026-09-13",
+      "post_id": "smpa-00340328",
+      "event_date": "2026-09-14",
       "time_raw": "12:00~14:00",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "1,000명"
+      "place": "대한항공 본사 -> 김포공항 국내선 택시정류장 <공항동>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00340327",
-      "event_date": "2026-09-13",
-      "time_raw": "14:00~16:00",
-      "place": "고용노동청 앞 -> 사랑채 동측 <장교동 등>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00340328",
+      "event_date": "2026-09-14",
+      "time_raw": "13:00~18:00",
+      "place": "정곡빌딩 남관 앞 <서초동>",
+      "personnel_raw": "2,000명"
+    },
+    {
+      "post_id": "smpa-00340328",
+      "event_date": "2026-09-14",
+      "time_raw": "15:00~18:00",
+      "place": "교대역 7出 앞 이면도로 <서초동>",
+      "personnel_raw": "1,000명"
     }
   ]
 }
