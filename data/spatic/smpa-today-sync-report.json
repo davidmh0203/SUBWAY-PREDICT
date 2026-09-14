@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-13T17:01:10.250Z",
+  "finishedAt": "2026-09-14T15:58:07.225Z",
   "mode": "same-day",
-  "kstHour": 2,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-09-14",
+  "date": "2026-09-15",
   "window": [
-    "2026-09-14"
+    "2026-09-15"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14400,
-    "posts": 2428
+    "events": 14404,
+    "posts": 2429
   },
   "samples": [
     {
-      "post_id": "smpa-00340328",
-      "event_date": "2026-09-14",
-      "time_raw": "11:00~13:00",
-      "place": "교보빌딩 앞 인도 <세종로>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00340328",
-      "event_date": "2026-09-14",
+      "post_id": "smpa-00340379",
+      "event_date": "2026-09-15",
       "time_raw": "12:00~14:00",
-      "place": "대한항공 본사 -> 김포공항 국내선 택시정류장 <공항동>",
-      "personnel_raw": "100명"
+      "place": "동화면세점 앞 -> 고궁박물관 남측 <세종대로 등>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00340328",
-      "event_date": "2026-09-14",
-      "time_raw": "13:00~18:00",
-      "place": "정곡빌딩 남관 앞 <서초동>",
-      "personnel_raw": "2,000명"
-    },
-    {
-      "post_id": "smpa-00340328",
-      "event_date": "2026-09-14",
+      "post_id": "smpa-00340379",
+      "event_date": "2026-09-15",
       "time_raw": "15:00~18:00",
       "place": "교대역 7出 앞 이면도로 <서초동>",
       "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00340379",
+      "event_date": "2026-09-15",
+      "time_raw": "15:00~18:00",
+      "place": "구로경찰서 정문 <구로>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00340379",
+      "event_date": "2026-09-15",
+      "time_raw": "19:30~20:30",
+      "place": "적선R -> 사랑채 동측 건너편 <효자로 등>",
+      "personnel_raw": "100명"
     }
   ]
 }
