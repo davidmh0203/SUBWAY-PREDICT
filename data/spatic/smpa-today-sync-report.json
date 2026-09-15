@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-14T18:48:24.801Z",
-  "mode": "same-day",
-  "kstHour": 3,
+  "finishedAt": "2026-09-15T14:24:26.700Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-09-15",
+  "date": "2026-09-16",
   "window": [
-    "2026-09-15"
+    "2026-09-16"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14404,
-    "posts": 2429
+    "events": 14408,
+    "posts": 2430
   },
   "samples": [
     {
-      "post_id": "smpa-00340379",
-      "event_date": "2026-09-15",
-      "time_raw": "12:00~14:00",
-      "place": "동화면세점 앞 -> 고궁박물관 남측 <세종대로 등>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00340422",
+      "event_date": "2026-09-16",
+      "time_raw": "09:00~14:00",
+      "place": "노량진역 -> 구 효자치안센터 앞 <노량진동 등>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00340379",
-      "event_date": "2026-09-15",
-      "time_raw": "15:00~18:00",
-      "place": "교대역 7出 앞 이면도로 <서초동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00340422",
+      "event_date": "2026-09-16",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00340379",
-      "event_date": "2026-09-15",
-      "time_raw": "15:00~18:00",
-      "place": "구로경찰서 정문 <구로>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00340422",
+      "event_date": "2026-09-16",
+      "time_raw": "14:30~17:00",
+      "place": "동화면세점 -> 고궁박물관 남측 -> 사랑채 동측 <효자로 등>",
+      "personnel_raw": "1,500명"
     },
     {
-      "post_id": "smpa-00340379",
-      "event_date": "2026-09-15",
-      "time_raw": "19:30~20:30",
-      "place": "적선R -> 사랑채 동측 건너편 <효자로 등>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00340422",
+      "event_date": "2026-09-16",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
