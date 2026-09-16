@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-16T00:44:06.833Z",
+  "finishedAt": "2026-09-16T15:27:44.587Z",
   "mode": "same-day",
-  "kstHour": 9,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-09-16",
+  "date": "2026-09-17",
   "window": [
-    "2026-09-16"
+    "2026-09-17"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14408,
-    "posts": 2430
+    "events": 14412,
+    "posts": 2431
   },
   "samples": [
     {
-      "post_id": "smpa-00340422",
-      "event_date": "2026-09-16",
-      "time_raw": "09:00~14:00",
-      "place": "노량진역 -> 구 효자치안센터 앞 <노량진동 등>",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00340422",
-      "event_date": "2026-09-16",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00340422",
-      "event_date": "2026-09-16",
-      "time_raw": "14:30~17:00",
-      "place": "동화면세점 -> 고궁박물관 남측 -> 사랑채 동측 <효자로 등>",
-      "personnel_raw": "1,500명"
-    },
-    {
-      "post_id": "smpa-00340422",
-      "event_date": "2026-09-16",
-      "time_raw": "19:00~20:00",
+      "post_id": "smpa-00340454",
+      "event_date": "2026-09-17",
+      "time_raw": "10:00~11:00",
       "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00340454",
+      "event_date": "2026-09-17",
+      "time_raw": "11:00~12:00",
+      "place": "시의회 본관 앞 -> 시의회 별관 <세종대로 등>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00340454",
+      "event_date": "2026-09-17",
+      "time_raw": "13:00~16:00",
+      "place": "서울역 야외계단 -> 사랑채 동측 건너편 <동자동·효자동 등>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00340454",
+      "event_date": "2026-09-17",
+      "time_raw": "15:00~18:00",
+      "place": "교대역 7出 앞 이면도로 <서초동>",
+      "personnel_raw": "1,000명"
     }
   ]
 }
