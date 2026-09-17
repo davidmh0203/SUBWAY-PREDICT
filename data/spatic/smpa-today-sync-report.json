@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-17T00:50:08.497Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-09-17T14:23:22.378Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-09-17",
+  "date": "2026-09-18",
   "window": [
-    "2026-09-17"
+    "2026-09-18"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14412,
-    "posts": 2431
+    "events": 14416,
+    "posts": 2432
   },
   "samples": [
     {
-      "post_id": "smpa-00340454",
-      "event_date": "2026-09-17",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
+      "post_id": "smpa-00340475",
+      "event_date": "2026-09-18",
+      "time_raw": "12:00~14:00",
+      "place": "동화면세점 앞 -> 사랑채 동측 건너편 <세종대로 등>",
+      "personnel_raw": "200명"
+    },
+    {
+      "post_id": "smpa-00340475",
+      "event_date": "2026-09-18",
+      "time_raw": "14:00~16:00",
+      "place": "마로니에공원 -> 한성대입구역 4出 -> 마로니에공원 <동숭동 등>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00340454",
-      "event_date": "2026-09-17",
-      "time_raw": "11:00~12:00",
-      "place": "시의회 본관 앞 -> 시의회 별관 <세종대로 등>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00340475",
+      "event_date": "2026-09-18",
+      "time_raw": "17:00~18:30",
+      "place": "삼성회장 자택 앞 -> 삼성복지재단 앞 <한남동>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00340454",
-      "event_date": "2026-09-17",
-      "time_raw": "13:00~16:00",
-      "place": "서울역 야외계단 -> 사랑채 동측 건너편 <동자동·효자동 등>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00340454",
-      "event_date": "2026-09-17",
-      "time_raw": "15:00~18:00",
-      "place": "교대역 7出 앞 이면도로 <서초동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00340475",
+      "event_date": "2026-09-18",
+      "time_raw": "19:30~22:00",
+      "place": "서울중앙우체국 -> 명동역 5出 <퇴계로 등>",
+      "personnel_raw": "300명"
     }
   ]
 }
