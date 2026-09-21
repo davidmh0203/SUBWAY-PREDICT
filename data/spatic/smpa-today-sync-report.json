@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-20T16:55:54.796Z",
+  "finishedAt": "2026-09-21T17:07:55.901Z",
   "mode": "same-day",
-  "kstHour": 1,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-09-21",
+  "date": "2026-09-22",
   "window": [
-    "2026-09-21"
+    "2026-09-22"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14423,
-    "posts": 2434
+    "events": 14427,
+    "posts": 2435
   },
   "samples": [
     {
-      "post_id": "smpa-00340507",
-      "event_date": "2026-09-21",
-      "time_raw": "14:00~17:00",
-      "place": "서울역 3번 출구 앞 -> 사랑채 동측 <효자로 등>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00340507",
-      "event_date": "2026-09-21",
-      "time_raw": "14:00~16:00",
-      "place": "서울역 -> 명동역 1번 출구 <세종대로 등>",
+      "post_id": "smpa-00340596",
+      "event_date": "2026-09-22",
+      "time_raw": "11:00~12:00",
+      "place": "송현공원 앞 인도 <송현동>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00340507",
-      "event_date": "2026-09-21",
-      "time_raw": "19:00~20:00",
-      "place": "KT본관 앞 남측 인도 <세종로>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00340596",
+      "event_date": "2026-09-22",
+      "time_raw": "12:00~14:00",
+      "place": "고용노동청 앞 -> 사랑채 동측 건너편 <장교동·효자로 등>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00340507",
-      "event_date": "2026-09-21",
-      "time_raw": "19:00~20:30",
-      "place": "사랑채 동측 <효자로>",
-      "personnel_raw": "350명"
+      "post_id": "smpa-00340596",
+      "event_date": "2026-09-22",
+      "time_raw": "13:00~18:00",
+      "place": "정곡빌딩 남관 앞 인도 <서초동>",
+      "personnel_raw": "2,000명"
+    },
+    {
+      "post_id": "smpa-00340596",
+      "event_date": "2026-09-22",
+      "time_raw": "16:00~18:00",
+      "place": "서울역광장 <봉래동2가>",
+      "personnel_raw": "100명"
     }
   ]
 }
