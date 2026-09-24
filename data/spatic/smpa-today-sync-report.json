@@ -1,47 +1,25 @@
 {
-  "finishedAt": "2026-09-24T00:48:24.633Z",
+  "finishedAt": "2026-09-24T15:51:49.642Z",
   "mode": "same-day",
-  "kstHour": 9,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-09-24",
+  "date": "2026-09-25",
   "window": [
-    "2026-09-24"
+    "2026-09-25"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
-  "empty": 0,
+  "assemblies": 0,
+  "withPersonnel": 0,
+  "empty": 1,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 0,
   "totals": {
     "events": 14434,
-    "posts": 2437
+    "posts": 2438
   },
-  "samples": [
-    {
-      "post_id": "smpa-00340658",
-      "event_date": "2026-09-24",
-      "time_raw": "13:00~15:00",
-      "place": "강남역 11출->정곡빌딩 남관 <서초대로 등>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00340658",
-      "event_date": "2026-09-24",
-      "time_raw": "13:00~14:00",
-      "place": "광명교삼거리->남부구치소 <오리로 등>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00340658",
-      "event_date": "2026-09-24",
-      "time_raw": "17:30~19:00",
-      "place": "송파역 3출->동부구치소 <송파대로 등>",
-      "personnel_raw": "300명"
-    }
-  ]
+  "samples": []
 }
