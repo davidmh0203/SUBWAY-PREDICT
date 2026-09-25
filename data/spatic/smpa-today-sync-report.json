@@ -1,25 +1,47 @@
 {
-  "finishedAt": "2026-09-25T00:43:56.430Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-09-25T14:42:05.774Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-09-25",
+  "date": "2026-09-26",
   "window": [
-    "2026-09-25"
+    "2026-09-26"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 0,
-  "withPersonnel": 0,
-  "empty": 1,
+  "assemblies": 3,
+  "withPersonnel": 3,
+  "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 0,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14434,
-    "posts": 2438
+    "events": 14437,
+    "posts": 2439
   },
-  "samples": []
+  "samples": [
+    {
+      "post_id": "smpa-00340660",
+      "event_date": "2026-09-26",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점 앞 <세종대로 등>",
+      "personnel_raw": "50,000명"
+    },
+    {
+      "post_id": "smpa-00340660",
+      "event_date": "2026-09-26",
+      "time_raw": "14:00~16:30",
+      "place": "대한문 앞 <태평로 1가>",
+      "personnel_raw": "2,000명"
+    },
+    {
+      "post_id": "smpa-00340660",
+      "event_date": "2026-09-26",
+      "time_raw": "14:00~18:00",
+      "place": "사랑채 동측 건너편->송현공원 <효자로 등>",
+      "personnel_raw": "150명"
+    }
+  ]
 }
