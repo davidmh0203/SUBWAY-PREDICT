@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-09-28T01:05:24.085Z",
+  "finishedAt": "2026-09-28T17:46:16.803Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-09-28",
+  "date": "2026-09-29",
   "window": [
-    "2026-09-28"
+    "2026-09-29"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14442,
-    "posts": 2441
+    "events": 14446,
+    "posts": 2442
   },
   "samples": [
     {
-      "post_id": "smpa-00340662",
-      "event_date": "2026-09-28",
-      "time_raw": "13:00~16:30",
-      "place": "사랑채 동측 건너편 <효자로>",
-      "personnel_raw": "2,000명"
+      "post_id": "smpa-00340725",
+      "event_date": "2026-09-29",
+      "time_raw": "12:20~12:50",
+      "place": "이레빌딩 앞 <당산동>",
+      "personnel_raw": "200 명"
     },
     {
-      "post_id": "smpa-00340662",
-      "event_date": "2026-09-28",
+      "post_id": "smpa-00340725",
+      "event_date": "2026-09-29",
       "time_raw": "15:00~18:00",
-      "place": "교대역 7출 앞 <서초동>",
-      "personnel_raw": "1,000명"
+      "place": "교대역 7出 앞 이면도로 <서초동>",
+      "personnel_raw": "1,000 명"
     },
     {
-      "post_id": "smpa-00340662",
-      "event_date": "2026-09-28",
-      "time_raw": "19:00~20:30",
-      "place": "파이낸스센터 앞 <태평로 1가>",
-      "personnel_raw": "120명"
+      "post_id": "smpa-00340725",
+      "event_date": "2026-09-29",
+      "time_raw": "17:00~18:00",
+      "place": "타워8 앞 <청진동>",
+      "personnel_raw": "300 명"
+    },
+    {
+      "post_id": "smpa-00340725",
+      "event_date": "2026-09-29",
+      "time_raw": "19:00~20:00",
+      "place": "세종호텔 앞 <명동>",
+      "personnel_raw": "200 명"
     }
   ]
 }
