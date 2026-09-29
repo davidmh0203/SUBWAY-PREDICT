@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-29T02:13:47.375Z",
+  "finishedAt": "2026-09-29T18:48:04.406Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 3,
   "afterHoursFrom": 18,
-  "date": "2026-09-29",
+  "date": "2026-09-30",
   "window": [
-    "2026-09-29"
+    "2026-09-30"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14446,
-    "posts": 2442
+    "events": 14450,
+    "posts": 2443
   },
   "samples": [
     {
-      "post_id": "smpa-00340725",
-      "event_date": "2026-09-29",
-      "time_raw": "12:20~12:50",
-      "place": "이레빌딩 앞 <당산동>",
-      "personnel_raw": "200 명"
+      "post_id": "smpa-00340775",
+      "event_date": "2026-09-30",
+      "time_raw": "11:00~13:00",
+      "place": "건설회관 앞 <논현동>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00340725",
-      "event_date": "2026-09-29",
-      "time_raw": "15:00~18:00",
-      "place": "교대역 7出 앞 이면도로 <서초동>",
-      "personnel_raw": "1,000 명"
+      "post_id": "smpa-00340775",
+      "event_date": "2026-09-30",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00340725",
-      "event_date": "2026-09-29",
-      "time_raw": "17:00~18:00",
-      "place": "타워8 앞 <청진동>",
-      "personnel_raw": "300 명"
+      "post_id": "smpa-00340775",
+      "event_date": "2026-09-30",
+      "time_raw": "16:00~17:30",
+      "place": "현대모비스 앞 <역삼동>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00340725",
-      "event_date": "2026-09-29",
+      "post_id": "smpa-00340775",
+      "event_date": "2026-09-30",
       "time_raw": "19:00~20:00",
-      "place": "세종호텔 앞 <명동>",
-      "personnel_raw": "200 명"
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
