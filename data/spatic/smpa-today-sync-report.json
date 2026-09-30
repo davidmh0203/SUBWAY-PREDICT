@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-09-30T01:28:36.825Z",
+  "finishedAt": "2026-09-30T16:02:17.377Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-09-30",
+  "date": "2026-10-01",
   "window": [
-    "2026-09-30"
+    "2026-10-01"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14450,
-    "posts": 2443
+    "events": 14454,
+    "posts": 2444
   },
   "samples": [
     {
-      "post_id": "smpa-00340775",
-      "event_date": "2026-09-30",
-      "time_raw": "11:00~13:00",
-      "place": "건설회관 앞 <논현동>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00340775",
-      "event_date": "2026-09-30",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00340775",
-      "event_date": "2026-09-30",
-      "time_raw": "16:00~17:30",
-      "place": "현대모비스 앞 <역삼동>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00340775",
-      "event_date": "2026-09-30",
-      "time_raw": "19:00~20:00",
+      "post_id": "smpa-00340819",
+      "event_date": "2026-10-01",
+      "time_raw": "10:00~11:00",
       "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00340819",
+      "event_date": "2026-10-01",
+      "time_raw": "11:30~12:30",
+      "place": "김포공항 국제선 1층 건너편 앞 <공항동>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00340819",
+      "event_date": "2026-10-01",
+      "time_raw": "14:30~18:00",
+      "place": "수서경찰서 앞 우측 인도 → 수서경찰서 일대",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00340819",
+      "event_date": "2026-10-01",
+      "time_raw": "19:00~22:00",
+      "place": "홍대역 7出 ↔ 홍익대 정문 <서교동 등>",
+      "personnel_raw": "100명"
     }
   ]
 }
