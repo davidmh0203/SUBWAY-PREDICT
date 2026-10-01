@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-01T01:27:20.765Z",
+  "finishedAt": "2026-10-01T16:38:17.673Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-01",
+  "date": "2026-10-02",
   "window": [
-    "2026-10-01"
+    "2026-10-02"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14454,
-    "posts": 2444
+    "events": 14458,
+    "posts": 2445
   },
   "samples": [
     {
-      "post_id": "smpa-00340819",
-      "event_date": "2026-10-01",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
+      "post_id": "smpa-00340873",
+      "event_date": "2026-10-02",
+      "time_raw": "06:00~16:00",
+      "place": "마곡16단지 건설 현장 앞 <마곡동>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00340873",
+      "event_date": "2026-10-02",
+      "time_raw": "10:00~17:00",
+      "place": "을지로3가역 1出 앞 <저동1가>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00340819",
-      "event_date": "2026-10-01",
-      "time_raw": "11:30~12:30",
-      "place": "김포공항 국제선 1층 건너편 앞 <공항동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00340873",
+      "event_date": "2026-10-02",
+      "time_raw": "11:00~13:00",
+      "place": "의사당역 2出 보조도로 앞 <여의도>",
+      "personnel_raw": "320명"
     },
     {
-      "post_id": "smpa-00340819",
-      "event_date": "2026-10-01",
-      "time_raw": "14:30~18:00",
-      "place": "수서경찰서 앞 우측 인도 → 수서경찰서 일대",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00340819",
-      "event_date": "2026-10-01",
-      "time_raw": "19:00~22:00",
-      "place": "홍대역 7出 ↔ 홍익대 정문 <서교동 등>",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00340873",
+      "event_date": "2026-10-02",
+      "time_raw": "19:30~21:30",
+      "place": "서울중앙우체국 → 명동역 5出 <세종대로 등>",
+      "personnel_raw": "300명"
     }
   ]
 }
