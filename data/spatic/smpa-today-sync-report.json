@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-10-02T01:47:06.022Z",
+  "finishedAt": "2026-10-02T15:55:45.458Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-10-02",
+  "date": "2026-10-03",
   "window": [
-    "2026-10-02"
+    "2026-10-03"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14458,
-    "posts": 2445
+    "events": 14464,
+    "posts": 2446
   },
   "samples": [
     {
-      "post_id": "smpa-00340873",
-      "event_date": "2026-10-02",
-      "time_raw": "06:00~16:00",
-      "place": "마곡16단지 건설 현장 앞 <마곡동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00340931",
+      "event_date": "2026-10-03",
+      "time_raw": "10:30~14:00",
+      "place": "서울역광장 → 효령빌딩 <봉래동 등>",
+      "personnel_raw": "2,000명"
     },
     {
-      "post_id": "smpa-00340873",
-      "event_date": "2026-10-02",
-      "time_raw": "10:00~17:00",
-      "place": "을지로3가역 1出 앞 <저동1가>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00340931",
+      "event_date": "2026-10-03",
+      "time_raw": "12:30~18:00",
+      "place": "서울역 4번 출구 → 종로3가역 14번 출구",
+      "personnel_raw": "2,000명"
     },
     {
-      "post_id": "smpa-00340873",
-      "event_date": "2026-10-02",
-      "time_raw": "11:00~13:00",
-      "place": "의사당역 2出 보조도로 앞 <여의도>",
-      "personnel_raw": "320명"
+      "post_id": "smpa-00340931",
+      "event_date": "2026-10-03",
+      "time_raw": "13:00~17:00",
+      "place": "동화면세점~대한문 편도 전차로 <세종대로>",
+      "personnel_raw": "140,000명"
     },
     {
-      "post_id": "smpa-00340873",
-      "event_date": "2026-10-02",
-      "time_raw": "19:30~21:30",
-      "place": "서울중앙우체국 → 명동역 5出 <세종대로 등>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00340931",
+      "event_date": "2026-10-03",
+      "time_raw": "14:00~17:00",
+      "place": "보신각 앞 2개 차로 ↔ 광화문 로터리",
+      "personnel_raw": "3,000명"
+    },
+    {
+      "post_id": "smpa-00340931",
+      "event_date": "2026-10-03",
+      "time_raw": "15:00~17:00",
+      "place": "숭례문 로터리~시청역 8번 출구",
+      "personnel_raw": "10,000명"
+    },
+    {
+      "post_id": "smpa-00340931",
+      "event_date": "2026-10-03",
+      "time_raw": "15:30~18:00",
+      "place": "시청 동편 → 숭례문 로터리 <남대문로 등>",
+      "personnel_raw": "1,200명"
     }
   ]
 }
