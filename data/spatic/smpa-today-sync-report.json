@@ -1,68 +1,47 @@
 {
-  "finishedAt": "2026-10-03T01:21:15.173Z",
-  "mode": "same-day",
-  "kstHour": 10,
+  "finishedAt": "2026-10-03T14:23:23.989Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-10-03",
+  "date": "2026-10-04",
   "window": [
-    "2026-10-03"
+    "2026-10-04"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 6,
-  "withPersonnel": 6,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 6,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14464,
-    "posts": 2446
+    "events": 14467,
+    "posts": 2447
   },
   "samples": [
     {
-      "post_id": "smpa-00340931",
-      "event_date": "2026-10-03",
-      "time_raw": "10:30~14:00",
-      "place": "서울역광장 → 효령빌딩 <봉래동 등>",
-      "personnel_raw": "2,000명"
+      "post_id": "smpa-00340932",
+      "event_date": "2026-10-04",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00340931",
-      "event_date": "2026-10-03",
-      "time_raw": "12:30~18:00",
-      "place": "서울역 4번 출구 → 종로3가역 14번 출구",
-      "personnel_raw": "2,000명"
-    },
-    {
-      "post_id": "smpa-00340931",
-      "event_date": "2026-10-03",
-      "time_raw": "13:00~17:00",
-      "place": "동화면세점~대한문 편도 전차로 <세종대로>",
-      "personnel_raw": "140,000명"
-    },
-    {
-      "post_id": "smpa-00340931",
-      "event_date": "2026-10-03",
-      "time_raw": "14:00~17:00",
-      "place": "보신각 앞 2개 차로 ↔ 광화문 로터리",
-      "personnel_raw": "3,000명"
-    },
-    {
-      "post_id": "smpa-00340931",
-      "event_date": "2026-10-03",
-      "time_raw": "15:00~17:00",
-      "place": "숭례문 로터리~시청역 8번 출구",
+      "post_id": "smpa-00340932",
+      "event_date": "2026-10-04",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
       "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00340931",
-      "event_date": "2026-10-03",
-      "time_raw": "15:30~18:00",
-      "place": "시청 동편 → 숭례문 로터리 <남대문로 등>",
-      "personnel_raw": "1,200명"
+      "post_id": "smpa-00340932",
+      "event_date": "2026-10-04",
+      "time_raw": "13:00~18:00",
+      "place": "우이천 쌍한교 배드민턴장 <수유동>",
+      "personnel_raw": "150명"
     }
   ]
 }
