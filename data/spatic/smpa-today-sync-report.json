@@ -1,47 +1,25 @@
 {
-  "finishedAt": "2026-10-04T01:57:25.213Z",
-  "mode": "same-day",
-  "kstHour": 10,
+  "finishedAt": "2026-10-04T14:55:41.543Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "window": [
-    "2026-10-04"
+    "2026-10-05"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
-  "empty": 0,
+  "assemblies": 0,
+  "withPersonnel": 0,
+  "empty": 1,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 0,
   "totals": {
     "events": 14467,
-    "posts": 2447
+    "posts": 2448
   },
-  "samples": [
-    {
-      "post_id": "smpa-00340932",
-      "event_date": "2026-10-04",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00340932",
-      "event_date": "2026-10-04",
-      "time_raw": "11:00~13:00",
-      "place": "동화면세점 앞 인도 <태평로1가>",
-      "personnel_raw": "10,000명"
-    },
-    {
-      "post_id": "smpa-00340932",
-      "event_date": "2026-10-04",
-      "time_raw": "13:00~18:00",
-      "place": "우이천 쌍한교 배드민턴장 <수유동>",
-      "personnel_raw": "150명"
-    }
-  ]
+  "samples": []
 }
