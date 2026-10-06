@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-06T02:27:12.181Z",
+  "finishedAt": "2026-10-06T16:07:46.124Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-06",
+  "date": "2026-10-07",
   "window": [
-    "2026-10-06"
+    "2026-10-07"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14471,
-    "posts": 2449
+    "events": 14475,
+    "posts": 2450
   },
   "samples": [
     {
-      "post_id": "smpa-00340934",
-      "event_date": "2026-10-06",
-      "time_raw": "06:00~16:00",
-      "place": "마곡16단지 건설 현장 앞 <마곡동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00341017",
+      "event_date": "2026-10-07",
+      "time_raw": "08:00~09:00",
+      "place": "정부서울청사 앞 인도 <세종대로>",
+      "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00340934",
-      "event_date": "2026-10-06",
-      "time_raw": "10:00~18:00",
-      "place": "사랑채 동측 건너편 인도 <효자동>",
+      "post_id": "smpa-00341017",
+      "event_date": "2026-10-07",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00340934",
-      "event_date": "2026-10-06",
-      "time_raw": "15:00~17:00",
-      "place": "목동14단지 B상가 앞 <목동>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00341017",
+      "event_date": "2026-10-07",
+      "time_raw": "14:00~15:00",
+      "place": "의사당역 3出 앞 <여의도>",
+      "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00340934",
-      "event_date": "2026-10-06",
+      "post_id": "smpa-00341017",
+      "event_date": "2026-10-07",
       "time_raw": "19:00~20:00",
-      "place": "세종호텔 앞 <명동>",
-      "personnel_raw": "200명"
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
