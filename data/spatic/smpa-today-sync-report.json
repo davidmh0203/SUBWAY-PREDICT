@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-07T01:46:15.913Z",
+  "finishedAt": "2026-10-07T16:47:07.183Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-07",
+  "date": "2026-10-08",
   "window": [
-    "2026-10-07"
+    "2026-10-08"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14475,
-    "posts": 2450
+    "events": 14479,
+    "posts": 2451
   },
   "samples": [
     {
-      "post_id": "smpa-00341017",
-      "event_date": "2026-10-07",
-      "time_raw": "08:00~09:00",
-      "place": "정부서울청사 앞 인도 <세종대로>",
-      "personnel_raw": "150명"
+      "post_id": "smpa-00341063",
+      "event_date": "2026-10-08",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00341017",
-      "event_date": "2026-10-07",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 인도 및 2개 차로 <수송동>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00341017",
-      "event_date": "2026-10-07",
-      "time_raw": "14:00~15:00",
-      "place": "의사당역 3出 앞 <여의도>",
+      "post_id": "smpa-00341063",
+      "event_date": "2026-10-08",
+      "time_raw": "13:00~18:00",
+      "place": "서울어울림체육센터 앞 <상계동>",
       "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00341017",
-      "event_date": "2026-10-07",
-      "time_raw": "19:00~20:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00341063",
+      "event_date": "2026-10-08",
+      "time_raw": "14:00~15:30",
+      "place": "의사당역 2번 출구 앞 <여의도>",
+      "personnel_raw": "400명"
+    },
+    {
+      "post_id": "smpa-00341063",
+      "event_date": "2026-10-08",
+      "time_raw": "13:00~16:00",
+      "place": "이룸센터 보조도로~여야 당사 <여의도>",
+      "personnel_raw": "100명"
     }
   ]
 }
