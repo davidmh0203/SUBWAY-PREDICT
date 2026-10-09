@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-09T02:28:16.635Z",
+  "finishedAt": "2026-10-09T16:26:43.993Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-09",
+  "date": "2026-10-10",
   "window": [
-    "2026-10-09"
+    "2026-10-10"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14483,
-    "posts": 2452
+    "events": 14487,
+    "posts": 2453
   },
   "samples": [
     {
-      "post_id": "smpa-00341108",
-      "event_date": "2026-10-09",
-      "time_raw": "08:30~11:30",
-      "place": "이촌가족공원 → 효창공원",
-      "personnel_raw": "6,000명"
+      "post_id": "smpa-00341109",
+      "event_date": "2026-10-10",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점 앞 인도<태평로1가>",
+      "personnel_raw": "1,500명"
     },
     {
-      "post_id": "smpa-00341108",
-      "event_date": "2026-10-09",
+      "post_id": "smpa-00341109",
+      "event_date": "2026-10-10",
       "time_raw": "14:00~16:00",
-      "place": "동십자R <세종로>",
-      "personnel_raw": "5,000명"
+      "place": "파고다타워 ⇄ 신논현역 <강남대로 등>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00341108",
-      "event_date": "2026-10-09",
-      "time_raw": "14:00~16:00",
-      "place": "의사당역 2出 앞 <여의도동>",
-      "personnel_raw": "10,000명"
+      "post_id": "smpa-00341109",
+      "event_date": "2026-10-10",
+      "time_raw": "14:00~15:00",
+      "place": "신논현역 7出 → 교대역 7出 <강남대로 등>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00341108",
-      "event_date": "2026-10-09",
-      "time_raw": "19:00~23:30",
-      "place": "동화면세점 앞 <태평로1가>",
-      "personnel_raw": "2,000명"
+      "post_id": "smpa-00341109",
+      "event_date": "2026-10-10",
+      "time_raw": "17:00~19:30",
+      "place": "서초역 8出 → CGV 강남 <강남대로 등>",
+      "personnel_raw": "500명"
     }
   ]
 }
