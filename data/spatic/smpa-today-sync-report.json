@@ -1,53 +1,46 @@
 {
-  "finishedAt": "2026-10-10T01:53:16.511Z",
+  "finishedAt": "2026-10-10T15:31:11.515Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-10-10",
+  "date": "2026-10-11",
   "window": [
-    "2026-10-10"
+    "2026-10-11"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14487,
-    "posts": 2453
+    "events": 14490,
+    "posts": 2454
   },
   "samples": [
     {
-      "post_id": "smpa-00341109",
-      "event_date": "2026-10-10",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점 앞 인도<태평로1가>",
+      "post_id": "smpa-00341110",
+      "event_date": "2026-10-11",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00341110",
+      "event_date": "2026-10-11",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
       "personnel_raw": "1,500명"
     },
     {
-      "post_id": "smpa-00341109",
-      "event_date": "2026-10-10",
-      "time_raw": "14:00~16:00",
-      "place": "파고다타워 ⇄ 신논현역 <강남대로 등>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00341109",
-      "event_date": "2026-10-10",
-      "time_raw": "14:00~15:00",
-      "place": "신논현역 7出 → 교대역 7出 <강남대로 등>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00341109",
-      "event_date": "2026-10-10",
-      "time_raw": "17:00~19:30",
-      "place": "서초역 8出 → CGV 강남 <강남대로 등>",
+      "post_id": "smpa-00341110",
+      "event_date": "2026-10-11",
+      "time_raw": "16:00~17:00",
+      "place": "영풍빌딩 → 명동역 6出 <세종대로 등>",
       "personnel_raw": "500명"
     }
   ]
