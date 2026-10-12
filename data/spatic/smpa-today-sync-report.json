@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-12T01:39:37.665Z",
+  "finishedAt": "2026-10-12T19:13:16.480Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-10-12",
+  "date": "2026-10-13",
   "window": [
-    "2026-10-12"
+    "2026-10-13"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14494,
-    "posts": 2455
+    "events": 14498,
+    "posts": 2456
   },
   "samples": [
     {
-      "post_id": "smpa-00341126",
-      "event_date": "2026-10-12",
-      "time_raw": "09:00~13:00",
-      "place": "경찰청 앞 <미근동>",
-      "personnel_raw": "50명"
-    },
-    {
-      "post_id": "smpa-00341126",
-      "event_date": "2026-10-12",
-      "time_raw": "10:30~13:00",
-      "place": "하나증권 앞 → 여의도역 1出 일대 <여의도>",
+      "post_id": "smpa-00341161",
+      "event_date": "2026-10-13",
+      "time_raw": "13:30~16:00",
+      "place": "마포농수산물시장 앞 -> 망원역 1出 일대",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00341126",
-      "event_date": "2026-10-12",
-      "time_raw": "13:30~15:30",
-      "place": "마포구청 앞 → 망원역 1出 일대 <성산동>",
-      "personnel_raw": "80명"
+      "post_id": "smpa-00341161",
+      "event_date": "2026-10-13",
+      "time_raw": "14:00~15:30",
+      "place": "사랑채 동측 건너편",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00341126",
-      "event_date": "2026-10-12",
-      "time_raw": "14:30~17:00",
-      "place": "광화문KT 건너편 → 사랑채 동측 건너편",
-      "personnel_raw": "50명"
+      "post_id": "smpa-00341161",
+      "event_date": "2026-10-13",
+      "time_raw": "14:00~16:00",
+      "place": "TP타워 앞 인도",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00341161",
+      "event_date": "2026-10-13",
+      "time_raw": "18:00~19:30",
+      "place": "쿠팡 본사 앞",
+      "personnel_raw": "200명"
     }
   ]
 }
