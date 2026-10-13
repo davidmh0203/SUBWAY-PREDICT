@@ -1,54 +1,25 @@
 {
-  "finishedAt": "2026-10-13T03:08:21.277Z",
+  "finishedAt": "2026-10-13T17:04:09.166Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-10-13",
+  "date": "2026-10-14",
   "window": [
-    "2026-10-13"
+    "2026-10-14"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 0,
+  "withPersonnel": 0,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 0,
   "totals": {
     "events": 14498,
     "posts": 2456
   },
-  "samples": [
-    {
-      "post_id": "smpa-00341161",
-      "event_date": "2026-10-13",
-      "time_raw": "13:30~16:00",
-      "place": "마포농수산물시장 앞 -> 망원역 1出 일대",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00341161",
-      "event_date": "2026-10-13",
-      "time_raw": "14:00~15:30",
-      "place": "사랑채 동측 건너편",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00341161",
-      "event_date": "2026-10-13",
-      "time_raw": "14:00~16:00",
-      "place": "TP타워 앞 인도",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00341161",
-      "event_date": "2026-10-13",
-      "time_raw": "18:00~19:30",
-      "place": "쿠팡 본사 앞",
-      "personnel_raw": "200명"
-    }
-  ]
+  "samples": []
 }
