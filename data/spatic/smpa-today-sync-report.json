@@ -1,54 +1,25 @@
 {
-  "finishedAt": "2026-10-14T01:21:11.679Z",
+  "finishedAt": "2026-10-14T15:52:29.254Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-10-14",
+  "date": "2026-10-15",
   "window": [
-    "2026-10-14"
+    "2026-10-15"
   ],
   "source": "smpa-nd54882",
-  "postsMatched": 1,
-  "fetched": 1,
+  "postsMatched": 0,
+  "fetched": 0,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 0,
+  "withPersonnel": 0,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 0,
   "totals": {
     "events": 14502,
     "posts": 2457
   },
-  "samples": [
-    {
-      "post_id": "smpa-00341208",
-      "event_date": "2026-10-14",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 <수송동>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00341208",
-      "event_date": "2026-10-14",
-      "time_raw": "13:30~15:30",
-      "place": "마포농수산물시장 앞 -> 망원역 1出 일대",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00341208",
-      "event_date": "2026-10-14",
-      "time_raw": "14:00~16:00",
-      "place": "사랑채 동측 건너편 <효자로>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00341208",
-      "event_date": "2026-10-14",
-      "time_raw": "19:00~20:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
-    }
-  ]
+  "samples": []
 }
