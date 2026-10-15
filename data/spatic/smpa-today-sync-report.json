@@ -1,25 +1,54 @@
 {
-  "finishedAt": "2026-10-14T18:06:53.574Z",
+  "finishedAt": "2026-10-15T00:46:15.074Z",
   "mode": "same-day",
-  "kstHour": 3,
+  "kstHour": 9,
   "afterHoursFrom": 18,
   "date": "2026-10-15",
   "window": [
     "2026-10-15"
   ],
   "source": "smpa-nd54882",
-  "postsMatched": 0,
-  "fetched": 0,
+  "postsMatched": 1,
+  "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 0,
-  "withPersonnel": 0,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 0,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14502,
-    "posts": 2457
+    "events": 14506,
+    "posts": 2458
   },
-  "samples": []
+  "samples": [
+    {
+      "post_id": "smpa-00341250",
+      "event_date": "2026-10-15",
+      "time_raw": "09:00~15:00",
+      "place": "사랑채 동측 건너편 <효자동>",
+      "personnel_raw": "150명"
+    },
+    {
+      "post_id": "smpa-00341250",
+      "event_date": "2026-10-15",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00341250",
+      "event_date": "2026-10-15",
+      "time_raw": "10:30~13:00",
+      "place": "하나증권 후문 앞 -> 여의도역 1出 일대",
+      "personnel_raw": "300명"
+    },
+    {
+      "post_id": "smpa-00341250",
+      "event_date": "2026-10-15",
+      "time_raw": "13:30~15:30",
+      "place": "마포농수산물시장 앞 -> 망원역 1出 일대",
+      "personnel_raw": "100명"
+    }
+  ]
 }
