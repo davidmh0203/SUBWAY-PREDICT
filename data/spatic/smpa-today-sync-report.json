@@ -1,61 +1,47 @@
 {
-  "finishedAt": "2026-10-17T00:43:28.023Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-10-17T13:05:22.620Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 22,
   "afterHoursFrom": 18,
-  "date": "2026-10-17",
+  "date": "2026-10-18",
   "window": [
-    "2026-10-17"
+    "2026-10-18"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 5,
-  "withPersonnel": 5,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 5,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14515,
-    "posts": 2460
+    "events": 14518,
+    "posts": 2461
   },
   "samples": [
     {
-      "post_id": "smpa-00341314",
-      "event_date": "2026-10-17",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점 앞 -> 효자PB <세종대로 등>",
-      "personnel_raw": "50,000명"
-    },
-    {
-      "post_id": "smpa-00341314",
-      "event_date": "2026-10-17",
-      "time_raw": "13:00~15:30",
-      "place": "영풍빌딩 동측 <서린동> / 서울역광장 ->",
-      "personnel_raw": "600명"
-    },
-    {
-      "post_id": "smpa-00341314",
-      "event_date": "2026-10-17",
-      "time_raw": "15:00~16:00",
-      "place": "HW컨벤션 -> 고궁박물관 <자하문로 등>",
+      "post_id": "smpa-00341315",
+      "event_date": "2026-10-18",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00341314",
-      "event_date": "2026-10-17",
-      "time_raw": "16:00~18:30",
-      "place": "의사당역 5出 -> 민주당사 <은행로 등>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00341315",
+      "event_date": "2026-10-18",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
+      "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00341314",
-      "event_date": "2026-10-17",
-      "time_raw": "16:00~17:30",
-      "place": "고궁박물관 남측 -> 의정부터 서측",
-      "personnel_raw": "2,000명"
+      "post_id": "smpa-00341315",
+      "event_date": "2026-10-18",
+      "time_raw": "14:30~16:00",
+      "place": "숭례문R ~ 시청역 8出 <세종대로>",
+      "personnel_raw": "8,000명"
     }
   ]
 }
