@@ -1,47 +1,40 @@
 {
-  "finishedAt": "2026-10-18T00:13:19.016Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-10-18T13:25:37.952Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 22,
   "afterHoursFrom": 18,
-  "date": "2026-10-18",
+  "date": "2026-10-19",
   "window": [
-    "2026-10-18"
+    "2026-10-19"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 2,
+  "withPersonnel": 2,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 2,
   "totals": {
-    "events": 14518,
-    "posts": 2461
+    "events": 14520,
+    "posts": 2462
   },
   "samples": [
     {
-      "post_id": "smpa-00341315",
-      "event_date": "2026-10-18",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00341316",
+      "event_date": "2026-10-19",
+      "time_raw": "09:30~10:30",
+      "place": "국회 앞 <여의도>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00341315",
-      "event_date": "2026-10-18",
-      "time_raw": "11:00~13:00",
-      "place": "동화면세점 앞 인도 <태평로1가>",
-      "personnel_raw": "10,000명"
-    },
-    {
-      "post_id": "smpa-00341315",
-      "event_date": "2026-10-18",
-      "time_raw": "14:30~16:00",
-      "place": "숭례문R ~ 시청역 8出 <세종대로>",
-      "personnel_raw": "8,000명"
+      "post_id": "smpa-00341316",
+      "event_date": "2026-10-19",
+      "time_raw": "10:30~13:00",
+      "place": "하나증권 앞 -> 여의도역 1出 일대 <여의도>",
+      "personnel_raw": "200명"
     }
   ]
 }
