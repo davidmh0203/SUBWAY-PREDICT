@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-10-20T01:11:41.717Z",
-  "mode": "same-day",
-  "kstHour": 10,
+  "finishedAt": "2026-10-20T14:25:21.279Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-10-20",
+  "date": "2026-10-21",
   "window": [
-    "2026-10-20"
+    "2026-10-21"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14523,
-    "posts": 2463
+    "events": 14527,
+    "posts": 2464
   },
   "samples": [
     {
-      "post_id": "smpa-00341375",
-      "event_date": "2026-10-20",
-      "time_raw": "08:00~14:30",
-      "place": "연희로24길 12-5 앞 → 서대문구선관위 일대",
+      "post_id": "smpa-00341424",
+      "event_date": "2026-10-21",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 인도",
+      "personnel_raw": "300명"
+    },
+    {
+      "post_id": "smpa-00341424",
+      "event_date": "2026-10-21",
+      "time_raw": "14:00~15:30",
+      "place": "의사당역 2出 앞 → 여야 당사",
+      "personnel_raw": "200명"
+    },
+    {
+      "post_id": "smpa-00341424",
+      "event_date": "2026-10-21",
+      "time_raw": "15:30~16:30",
+      "place": "사랑채 동측 건너편",
       "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00341375",
-      "event_date": "2026-10-20",
-      "time_raw": "13:00~17:00",
-      "place": "의사당역 4出 앞 → 여야 당사 <여의도>",
+      "post_id": "smpa-00341424",
+      "event_date": "2026-10-21",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞",
       "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00341375",
-      "event_date": "2026-10-20",
-      "time_raw": "14:00~15:30",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "1,000명"
     }
   ]
 }
