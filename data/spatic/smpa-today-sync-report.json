@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-21T18:10:08.175Z",
-  "mode": "same-day",
-  "kstHour": 3,
+  "finishedAt": "2026-10-22T14:36:26.458Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-10-22",
+  "date": "2026-10-23",
   "window": [
-    "2026-10-22"
+    "2026-10-23"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14531,
-    "posts": 2465
+    "events": 14535,
+    "posts": 2466
   },
   "samples": [
     {
-      "post_id": "smpa-00341465",
-      "event_date": "2026-10-22",
-      "time_raw": "08:40~12:00",
-      "place": "육군사관학교 1정문 → 공릉동성당",
-      "personnel_raw": "400명"
+      "post_id": "smpa-00341499",
+      "event_date": "2026-10-23",
+      "time_raw": "11:00~12:00",
+      "place": "이레빌딩 앞 <당산동>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00341465",
-      "event_date": "2026-10-22",
-      "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00341465",
-      "event_date": "2026-10-22",
-      "time_raw": "13:00~16:00",
-      "place": "시청역 8出 ~ 숭례문R",
-      "personnel_raw": "15,000명"
-    },
-    {
-      "post_id": "smpa-00341465",
-      "event_date": "2026-10-22",
+      "post_id": "smpa-00341499",
+      "event_date": "2026-10-23",
       "time_raw": "13:30~14:30",
       "place": "마포농수산물시장 → 마포구청역 일대",
       "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00341499",
+      "event_date": "2026-10-23",
+      "time_raw": "14:00~16:00",
+      "place": "LG유플러스 본사 앞 <한강로3가>",
+      "personnel_raw": "1,260명"
+    },
+    {
+      "post_id": "smpa-00341499",
+      "event_date": "2026-10-23",
+      "time_raw": "19:00~20:00",
+      "place": "민주당사 앞 <여의도>",
+      "personnel_raw": "3,000명"
     }
   ]
 }
