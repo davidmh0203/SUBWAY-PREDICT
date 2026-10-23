@@ -1,54 +1,61 @@
 {
-  "finishedAt": "2026-10-23T00:52:33.990Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-10-23T14:22:02.711Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 23,
   "afterHoursFrom": 18,
-  "date": "2026-10-23",
+  "date": "2026-10-24",
   "window": [
-    "2026-10-23"
+    "2026-10-24"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 5,
+  "withPersonnel": 5,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 5,
   "totals": {
-    "events": 14535,
-    "posts": 2466
+    "events": 14540,
+    "posts": 2467
   },
   "samples": [
     {
-      "post_id": "smpa-00341499",
-      "event_date": "2026-10-23",
-      "time_raw": "11:00~12:00",
-      "place": "이레빌딩 앞 <당산동>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00341524",
+      "event_date": "2026-10-24",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점 앞 → 효자PB",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00341499",
-      "event_date": "2026-10-23",
-      "time_raw": "13:30~14:30",
-      "place": "마포농수산물시장 → 마포구청역 일대",
-      "personnel_raw": "100명"
+      "post_id": "smpa-00341524",
+      "event_date": "2026-10-24",
+      "time_raw": "12:00~14:00",
+      "place": "정부서울청사 북측 → 숭례문R",
+      "personnel_raw": "700명"
     },
     {
-      "post_id": "smpa-00341499",
-      "event_date": "2026-10-23",
+      "post_id": "smpa-00341524",
+      "event_date": "2026-10-24",
       "time_raw": "14:00~16:00",
-      "place": "LG유플러스 본사 앞 <한강로3가>",
-      "personnel_raw": "1,260명"
+      "place": "숭례문R ~ 시청역 8出 앞",
+      "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00341499",
-      "event_date": "2026-10-23",
-      "time_raw": "19:00~20:00",
-      "place": "민주당사 앞 <여의도>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00341524",
+      "event_date": "2026-10-24",
+      "time_raw": "15:00~18:00",
+      "place": "탑골공원 → 사랑채 동측 건너편",
+      "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00341524",
+      "event_date": "2026-10-24",
+      "time_raw": "16:00~19:00",
+      "place": "의사당역 5出 → 민주당사",
+      "personnel_raw": "5,000명"
     }
   ]
 }
