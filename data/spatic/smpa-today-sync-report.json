@@ -1,61 +1,47 @@
 {
-  "finishedAt": "2026-10-24T00:58:57.855Z",
-  "mode": "same-day",
-  "kstHour": 9,
+  "finishedAt": "2026-10-24T13:28:46.774Z",
+  "mode": "next-day-after-hours",
+  "kstHour": 22,
   "afterHoursFrom": 18,
-  "date": "2026-10-24",
+  "date": "2026-10-25",
   "window": [
-    "2026-10-24"
+    "2026-10-25"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 5,
-  "withPersonnel": 5,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 5,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14540,
-    "posts": 2467
+    "events": 14543,
+    "posts": 2468
   },
   "samples": [
     {
-      "post_id": "smpa-00341524",
-      "event_date": "2026-10-24",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점 앞 → 효자PB",
-      "personnel_raw": "50,000명"
+      "post_id": "smpa-00341525",
+      "event_date": "2026-10-25",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00341524",
-      "event_date": "2026-10-24",
-      "time_raw": "12:00~14:00",
-      "place": "정부서울청사 북측 → 숭례문R",
-      "personnel_raw": "700명"
-    },
-    {
-      "post_id": "smpa-00341524",
-      "event_date": "2026-10-24",
-      "time_raw": "14:00~16:00",
-      "place": "숭례문R ~ 시청역 8出 앞",
+      "post_id": "smpa-00341525",
+      "event_date": "2026-10-25",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 <태평로1가>",
       "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00341524",
-      "event_date": "2026-10-24",
-      "time_raw": "15:00~18:00",
-      "place": "탑골공원 → 사랑채 동측 건너편",
-      "personnel_raw": "500명"
-    },
-    {
-      "post_id": "smpa-00341524",
-      "event_date": "2026-10-24",
-      "time_raw": "16:00~19:00",
-      "place": "의사당역 5出 → 민주당사",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00341525",
+      "event_date": "2026-10-25",
+      "time_raw": "15:00~16:30",
+      "place": "한화포레나미아 앞 <송천동>",
+      "personnel_raw": "200명"
     }
   ]
 }
