@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-26T00:37:52.408Z",
+  "finishedAt": "2026-10-26T16:15:06.621Z",
   "mode": "same-day",
-  "kstHour": 9,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-26",
+  "date": "2026-10-27",
   "window": [
-    "2026-10-26"
+    "2026-10-27"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,34 +18,34 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14547,
-    "posts": 2469
+    "events": 14551,
+    "posts": 2470
   },
   "samples": [
     {
-      "post_id": "smpa-00341526",
-      "event_date": "2026-10-26",
+      "post_id": "smpa-00341568",
+      "event_date": "2026-10-27",
       "time_raw": "10:30~13:00",
       "place": "하나증권 후문 앞 <여의도>",
       "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00341526",
-      "event_date": "2026-10-26",
+      "post_id": "smpa-00341568",
+      "event_date": "2026-10-27",
+      "time_raw": "13:00~14:30",
+      "place": "의사당역 5出 앞 <여의도>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00341568",
+      "event_date": "2026-10-27",
       "time_raw": "13:30~14:30",
       "place": "마포농수산물시장 → 마포구청역R 일대",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00341526",
-      "event_date": "2026-10-26",
-      "time_raw": "14:00~15:30",
-      "place": "더베이스 서초빌딩 앞 <서초대로 등>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00341526",
-      "event_date": "2026-10-26",
+      "post_id": "smpa-00341568",
+      "event_date": "2026-10-27",
       "time_raw": "19:00~20:00",
       "place": "민주당사 앞 이면도로 <여의도>",
       "personnel_raw": "3,000명"
