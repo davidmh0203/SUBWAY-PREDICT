@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-10-28T01:35:09.926Z",
+  "finishedAt": "2026-10-28T16:13:05.581Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-28",
+  "date": "2026-10-29",
   "window": [
-    "2026-10-28"
+    "2026-10-29"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14554,
-    "posts": 2471
+    "events": 14558,
+    "posts": 2472
   },
   "samples": [
     {
-      "post_id": "smpa-00341602",
-      "event_date": "2026-10-28",
-      "time_raw": "12:00~14:00",
-      "place": "국민의 힘 앞<->민주당 앞 <여의도>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00341675",
+      "event_date": "2026-10-29",
+      "time_raw": "07:00~13:00",
+      "place": "포스코 센터 앞 <대치동>",
+      "personnel_raw": "400명"
     },
     {
-      "post_id": "smpa-00341602",
-      "event_date": "2026-10-28",
-      "time_raw": "14:30~15:30",
-      "place": "마로니에공원 -> 종로3가 <연건동 등>",
-      "personnel_raw": "1,200명"
+      "post_id": "smpa-00341675",
+      "event_date": "2026-10-29",
+      "time_raw": "08:00~16:00",
+      "place": "연희로 24길 <연희동>",
+      "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00341602",
-      "event_date": "2026-10-28",
-      "time_raw": "19:00~20:00",
-      "place": "민주당사 앞 <여의도>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00341675",
+      "event_date": "2026-10-29",
+      "time_raw": "14:00~15:30",
+      "place": "의사당역 2出 앞 <여의도>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00341675",
+      "event_date": "2026-10-29",
+      "time_raw": "18:00~22:00",
+      "place": "이태원 광장 <이태원동>",
+      "personnel_raw": "100명"
     }
   ]
 }
