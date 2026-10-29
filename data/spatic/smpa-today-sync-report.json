@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-29T01:55:51.196Z",
+  "finishedAt": "2026-10-29T16:20:08.662Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-29",
+  "date": "2026-10-30",
   "window": [
-    "2026-10-29"
+    "2026-10-30"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14558,
-    "posts": 2472
+    "events": 14562,
+    "posts": 2473
   },
   "samples": [
     {
-      "post_id": "smpa-00341675",
-      "event_date": "2026-10-29",
-      "time_raw": "07:00~13:00",
-      "place": "포스코 센터 앞 <대치동>",
-      "personnel_raw": "400명"
+      "post_id": "smpa-00341761",
+      "event_date": "2026-10-30",
+      "time_raw": "09:30~13:30",
+      "place": "연세대 앞 <창천동>",
+      "personnel_raw": "160명"
     },
     {
-      "post_id": "smpa-00341675",
-      "event_date": "2026-10-29",
-      "time_raw": "08:00~16:00",
-      "place": "연희로 24길 <연희동>",
-      "personnel_raw": "150명"
+      "post_id": "smpa-00341761",
+      "event_date": "2026-10-30",
+      "time_raw": "13:00~15:00",
+      "place": "연합뉴스 앞 <수송동>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00341675",
-      "event_date": "2026-10-29",
-      "time_raw": "14:00~15:30",
-      "place": "의사당역 2出 앞 <여의도>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00341675",
-      "event_date": "2026-10-29",
-      "time_raw": "18:00~22:00",
-      "place": "이태원 광장 <이태원동>",
+      "post_id": "smpa-00341761",
+      "event_date": "2026-10-30",
+      "time_raw": "15:40~17:00",
+      "place": "교대역 5出 → 신논현역 5出 <서초대로 등>",
       "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00341761",
+      "event_date": "2026-10-30",
+      "time_raw": "19:00~22:00",
+      "place": "중앙우체국 → 동화면세점 <세종대로 등>",
+      "personnel_raw": "300명"
     }
   ]
 }
