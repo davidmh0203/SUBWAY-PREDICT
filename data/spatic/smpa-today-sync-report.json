@@ -1,54 +1,47 @@
 {
-  "finishedAt": "2026-10-30T02:06:51.281Z",
+  "finishedAt": "2026-10-30T16:08:51.892Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-10-30",
+  "date": "2026-10-31",
   "window": [
-    "2026-10-30"
+    "2026-10-31"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14562,
-    "posts": 2473
+    "events": 14565,
+    "posts": 2474
   },
   "samples": [
     {
-      "post_id": "smpa-00341761",
-      "event_date": "2026-10-30",
-      "time_raw": "09:30~13:30",
-      "place": "연세대 앞 <창천동>",
-      "personnel_raw": "160명"
+      "post_id": "smpa-00341824",
+      "event_date": "2026-10-31",
+      "time_raw": "10:00~12:00",
+      "place": "사랑채 동측 건너편 <효자동>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00341761",
-      "event_date": "2026-10-30",
-      "time_raw": "13:00~15:00",
-      "place": "연합뉴스 앞 <수송동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00341824",
+      "event_date": "2026-10-31",
+      "time_raw": "12:00~16:00",
+      "place": "동화면세점 앞 <세종대로>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00341761",
-      "event_date": "2026-10-30",
-      "time_raw": "15:40~17:00",
-      "place": "교대역 5出 → 신논현역 5出 <서초대로 등>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00341761",
-      "event_date": "2026-10-30",
-      "time_raw": "19:00~22:00",
-      "place": "중앙우체국 → 동화면세점 <세종대로 등>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00341824",
+      "event_date": "2026-10-31",
+      "time_raw": "14:00~16:30",
+      "place": "숭례문~시청역 <세종대로 등>",
+      "personnel_raw": "5,000명"
     }
   ]
 }
