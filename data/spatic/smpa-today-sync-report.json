@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-10-31T01:45:11.199Z",
+  "finishedAt": "2026-10-31T15:27:37.083Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-10-31",
+  "date": "2026-11-01",
   "window": [
-    "2026-10-31"
+    "2026-11-01"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,30 +18,30 @@
   "errors": 0,
   "eventsWritten": 3,
   "totals": {
-    "events": 14565,
-    "posts": 2474
+    "events": 14568,
+    "posts": 2475
   },
   "samples": [
     {
-      "post_id": "smpa-00341824",
-      "event_date": "2026-10-31",
-      "time_raw": "10:00~12:00",
-      "place": "사랑채 동측 건너편 <효자동>",
+      "post_id": "smpa-00341825",
+      "event_date": "2026-11-01",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00341824",
-      "event_date": "2026-10-31",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점 앞 <세종대로>",
-      "personnel_raw": "50,000명"
+      "post_id": "smpa-00341825",
+      "event_date": "2026-11-01",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 <태평로1가>",
+      "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00341824",
-      "event_date": "2026-10-31",
-      "time_raw": "14:00~16:30",
-      "place": "숭례문~시청역 <세종대로 등>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00341825",
+      "event_date": "2026-11-01",
+      "time_raw": "14:00~17:00",
+      "place": "경복궁 영추문 앞 → 탑골공원 <효자동 등>",
+      "personnel_raw": "200명"
     }
   ]
 }
