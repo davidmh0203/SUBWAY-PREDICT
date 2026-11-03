@@ -1,53 +1,46 @@
 {
-  "finishedAt": "2026-11-03T03:39:29.848Z",
+  "finishedAt": "2026-11-03T17:13:33.789Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "window": [
-    "2026-11-03"
+    "2026-11-04"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14575,
-    "posts": 2477
+    "events": 14578,
+    "posts": 2478
   },
   "samples": [
     {
-      "post_id": "smpa-00341952",
-      "event_date": "2026-11-03",
-      "time_raw": "09:00~14:00",
-      "place": "정부서울청사 정문 앞 <세종로>",
+      "post_id": "smpa-00342067",
+      "event_date": "2026-11-04",
+      "time_raw": "13:30~14:30",
+      "place": "고용노동청 앞 <장교동>",
       "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00341952",
-      "event_date": "2026-11-03",
-      "time_raw": "10:00~12:00",
-      "place": "시청 서편 <태평로>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00342067",
+      "event_date": "2026-11-04",
+      "time_raw": "15:30~18:00",
+      "place": "<성산로 등>",
+      "personnel_raw": "200명"
     },
     {
-      "post_id": "smpa-00341952",
-      "event_date": "2026-11-03",
-      "time_raw": "14:00~15:30",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00341952",
-      "event_date": "2026-11-03",
-      "time_raw": "17:00~19:00",
-      "place": "서울시교육청 앞 <후암동>",
+      "post_id": "smpa-00342067",
+      "event_date": "2026-11-04",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
     }
   ]
