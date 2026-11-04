@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-04T02:37:35.193Z",
+  "finishedAt": "2026-11-04T17:24:44.977Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-11-04",
+  "date": "2026-11-05",
   "window": [
-    "2026-11-04"
+    "2026-11-05"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,30 +18,30 @@
   "errors": 0,
   "eventsWritten": 3,
   "totals": {
-    "events": 14578,
-    "posts": 2478
+    "events": 14581,
+    "posts": 2479
   },
   "samples": [
     {
-      "post_id": "smpa-00342067",
-      "event_date": "2026-11-04",
-      "time_raw": "13:30~14:30",
-      "place": "고용노동청 앞 <장교동>",
+      "post_id": "smpa-00342176",
+      "event_date": "2026-11-05",
+      "time_raw": "10:00~11:30",
+      "place": "시청 동편 <무교로>",
       "personnel_raw": "300명"
     },
     {
-      "post_id": "smpa-00342067",
-      "event_date": "2026-11-04",
-      "time_raw": "15:30~18:00",
-      "place": "<성산로 등>",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00342176",
+      "event_date": "2026-11-05",
+      "time_raw": "13:30~15:00",
+      "place": "마포농수산물시장 앞 ↔ 마포구청 앞 <성산동>",
+      "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00342067",
-      "event_date": "2026-11-04",
-      "time_raw": "19:00~20:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00342176",
+      "event_date": "2026-11-05",
+      "time_raw": "18:00~19:30",
+      "place": "KB금융지주 앞 → KB증권 본사 앞 <여의도>",
+      "personnel_raw": "1,500명"
     }
   ]
 }
