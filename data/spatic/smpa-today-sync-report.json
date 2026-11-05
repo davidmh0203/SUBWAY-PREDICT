@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-05T02:42:20.709Z",
+  "finishedAt": "2026-11-05T18:53:31.536Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 3,
   "afterHoursFrom": 18,
-  "date": "2026-11-05",
+  "date": "2026-11-06",
   "window": [
-    "2026-11-05"
+    "2026-11-06"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,30 +18,30 @@
   "errors": 0,
   "eventsWritten": 3,
   "totals": {
-    "events": 14581,
-    "posts": 2479
+    "events": 14584,
+    "posts": 2480
   },
   "samples": [
     {
-      "post_id": "smpa-00342176",
-      "event_date": "2026-11-05",
-      "time_raw": "10:00~11:30",
-      "place": "시청 동편 <무교로>",
-      "personnel_raw": "300명"
-    },
-    {
-      "post_id": "smpa-00342176",
-      "event_date": "2026-11-05",
-      "time_raw": "13:30~15:00",
-      "place": "마포농수산물시장 앞 ↔ 마포구청 앞 <성산동>",
+      "post_id": "smpa-00342329",
+      "event_date": "2026-11-06",
+      "time_raw": "11:00~14:00",
+      "place": "시청 2청사 앞 인도 <서소문로>",
       "personnel_raw": "100명"
     },
     {
-      "post_id": "smpa-00342176",
-      "event_date": "2026-11-05",
-      "time_raw": "18:00~19:30",
-      "place": "KB금융지주 앞 → KB증권 본사 앞 <여의도>",
-      "personnel_raw": "1,500명"
+      "post_id": "smpa-00342329",
+      "event_date": "2026-11-06",
+      "time_raw": "14:00~18:00",
+      "place": "신길동 849 이면도로 앞 <신길동>",
+      "personnel_raw": "70명"
+    },
+    {
+      "post_id": "smpa-00342329",
+      "event_date": "2026-11-06",
+      "time_raw": "19:30~22:00",
+      "place": "서울중앙우체국 → 동화면세점 <세종대로 등>",
+      "personnel_raw": "300명"
     }
   ]
 }
