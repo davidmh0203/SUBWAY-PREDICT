@@ -1,68 +1,47 @@
 {
-  "finishedAt": "2026-11-07T02:17:33.204Z",
+  "finishedAt": "2026-11-07T15:49:44.247Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 0,
   "afterHoursFrom": 18,
-  "date": "2026-11-07",
+  "date": "2026-11-08",
   "window": [
-    "2026-11-07"
+    "2026-11-08"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 6,
-  "withPersonnel": 6,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 6,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14590,
-    "posts": 2481
+    "events": 14593,
+    "posts": 2482
   },
   "samples": [
     {
-      "post_id": "smpa-00342436",
-      "event_date": "2026-11-07",
-      "time_raw": "12:00~16:00",
-      "place": "동화면세점 앞 → 종로1R → 동화면세점 앞",
-      "personnel_raw": "50,000명"
+      "post_id": "smpa-00342437",
+      "event_date": "2026-11-08",
+      "time_raw": "09:30~10:30",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00342436",
-      "event_date": "2026-11-07",
-      "time_raw": "12:45~16:00",
-      "place": "서초역 8出 ↔ 강남역 <서초대로 등>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00342437",
+      "event_date": "2026-11-08",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
+      "personnel_raw": "10,000명"
     },
     {
-      "post_id": "smpa-00342436",
-      "event_date": "2026-11-07",
-      "time_raw": "14:00~15:30",
-      "place": "마포대교 남단~서울교 북단 <여의도>",
-      "personnel_raw": "30,000명"
-    },
-    {
-      "post_id": "smpa-00342436",
-      "event_date": "2026-11-07",
-      "time_raw": "15:00~16:00",
-      "place": "<태평로 등>",
-      "personnel_raw": "50,000명"
-    },
-    {
-      "post_id": "smpa-00342436",
-      "event_date": "2026-11-07",
-      "time_raw": "15:00~16:00",
-      "place": "내자R~사직공원 <적선동>",
-      "personnel_raw": "6,000명"
-    },
-    {
-      "post_id": "smpa-00342436",
-      "event_date": "2026-11-07",
-      "time_raw": "16:00~19:00",
-      "place": "의사당역 5出 → 민주당사 <은행로 등>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00342437",
+      "event_date": "2026-11-08",
+      "time_raw": "15:00~18:00",
+      "place": "교보빌딩 정문 앞 <세종대로>",
+      "personnel_raw": "100명"
     }
   ]
 }
