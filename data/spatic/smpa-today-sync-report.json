@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-09T01:53:28.763Z",
+  "finishedAt": "2026-11-09T19:57:27.280Z",
   "mode": "same-day",
-  "kstHour": 10,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-11-09",
+  "date": "2026-11-10",
   "window": [
-    "2026-11-09"
+    "2026-11-10"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,30 +18,30 @@
   "errors": 0,
   "eventsWritten": 3,
   "totals": {
-    "events": 14596,
-    "posts": 2483
+    "events": 14599,
+    "posts": 2484
   },
   "samples": [
     {
-      "post_id": "smpa-00342438",
-      "event_date": "2026-11-09",
-      "time_raw": "10:30~13:00",
-      "place": "하나증권 앞 → 금감원·여의도역 <여의도>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00342438",
-      "event_date": "2026-11-09",
-      "time_raw": "11:00~15:30",
-      "place": "국회의사당역 2出 → 사랑채 동측 건너편",
+      "post_id": "smpa-00342617",
+      "event_date": "2026-11-10",
+      "time_raw": "08:00~12:00",
+      "place": "시의회 별관 앞 <정동길>",
       "personnel_raw": "400명"
     },
     {
-      "post_id": "smpa-00342438",
-      "event_date": "2026-11-09",
-      "time_raw": "11:00~13:00",
-      "place": "서울시교육청 앞 인도 <후암동>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00342617",
+      "event_date": "2026-11-10",
+      "time_raw": "08:00~16:00",
+      "place": "연희로24길 12-5 앞<연희동>",
+      "personnel_raw": "150명"
+    },
+    {
+      "post_id": "smpa-00342617",
+      "event_date": "2026-11-10",
+      "time_raw": "15:00~18:00",
+      "place": "강서구청 앞",
+      "personnel_raw": "200명"
     }
   ]
 }
