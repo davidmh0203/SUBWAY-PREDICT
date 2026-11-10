@@ -1,47 +1,54 @@
 {
-  "finishedAt": "2026-11-10T04:15:50.589Z",
+  "finishedAt": "2026-11-10T17:12:34.872Z",
   "mode": "same-day",
-  "kstHour": 13,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "window": [
-    "2026-11-10"
+    "2026-11-11"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 3,
-  "withPersonnel": 3,
+  "assemblies": 4,
+  "withPersonnel": 4,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 3,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14599,
-    "posts": 2484
+    "events": 14603,
+    "posts": 2485
   },
   "samples": [
     {
-      "post_id": "smpa-00342617",
-      "event_date": "2026-11-10",
-      "time_raw": "08:00~12:00",
-      "place": "시의회 별관 앞 <정동길>",
-      "personnel_raw": "400명"
+      "post_id": "smpa-00342833",
+      "event_date": "2026-11-11",
+      "time_raw": "11:00~15:00",
+      "place": "농협중앙회 -> 동화면세점 <정동길 등>",
+      "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00342617",
-      "event_date": "2026-11-10",
-      "time_raw": "08:00~16:00",
-      "place": "연희로24길 12-5 앞<연희동>",
+      "post_id": "smpa-00342833",
+      "event_date": "2026-11-11",
+      "time_raw": "12:00~13:00",
+      "place": "소녀상 앞 <수송동>",
+      "personnel_raw": "300명"
+    },
+    {
+      "post_id": "smpa-00342833",
+      "event_date": "2026-11-11",
+      "time_raw": "15:00~17:00",
+      "place": "대우건설 본사 앞 <을지로4가>",
       "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00342617",
-      "event_date": "2026-11-10",
-      "time_raw": "15:00~18:00",
-      "place": "강서구청 앞",
-      "personnel_raw": "200명"
+      "post_id": "smpa-00342833",
+      "event_date": "2026-11-11",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
