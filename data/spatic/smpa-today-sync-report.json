@@ -1,53 +1,46 @@
 {
-  "finishedAt": "2026-11-11T02:08:41.391Z",
+  "finishedAt": "2026-11-11T17:21:14.494Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-11-11",
+  "date": "2026-11-12",
   "window": [
-    "2026-11-11"
+    "2026-11-12"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14603,
-    "posts": 2485
+    "events": 14606,
+    "posts": 2486
   },
   "samples": [
     {
-      "post_id": "smpa-00342833",
-      "event_date": "2026-11-11",
-      "time_raw": "11:00~15:00",
-      "place": "농협중앙회 -> 동화면세점 <정동길 등>",
+      "post_id": "smpa-00343088",
+      "event_date": "2026-11-12",
+      "time_raw": "10:00~11:00",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
     },
     {
-      "post_id": "smpa-00342833",
-      "event_date": "2026-11-11",
-      "time_raw": "12:00~13:00",
-      "place": "소녀상 앞 <수송동>",
-      "personnel_raw": "300명"
+      "post_id": "smpa-00343088",
+      "event_date": "2026-11-12",
+      "time_raw": "13:30~15:00",
+      "place": "의사당역 3出 앞 <여의도>",
+      "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00342833",
-      "event_date": "2026-11-11",
-      "time_raw": "15:00~17:00",
-      "place": "대우건설 본사 앞 <을지로4가>",
-      "personnel_raw": "150명"
-    },
-    {
-      "post_id": "smpa-00342833",
-      "event_date": "2026-11-11",
-      "time_raw": "19:00~20:00",
-      "place": "평강제일교회 앞 <오류동>",
+      "post_id": "smpa-00343088",
+      "event_date": "2026-11-12",
+      "time_raw": "16:00~17:00",
+      "place": "농업박물관~농협중앙회 앞 <충정로1가>",
       "personnel_raw": "500명"
     }
   ]
