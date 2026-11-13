@@ -1,40 +1,25 @@
 {
-  "finishedAt": "2026-11-12T20:59:50.892Z",
+  "finishedAt": "2026-11-13T17:18:57.322Z",
   "mode": "same-day",
-  "kstHour": 5,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-11-13",
+  "date": "2026-11-14",
   "window": [
-    "2026-11-13"
+    "2026-11-14"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 2,
-  "withPersonnel": 2,
-  "empty": 0,
+  "assemblies": 0,
+  "withPersonnel": 0,
+  "empty": 1,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 2,
+  "eventsWritten": 0,
   "totals": {
     "events": 14608,
-    "posts": 2487
+    "posts": 2488
   },
-  "samples": [
-    {
-      "post_id": "smpa-00343202",
-      "event_date": "2026-11-13",
-      "time_raw": "13:00~15:00",
-      "place": "사랑채 동측 건너편 <효자동>",
-      "personnel_raw": "3,000명"
-    },
-    {
-      "post_id": "smpa-00343202",
-      "event_date": "2026-11-13",
-      "time_raw": "15:00~17:30",
-      "place": "풀무원 상암지점 <상암동>",
-      "personnel_raw": "400명"
-    }
-  ]
+  "samples": []
 }
