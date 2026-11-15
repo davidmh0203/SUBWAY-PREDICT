@@ -1,61 +1,25 @@
 {
-  "finishedAt": "2026-11-15T02:04:20.282Z",
+  "finishedAt": "2026-11-15T16:29:51.653Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-11-15",
+  "date": "2026-11-16",
   "window": [
-    "2026-11-15"
+    "2026-11-16"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 5,
-  "withPersonnel": 5,
-  "empty": 0,
+  "assemblies": 0,
+  "withPersonnel": 0,
+  "empty": 1,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 5,
+  "eventsWritten": 0,
   "totals": {
     "events": 14613,
-    "posts": 2489
+    "posts": 2490
   },
-  "samples": [
-    {
-      "post_id": "smpa-00343390",
-      "event_date": "2026-11-15",
-      "time_raw": "09:30~10:30",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00343390",
-      "event_date": "2026-11-15",
-      "time_raw": "09:30~10:30",
-      "place": "평강제일교회 앞 좌측 공터 <오류동>",
-      "personnel_raw": "100명"
-    },
-    {
-      "post_id": "smpa-00343390",
-      "event_date": "2026-11-15",
-      "time_raw": "11:00~13:00",
-      "place": "동화면세점 앞 인도 <세종대로>",
-      "personnel_raw": "10,000명"
-    },
-    {
-      "post_id": "smpa-00343390",
-      "event_date": "2026-11-15",
-      "time_raw": "13:30~15:00",
-      "place": "고궁박물관 남측 → 舊)효자PB <세종로>",
-      "personnel_raw": "1,000명"
-    },
-    {
-      "post_id": "smpa-00343390",
-      "event_date": "2026-11-15",
-      "time_raw": "13:30~16:30",
-      "place": "보신각 앞 인도 <관철동>",
-      "personnel_raw": "70명"
-    }
-  ]
+  "samples": []
 }
