@@ -1,25 +1,54 @@
 {
-  "finishedAt": "2026-11-16T02:20:30.991Z",
+  "finishedAt": "2026-11-16T19:45:38.156Z",
   "mode": "same-day",
-  "kstHour": 11,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-11-16",
+  "date": "2026-11-17",
   "window": [
-    "2026-11-16"
+    "2026-11-17"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 0,
-  "withPersonnel": 0,
-  "empty": 1,
+  "assemblies": 4,
+  "withPersonnel": 4,
+  "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 0,
+  "eventsWritten": 4,
   "totals": {
-    "events": 14613,
-    "posts": 2490
+    "events": 14617,
+    "posts": 2491
   },
-  "samples": []
+  "samples": [
+    {
+      "post_id": "smpa-00343526",
+      "event_date": "2026-11-17",
+      "time_raw": "10:30~11:30",
+      "place": "대한문~도시건축전시관 앞 <태평로>",
+      "personnel_raw": "3,000명"
+    },
+    {
+      "post_id": "smpa-00343526",
+      "event_date": "2026-11-17",
+      "time_raw": "12:00~17:00",
+      "place": "국회의사당역 4出~잠사회관 앞 <여의도>",
+      "personnel_raw": "2,000명"
+    },
+    {
+      "post_id": "smpa-00343526",
+      "event_date": "2026-11-17",
+      "time_raw": "13:00~18:00",
+      "place": "제기동역 2出 앞 → 동대문구청",
+      "personnel_raw": "2,000명"
+    },
+    {
+      "post_id": "smpa-00343526",
+      "event_date": "2026-11-17",
+      "time_raw": "13:30~15:30",
+      "place": "삼희빌딩 앞 <여의도>",
+      "personnel_raw": "3,000명"
+    }
+  ]
 }
