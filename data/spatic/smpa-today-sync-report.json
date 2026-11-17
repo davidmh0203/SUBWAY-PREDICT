@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-17T04:43:35.601Z",
+  "finishedAt": "2026-11-17T18:42:24.775Z",
   "mode": "same-day",
-  "kstHour": 13,
+  "kstHour": 3,
   "afterHoursFrom": 18,
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "window": [
-    "2026-11-17"
+    "2026-11-18"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14617,
-    "posts": 2491
+    "events": 14621,
+    "posts": 2492
   },
   "samples": [
     {
-      "post_id": "smpa-00343526",
-      "event_date": "2026-11-17",
-      "time_raw": "10:30~11:30",
-      "place": "대한문~도시건축전시관 앞 <태평로>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00343622",
+      "event_date": "2026-11-18",
+      "time_raw": "11:00~12:30",
+      "place": "사랑채 동측 건너편 <효자로>",
+      "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00343526",
-      "event_date": "2026-11-17",
-      "time_raw": "12:00~17:00",
-      "place": "국회의사당역 4出~잠사회관 앞 <여의도>",
-      "personnel_raw": "2,000명"
+      "post_id": "smpa-00343622",
+      "event_date": "2026-11-18",
+      "time_raw": "14:00~15:00",
+      "place": "국회의사당역 5出 <여의도>",
+      "personnel_raw": "5,000명"
     },
     {
-      "post_id": "smpa-00343526",
-      "event_date": "2026-11-17",
-      "time_raw": "13:00~18:00",
-      "place": "제기동역 2出 앞 → 동대문구청",
-      "personnel_raw": "2,000명"
+      "post_id": "smpa-00343622",
+      "event_date": "2026-11-18",
+      "time_raw": "17:30~18:30",
+      "place": "핀란드타워 앞 <신촌동>",
+      "personnel_raw": "400명"
     },
     {
-      "post_id": "smpa-00343526",
-      "event_date": "2026-11-17",
-      "time_raw": "13:30~15:30",
-      "place": "삼희빌딩 앞 <여의도>",
-      "personnel_raw": "3,000명"
+      "post_id": "smpa-00343622",
+      "event_date": "2026-11-18",
+      "time_raw": "19:00~20:00",
+      "place": "평강제일교회 앞 <오류동>",
+      "personnel_raw": "500명"
     }
   ]
 }
