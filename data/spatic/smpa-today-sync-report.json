@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-18T03:48:47.946Z",
+  "finishedAt": "2026-11-18T18:18:05.822Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 3,
   "afterHoursFrom": 18,
-  "date": "2026-11-18",
+  "date": "2026-11-19",
   "window": [
-    "2026-11-18"
+    "2026-11-19"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14621,
-    "posts": 2492
+    "events": 14625,
+    "posts": 2493
   },
   "samples": [
     {
-      "post_id": "smpa-00343622",
-      "event_date": "2026-11-18",
-      "time_raw": "11:00~12:30",
-      "place": "사랑채 동측 건너편 <효자로>",
-      "personnel_raw": "150명"
+      "post_id": "smpa-00343698",
+      "event_date": "2026-11-19",
+      "time_raw": "15:00~16:00",
+      "place": "더베이스 서초빌딩 앞 <서초동>",
+      "personnel_raw": "30명"
     },
     {
-      "post_id": "smpa-00343622",
-      "event_date": "2026-11-18",
-      "time_raw": "14:00~15:00",
-      "place": "국회의사당역 5出 <여의도>",
+      "post_id": "smpa-00343698",
+      "event_date": "2026-11-19",
+      "time_raw": "15:00~16:30",
+      "place": "국회 앞 → 민주당사 <여의도>",
+      "personnel_raw": "100명"
+    },
+    {
+      "post_id": "smpa-00343698",
+      "event_date": "2026-11-19",
+      "time_raw": "15:30~17:00",
+      "place": "중앙공소청 서문 앞 <서초동>",
       "personnel_raw": "5,000명"
     },
     {
-      "post_id": "smpa-00343622",
-      "event_date": "2026-11-18",
-      "time_raw": "17:30~18:30",
-      "place": "핀란드타워 앞 <신촌동>",
-      "personnel_raw": "400명"
-    },
-    {
-      "post_id": "smpa-00343622",
-      "event_date": "2026-11-18",
+      "post_id": "smpa-00343698",
+      "event_date": "2026-11-19",
       "time_raw": "19:00~20:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
+      "place": "세종호텔 앞 <명동>",
+      "personnel_raw": "200명"
     }
   ]
 }
