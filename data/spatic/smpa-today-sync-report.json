@@ -1,54 +1,47 @@
 {
-  "finishedAt": "2026-11-20T03:41:37.491Z",
+  "finishedAt": "2026-11-20T17:56:01.270Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 2,
   "afterHoursFrom": 18,
-  "date": "2026-11-20",
+  "date": "2026-11-21",
   "window": [
-    "2026-11-20"
+    "2026-11-21"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 3,
+  "withPersonnel": 3,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 3,
   "totals": {
-    "events": 14629,
-    "posts": 2494
+    "events": 14632,
+    "posts": 2495
   },
   "samples": [
     {
-      "post_id": "smpa-00343748",
-      "event_date": "2026-11-20",
-      "time_raw": "10:00~12:00",
-      "place": "민주당사 앞 <여의도>",
-      "personnel_raw": "500명"
+      "post_id": "smpa-00343825",
+      "event_date": "2026-11-21",
+      "time_raw": "11:30~16:00",
+      "place": "동화면세점 앞 <세종대로>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00343748",
-      "event_date": "2026-11-20",
-      "time_raw": "13:00~14:00",
-      "place": "산업은행 정문 앞 <여의도>",
-      "personnel_raw": "10,000명"
-    },
-    {
-      "post_id": "smpa-00343748",
-      "event_date": "2026-11-20",
-      "time_raw": "13:00~13:40",
-      "place": "농업박물관 앞 <충정로>",
+      "post_id": "smpa-00343825",
+      "event_date": "2026-11-21",
+      "time_raw": "13:00~18:00",
+      "place": "보신각 서측 <관철동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00343748",
-      "event_date": "2026-11-20",
-      "time_raw": "15:00~17:00",
-      "place": "국회의사당역 2出 앞 <여의도>",
-      "personnel_raw": "10,000명"
+      "post_id": "smpa-00343825",
+      "event_date": "2026-11-21",
+      "time_raw": "14:00~16:00",
+      "place": "국회의사당역 2出 → 민주당사 <여의도>",
+      "personnel_raw": "5,000명"
     }
   ]
 }
