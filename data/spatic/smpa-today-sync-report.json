@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-21T03:24:25.371Z",
+  "finishedAt": "2026-11-21T16:54:06.615Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 1,
   "afterHoursFrom": 18,
-  "date": "2026-11-21",
+  "date": "2026-11-22",
   "window": [
-    "2026-11-21"
+    "2026-11-22"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,30 +18,30 @@
   "errors": 0,
   "eventsWritten": 3,
   "totals": {
-    "events": 14632,
-    "posts": 2495
+    "events": 14635,
+    "posts": 2496
   },
   "samples": [
     {
-      "post_id": "smpa-00343825",
-      "event_date": "2026-11-21",
-      "time_raw": "11:30~16:00",
-      "place": "동화면세점 앞 <세종대로>",
-      "personnel_raw": "50,000명"
-    },
-    {
-      "post_id": "smpa-00343825",
-      "event_date": "2026-11-21",
-      "time_raw": "13:00~18:00",
-      "place": "보신각 서측 <관철동>",
+      "post_id": "smpa-00343826",
+      "event_date": "2026-11-22",
+      "time_raw": "09:30~10:30",
+      "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00343825",
-      "event_date": "2026-11-21",
-      "time_raw": "14:00~16:00",
-      "place": "국회의사당역 2出 → 민주당사 <여의도>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00343826",
+      "event_date": "2026-11-22",
+      "time_raw": "11:00~13:00",
+      "place": "동화면세점 앞 인도 <태평로1가>",
+      "personnel_raw": "10,000명"
+    },
+    {
+      "post_id": "smpa-00343826",
+      "event_date": "2026-11-22",
+      "time_raw": "14:30~17:30",
+      "place": "선릉역 5出 -> 삼화빌딩 <테헤란로 등>",
+      "personnel_raw": "200명"
     }
   ]
 }
