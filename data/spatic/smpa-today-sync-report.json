@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-23T03:01:20.663Z",
+  "finishedAt": "2026-11-23T21:36:53.057Z",
   "mode": "same-day",
-  "kstHour": 12,
+  "kstHour": 6,
   "afterHoursFrom": 18,
-  "date": "2026-11-23",
+  "date": "2026-11-24",
   "window": [
-    "2026-11-23"
+    "2026-11-24"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14639,
-    "posts": 2497
+    "events": 14643,
+    "posts": 2498
   },
   "samples": [
     {
-      "post_id": "smpa-00343827",
-      "event_date": "2026-11-23",
-      "time_raw": "09:00~11:30",
-      "place": "용산 순교복자수녀회 -> 명동성당",
-      "personnel_raw": "70명"
-    },
-    {
-      "post_id": "smpa-00343827",
-      "event_date": "2026-11-23",
+      "post_id": "smpa-00343988",
+      "event_date": "2026-11-24",
       "time_raw": "10:30~13:00",
-      "place": "하나증권 후문 앞 <여의도>",
-      "personnel_raw": "300명"
+      "place": "남부고용지청 앞 -> 선유동1로·영등포로 일대 <당산동>",
+      "personnel_raw": "150명"
     },
     {
-      "post_id": "smpa-00343827",
-      "event_date": "2026-11-23",
+      "post_id": "smpa-00343988",
+      "event_date": "2026-11-24",
+      "time_raw": "11:00~12:40",
+      "place": "동화면세점 앞 인도 <세종로>",
+      "personnel_raw": "120명"
+    },
+    {
+      "post_id": "smpa-00343988",
+      "event_date": "2026-11-24",
+      "time_raw": "13:30~16:00",
+      "place": "의사당역 4出 앞 <-> 여야 당사 일대 <여의도>",
+      "personnel_raw": "3,000명"
+    },
+    {
+      "post_id": "smpa-00343988",
+      "event_date": "2026-11-24",
       "time_raw": "14:00~14:50",
       "place": "신논현역 7出 -> 교대역 7出 <강남대로 등>",
-      "personnel_raw": "200명"
-    },
-    {
-      "post_id": "smpa-00343827",
-      "event_date": "2026-11-23",
-      "time_raw": "15:00~16:00",
-      "place": "청량리역 5出 앞 인도 <전농동>",
-      "personnel_raw": "100명"
+      "personnel_raw": "1,000명"
     }
   ]
 }
