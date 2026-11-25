@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-25T04:59:42.446Z",
+  "finishedAt": "2026-11-25T19:30:04.540Z",
   "mode": "same-day",
-  "kstHour": 13,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "window": [
-    "2026-11-25"
+    "2026-11-26"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,37 +18,37 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14647,
-    "posts": 2499
+    "events": 14651,
+    "posts": 2500
   },
   "samples": [
     {
-      "post_id": "smpa-00344057",
-      "event_date": "2026-11-25",
-      "time_raw": "10:00~10:30",
-      "place": "전태일기념관 앞 <관수동>",
-      "personnel_raw": "400명"
-    },
-    {
-      "post_id": "smpa-00344057",
-      "event_date": "2026-11-25",
-      "time_raw": "10:30~11:30",
-      "place": "대한문~시의회 앞 <태평로>",
-      "personnel_raw": "3,000명"
-    },
-    {
-      "post_id": "smpa-00344057",
-      "event_date": "2026-11-25",
-      "time_raw": "13:00~15:00",
-      "place": "舊효자PB 앞 <궁정동>",
-      "personnel_raw": "1,500명"
-    },
-    {
-      "post_id": "smpa-00344057",
-      "event_date": "2026-11-25",
-      "time_raw": "19:00~20:00",
+      "post_id": "smpa-00344121",
+      "event_date": "2026-11-26",
+      "time_raw": "10:00~11:00",
       "place": "평강제일교회 앞 <오류동>",
       "personnel_raw": "500명"
+    },
+    {
+      "post_id": "smpa-00344121",
+      "event_date": "2026-11-26",
+      "time_raw": "12:00~13:00",
+      "place": "동화면세점 앞~코리아나호텔 앞 <세종대로>",
+      "personnel_raw": "5,000명"
+    },
+    {
+      "post_id": "smpa-00344121",
+      "event_date": "2026-11-26",
+      "time_raw": "13:00~14:00",
+      "place": "안국역 4出 -> 종로·광화문 일대 -> 안국역 4出 <운니동 등>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00344121",
+      "event_date": "2026-11-26",
+      "time_raw": "14:00~16:00",
+      "place": "국회의사당역 5出 앞 <여의도>",
+      "personnel_raw": "8,000명"
     }
   ]
 }
