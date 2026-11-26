@@ -1,11 +1,11 @@
 {
-  "finishedAt": "2026-11-26T04:18:11.917Z",
+  "finishedAt": "2026-11-26T19:12:51.399Z",
   "mode": "same-day",
-  "kstHour": 13,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-11-26",
+  "date": "2026-11-27",
   "window": [
-    "2026-11-26"
+    "2026-11-27"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
@@ -18,36 +18,36 @@
   "errors": 0,
   "eventsWritten": 4,
   "totals": {
-    "events": 14651,
-    "posts": 2500
+    "events": 14655,
+    "posts": 2501
   },
   "samples": [
     {
-      "post_id": "smpa-00344121",
-      "event_date": "2026-11-26",
+      "post_id": "smpa-00344185",
+      "event_date": "2026-11-27",
       "time_raw": "10:00~11:00",
-      "place": "평강제일교회 앞 <오류동>",
-      "personnel_raw": "500명"
+      "place": "서울시교육청 앞 <후암동>",
+      "personnel_raw": "400명"
     },
     {
-      "post_id": "smpa-00344121",
-      "event_date": "2026-11-26",
-      "time_raw": "12:00~13:00",
-      "place": "동화면세점 앞~코리아나호텔 앞 <세종대로>",
-      "personnel_raw": "5,000명"
+      "post_id": "smpa-00344185",
+      "event_date": "2026-11-27",
+      "time_raw": "13:00~15:30",
+      "place": "사랑채 동측 건너편 -> 舊효자PB <효자동 일대>",
+      "personnel_raw": "700명"
     },
     {
-      "post_id": "smpa-00344121",
-      "event_date": "2026-11-26",
-      "time_raw": "13:00~14:00",
-      "place": "안국역 4出 -> 종로·광화문 일대 -> 안국역 4出 <운니동 등>",
-      "personnel_raw": "1,000명"
+      "post_id": "smpa-00344185",
+      "event_date": "2026-11-27",
+      "time_raw": "13:30~16:00",
+      "place": "마포대교 남단~여의도 환승센터 -> 의사당역 2出 <여의도>",
+      "personnel_raw": "20,000명"
     },
     {
-      "post_id": "smpa-00344121",
-      "event_date": "2026-11-26",
-      "time_raw": "14:00~16:00",
-      "place": "국회의사당역 5出 앞 <여의도>",
+      "post_id": "smpa-00344185",
+      "event_date": "2026-11-27",
+      "time_raw": "13:30~16:00",
+      "place": "의사당역 4出 -> 여의도역 6出 <여의도>",
       "personnel_raw": "8,000명"
     }
   ]
