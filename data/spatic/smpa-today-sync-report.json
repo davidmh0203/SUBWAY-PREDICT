@@ -1,54 +1,68 @@
 {
-  "finishedAt": "2026-11-27T04:27:28.488Z",
+  "finishedAt": "2026-11-27T19:07:20.436Z",
   "mode": "same-day",
-  "kstHour": 13,
+  "kstHour": 4,
   "afterHoursFrom": 18,
-  "date": "2026-11-27",
+  "date": "2026-11-28",
   "window": [
-    "2026-11-27"
+    "2026-11-28"
   ],
   "source": "smpa-nd54882",
   "postsMatched": 1,
   "fetched": 1,
   "skippedCache": 0,
-  "assemblies": 4,
-  "withPersonnel": 4,
+  "assemblies": 6,
+  "withPersonnel": 6,
   "empty": 0,
   "skippedNoPersonnel": 0,
   "errors": 0,
-  "eventsWritten": 4,
+  "eventsWritten": 6,
   "totals": {
-    "events": 14655,
-    "posts": 2501
+    "events": 14661,
+    "posts": 2502
   },
   "samples": [
     {
-      "post_id": "smpa-00344185",
-      "event_date": "2026-11-27",
-      "time_raw": "10:00~11:00",
-      "place": "서울시교육청 앞 <후암동>",
-      "personnel_raw": "400명"
+      "post_id": "smpa-00344243",
+      "event_date": "2026-11-28",
+      "time_raw": "11:30~16:00",
+      "place": "동화면세점 -> 을지로1R -> 동화면세점 <세종대로 등>",
+      "personnel_raw": "50,000명"
     },
     {
-      "post_id": "smpa-00344185",
-      "event_date": "2026-11-27",
-      "time_raw": "13:00~15:30",
-      "place": "사랑채 동측 건너편 -> 舊효자PB <효자동 일대>",
-      "personnel_raw": "700명"
+      "post_id": "smpa-00344243",
+      "event_date": "2026-11-28",
+      "time_raw": "13:00~15:00",
+      "place": "보신각 -> 광화문R -> 보신각 <관철동 등>",
+      "personnel_raw": "1,000명"
     },
     {
-      "post_id": "smpa-00344185",
-      "event_date": "2026-11-27",
-      "time_raw": "13:30~16:00",
-      "place": "마포대교 남단~여의도 환승센터 -> 의사당역 2出 <여의도>",
-      "personnel_raw": "20,000명"
+      "post_id": "smpa-00344243",
+      "event_date": "2026-11-28",
+      "time_raw": "13:30~18:00",
+      "place": "탑골공원 -> 종2R -> 사랑채 동측 건너편 <효자로 등>",
+      "personnel_raw": "3,000명"
     },
     {
-      "post_id": "smpa-00344185",
-      "event_date": "2026-11-27",
-      "time_raw": "13:30~16:00",
-      "place": "의사당역 4出 -> 여의도역 6出 <여의도>",
-      "personnel_raw": "8,000명"
+      "post_id": "smpa-00344243",
+      "event_date": "2026-11-28",
+      "time_raw": "14:00~16:30",
+      "place": "파고다타워 <-> 신논현역 <강남대로 등>",
+      "personnel_raw": "1,000명"
+    },
+    {
+      "post_id": "smpa-00344243",
+      "event_date": "2026-11-28",
+      "time_raw": "16:00~19:00",
+      "place": "중앙공소청 서문 -> 씨티빌딩 <강남대로 등>",
+      "personnel_raw": "5,000명"
+    },
+    {
+      "post_id": "smpa-00344243",
+      "event_date": "2026-11-28",
+      "time_raw": "17:00~19:00",
+      "place": "국회의사당역 5出 앞 <여의도동>",
+      "personnel_raw": "3,000명"
     }
   ]
 }
